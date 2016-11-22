@@ -1,0 +1,16 @@
+-Always put a semicolon at at the end of line, even if the JS would work without it (strict mode style)
+
+-use 4 spaces for indentation
+
+-put the start of the brackets at the same line as the operation, for example 
+
+if(){ 
+	//foo
+}
+
+not
+
+if()
+{
+	//foo
+}

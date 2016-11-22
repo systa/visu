@@ -1,0 +1,20 @@
+//Configuration files for the app, these even support comments!
+
+{
+	"port": 8080,
+	"serverUrl":"http://localhost",		
+	"dbUrl":"mongodb://localhost/visu",
+	"dbOptions":{
+		
+		"server": {
+			"socketOptions":{
+				"keepAlive" : 1
+			}
+		},
+		"replset": {
+				"socketOptions":{
+					"keepAlive" : 1
+				}
+			}
+	}
+}

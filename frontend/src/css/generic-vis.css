@@ -1,0 +1,103 @@
+/*
+* Copyright (c) TUT Tampere University of Technology 2014-2015.
+* All rights reserved.
+* This software has been developed in Tekes-TIVIT project Need-for-Speed.
+* All rule set in consortium agreement of Need-for-Speed project apply.
+*
+* Main authors: Antti Luoto, Anna-Liisa Mattila, Henri Terho
+*/
+
+body{
+    background-color : #FFFFFF;
+    padding: 0px;
+    outline: 0px;
+    margin : 0px;
+    font-family:"Lucida Console", Monaco, Monospace;
+    font-size: 1em;
+    /*overflow-x: hidden;*/
+}
+
+#loader{
+    display : block;
+    position : absolute;
+    bottom: 50%;
+    left: 40%;
+    text-align: center;
+    text-shadow: 5px 5px 50px #606060;
+    font-size: 5em;
+    font-weight: bold;
+    color: #303030;
+    opacity : 0.8;
+}
+
+.ui{
+    display : block;
+    padding : 0% 10% 2% 15%;
+}
+
+.legend{
+    text-align : center;
+    font-size : 1.1em;
+}
+
+.search{
+    display : block;
+    padding : 1%;
+}
+
+.tooltip{
+    padding : 0.1%;
+    z-index : 10;
+    position : absolute;
+    visibility : hidden;
+    font-size : 0.65em;
+    background-color : #F0F0F0;
+    color : #202020;
+}
+
+.chart{
+    font-size: 0.95em;
+    font-family:"Lucida Console", Monaco, Monospace;
+}
+
+.chart rect{
+    stroke : #F0F0F0;
+    fill-opacity: 0.9;
+    shape-rendering: crispEdges;
+}
+
+.chart circle{
+    stroke : #F0F0F0;
+    fill-opacity: 0.9;
+    shape-rendering: crispEdges;
+}
+
+.chart text{
+    fill: #000;
+    text-anchor: start;
+}
+
+.chart line{
+    fill : none;
+    stroke-width : 5px;
+}
+
+.brush text{
+    fill: #505050;
+    font-size: 0.65em;
+    text-anchor: start;
+}
+
+.brush .extent{
+    stroke: #fff;
+    fill-opacity: .125;
+    shape-rendering: crispEdges;
+}
+
+.axis path,
+.axis line{
+    fill: none;
+    stroke: #C0C0C0;
+    shape-rendering: crispEdges;
+    stroke-width : 1px;
+}

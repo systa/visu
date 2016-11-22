@@ -1,0 +1,19 @@
+{
+  "name": "issue_collector",
+  "version": "1.0.0",
+  "description": "",
+  "main": "collect.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Otto Hylli",
+  "license": "ISC",
+  "dependencies": {
+    "JSONPath": "^0.10.0",
+    "parse-link-header": "^0.2.0",
+    "prompt": "^0.2.14",
+    "request": "^2.58.0",
+    "underscore": "^1.8.3",
+    "url-template": "^2.0.6"
+  }
+}

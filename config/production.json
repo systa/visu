@@ -1,0 +1,1 @@
+//these settings will override the default config when NODE_ENV will be set to production
