@@ -55,8 +55,6 @@ var api = {
     ],
     jiraIssues: {
         path: 'search?expand=changelog&maxResults=-1&jql=project={projectName}',
-        //for n4s jira
-        //path: 'search?expand=changelog&maxResults=1500&jql=project={projectName}',
         query: { state: 'all' },
         // probably filter for jira would be useful as there is so much data fetched in jira
         //filter: function ( item ) {
