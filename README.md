@@ -17,7 +17,7 @@ To install, install nodeJS, NPM and mongoDB
 After you have installed all of those, navigate to the project root and run the commands:
 
     npm install
-    npm install bower # if needed
+    npm install -g bower # if needed
     bower install
     npm install -g grunt-cli
     grunt
