@@ -56,7 +56,7 @@ var api = {
       // tell that this authentication form requires this kind of header for every request
       // since this is undefined it means that its value should be in the user parameters
       // i.e. they should have a parameter named Cookie and the user input should be like JSESSIONID=xxxxx
-      headers: { 'Cookie': undefined },
+      headers: { 'cookie': undefined },
     }
     ],
     // all github api calls require these headers
