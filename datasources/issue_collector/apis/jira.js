@@ -42,7 +42,23 @@ var api = {
     //make prompt for host address
     //change this to the jira url where you want to get the data!
     baseUrl: 'http://localhost:8080/rest/api/2/',
-    authentication: [ 'no authentication', 'basic', 'oauth2' ],
+    authentication: [ 'no authentication', 'basic', 'oauth2', 
+       // gitlab has its own authentication method that uses a private authentication token
+      // the token should be included in a HTTP request header
+      { name: 'JSESSIONID cookie',
+      // user params are things that are asked from the user
+      // these are used only if this authentication method is chosen
+      userParams: [ { 
+      // this has to be the same as the place where it will be used
+      name: 'Cookie',
+      // this text is shown to the user
+      description: 'JSESSIONID cookie from authenticated browser e.g. JSESSIONID=xxxxxx' } ],
+      // tell that this authentication form requires this kind of header for every request
+      // since this is undefined it means that its value should be in the user parameters
+      // i.e. they should have a parameter named Cookie and the user input should be like JSESSIONID=xxxxx
+      headers: { 'Cookie': undefined },
+    }
+    ],
     // all github api calls require these headers
     headers: { 
         Accept: 'application/json',
