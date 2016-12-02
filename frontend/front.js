@@ -15,14 +15,6 @@ router.get('/', function(req, res) {
   res.sendfile('./frontend/views/index.html');
 });
 
-router.get('/ophi-vis', function(req, res) {
-  res.sendfile('./frontend/views/ophi-vis.html');
-});
-
-router.get('/ophi-stat-vis', function(req, res) {
-  res.sendfile('./frontend/views/ophi-stat-vis.html');
-});
-
 router.get('/test-data-vis', function(req, res) {
 	res.sendfile('./frontend/views/test-data-vis.html');
 });
