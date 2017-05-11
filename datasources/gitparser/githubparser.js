@@ -32,7 +32,7 @@ function getClient( config ) {
         // use for authentication
         github.authenticate( { type: 'oauth', token: config.token } );
     }
-    
+
     return github;
 }
 
@@ -53,19 +53,22 @@ function getFromGitHub( github, getter, config, result, processor, callback ) {
     result.addedCount = result.addedCount || 0; // how many items we actually managed to add to db
     result.constructIds = result.constructIds || []; // the mongodb ids of the constructs we added
     result.eventIds = result.eventIds || []; // the mongodb ids of the events we added
+    result.statechangeIds = result.statechangeIds || []; // the mongodb ids of the events we added
     result.commentIds = result.commentIds || []; // the mongodb ids of the comments we added
     result.failedCount = result.failedCount || 0; // how many db insertions failed
     result.linkCount = result.linkCount || 0; // how many links we have to create
+    result.eventLinkCount = result.eventLinkCount || 0;
+    result.statechangeLinkCount = result.statechangeLinkCount || 0;
     result.linked = result.linked || 0; // how many links we managed to create
     result.failedLinks = result.failedLinks || 0; // how many link creations failed
     result.commentLinks = result.commentLinks || 0; // how many comment links were confirmed during the link counting
     result.commitChanges = result.commitChanges || 0; // how many commit changes succeeded
     result.failedCommitChanges = result.failedCommitChanges || 0; // how many commit changes failed
     result.source = getRepoUrl( config ) || result.source; // the source for origin_id
-    result.context = config.user +'/' +config.repo // context for origin_id
+    result.context = config.user +'/' +config.repo; // context for origin_id
     result.hasNextPage = false; // is there more items available from github
-        
-    // process the items from one github API call. 
+
+    // process the items from one github API call.
     // if there are more items after that gets the next page
     function  processPage( err, data ) {
         if ( err ) {
@@ -74,20 +77,20 @@ function getFromGitHub( github, getter, config, result, processor, callback ) {
             return;
         }
 
-        if ( data.length == 0 ) {
+        if ( data.length === 0 ) {
             // nothing to process
             callback( null, result );
         }
-        
+
          // how many items we have now fetched i.e. how many items we have to add to db
-        if (data.length != undefined)
+        if (data.length !== undefined)
             result.count += data.length;
-        
+
         // are there more items after this
         result.hasNextPage = github.hasNextPage( data );
         // setup buffering for database inserts
         var processingIterator = 0;
-        
+
         //remove the old listener if it's there
         if (result.bufferEventHandler)
             result.dataBuffer.removeListener('processor done', result.bufferEventHandler);
@@ -105,9 +108,9 @@ function getFromGitHub( github, getter, config, result, processor, callback ) {
                 if (result.processingBatch > result.count) {
                     result.processingBatch = result.count;
                 }
-                
+
                 // process each item with the given function, in sets of 30
-                if (data.length == undefined)
+                if (data.length === undefined)
                     processor( data, result, callback );
                 else
                 {
@@ -117,17 +120,17 @@ function getFromGitHub( github, getter, config, result, processor, callback ) {
                     }
                 }
             }
-        }
+        };
         //add the new listener
         result.dataBuffer.on('processor done', result.bufferEventHandler);
         //start processing with the first event
-        result.dataBuffer.emit('processor done', result.count-data.length);       
+        result.dataBuffer.emit('processor done', result.count-data.length);
      }
-     
+
      //setup the data buffer
      result.dataBuffer = new EventEmitter();
      result.bufferEventHandler = null;
-     
+
      // get the first page of items
      getter( config, processPage );
 }
@@ -146,14 +149,14 @@ function postToDb( url, item, result, idList, callback, processNewItem ) {
                 json: true
             }, function ( err, response, body ) {
                 if ( err || response.statusCode != 201 ) {
-                    // just note that we didn't manage to post this item 
+                    // just note that we didn't manage to post this item
                     // possibly should add more information why failed and what item failed
                     // or maybe instead should abort and not continue posting items
                     result.failedCount += 1;
-                    
-                    console.log('Failed to add: ' + item['type'] + ' ' + item.origin_id[0].source_id);
+
+                    console.log('Failed to add: ' + item.type + ' ' + item.origin_id[0].source_id);
                 }
-                
+
                 else {
                     // save the mongodb id of the just created item
                     idList.push( body._id );
@@ -162,7 +165,7 @@ function postToDb( url, item, result, idList, callback, processNewItem ) {
                     // addititional processing for the new item.
                     processNewItem( body );
                 }
-                
+
                 if ( !result.hasNextPage && result.count == result.addedCount + result.failedCount ) {
                     // this is the last page of items and we have processed them all so we can call the callback
                     result.dataBuffer = null;
@@ -171,7 +174,7 @@ function postToDb( url, item, result, idList, callback, processNewItem ) {
                 else if (result.dataBuffer && result.processingBatch == result.addedCount + result.failedCount) {
                     if (result.processingBatch == result.count)
                         result.dataBuffer.emit('processor done', -1);
-                    else 
+                    else
                         result.dataBuffer.emit('processor done', result.processingBatch);
                 }
             });
@@ -189,9 +192,9 @@ function parseCommits( config, callback ) {
     //save commit sha-numbers and DB ids so that commit additions/deletions can be added later
     result.commits = {};
     result.commitIterator = -1;
-    
+
     // function for processing a single commit got from github
-    function processCommit( item, result, callback ) {    
+    function processCommit( item, result, callback ) {
             // build a commit event from a github commit
             var commitEvent = {};
             commitEvent.type = 'commit';
@@ -206,25 +209,25 @@ function parseCommits( config, callback ) {
             if ( item.author ) {
                 commitEvent.data.author_username = item.author.login;
             }
-            
+
             if ( item.committer ) {
                 commitEvent.data.committer_username = item.committer.login;
             }
             commitEvent.data.additions = "0"; //defaults to be updated later
             commitEvent.data.deletions = "0";
             commitEvent.data.total = "0";
-            
+
             // post the new event to the database
             // no need to do anything after posting
             postToDb( apiUrl +'events/', commitEvent, result, result.eventIds, callback, function ( newEvent ) {
                 result.commits[newEvent.origin_id[0].source_id] = { id: newEvent._id };
-            });            
+            });
     }
-    
+
     // updates a single commit's changes data
     function processCommitChanges( item, result, callback ) {
         var body = {'data.additions': item.stats.additions, 'data.deletions': item.stats.deletions, 'data.total': item.stats.total};
-        request.put( { 
+        request.put( {
             url: apiUrl +'events/' + result.commits[item.sha].id,
             json: true,
             body: body
@@ -237,12 +240,12 @@ function parseCommits( config, callback ) {
             else {
                 result.commitChanges += 1;
             }
-            
+
             result.dataBuffer = null;
             callback(null, result);
         });
     }
-    
+
     //gets one commit's additions/deletions/total and stores them to the database. When all commits have been processed, calls callback
     function getCommitChanges(err, result) {
         if ( err ) {
@@ -254,7 +257,7 @@ function parseCommits( config, callback ) {
             console.log("Getting commit changes from GitHub");
             result.commitKeys = Object.keys(result.commits);
         }
-        
+
         result.commitIterator++;
 
         if (result.commitIterator < Object.keys(result.commits).length )
@@ -265,7 +268,7 @@ function parseCommits( config, callback ) {
             callback(null, result);
         }
     }
-    
+
     console.log('Getting commits from GitHub');
     // get the commits and start processing them
     getFromGitHub( github, github.repos.getCommits, { user: config.user, repo: config.repo }, result, processCommit, getCommitChanges );
@@ -280,7 +283,7 @@ function parseIssues( config, callback ) {
     // save created issue ids and events associated with it
     // used when connecting issues and related events
     result.issues = {};
-    
+
     // process a single issue fetched from github
     function processIssue( item, result, callback ) {
         // create a construct from the issue
@@ -288,39 +291,39 @@ function parseIssues( config, callback ) {
         construct.origin_id = [{
             source_id: String( item.number ),
             source: result.source,
-            context: result.context 
+            context: result.context
         }];
         //construct.state = item.state;
         if ( item.pull_request  ) {
             construct.type = 'pull request';
         }
-        
+
         else {
             construct.type = 'issue';
         }
-        
+
         construct.name = item.title;
         construct.description = item.body;
-        
+
         var meta = {};
         meta.id = item.id;
         if ( item.labels ) {
             meta.labels = _.pluck( item.labels, 'name' );
         }
-        
+
         if ( item.assignee ) {
             meta.assignee = item.assignee.login;
         }
-        
+
         meta.comments = item.comments;
         construct.data = meta;
-        
+
         // post the new construct to the db
         postToDb( constructsApi, construct, result, result.constructIds, callback, function ( newConstruct ) {
             // save the issues mongodb id for future use
             // the event ids of related issues will also be saved here
             result.issues[newConstruct.origin_id[0].source_id] = { id: newConstruct._id, eventIds: [], statechangeIds : [], commentIds: [], commentCount: item.comments };
-            
+
             // add a event that represents the creation / opening of this issue
             // github doesn't save the initial opening as a event so this has to be created manually
             result.count += 1;
@@ -330,112 +333,142 @@ function parseIssues( config, callback ) {
             event.origin_id = [ { source_id: String( item.number ), source: result.source, context: result.context  } ];
             event.time = item.created_at;
             event.creator = item.user.login;
-            event.state = 'open';
+            //event.state = 'open';
+            event.isStatechange = true;
             event.statechange = {
                 from : "",
                 to : "open"
             };
-            
+
             // post the event
-            postToDb( eventsApi, event, result, result.eventIds, callback, function ( newEvent ) { 
+            postToDb( eventsApi, event, result, result.statechangeIds, callback, function ( newEvent ) {
                 // save the id of this new event so that it can be later associated with the construct
-                 result.issues[newConstruct.origin_id[0].source_id].eventIds.push( newEvent._id );
+                 result.issues[newConstruct.origin_id[0].source_id].statechangeIds.push( newEvent._id );
             });
         });
     }
-    
+
     // process a single issue event
     function processIssueEvent( item, result, callback ) {
         var event = {};
         event.origin_id = [ { source_id: String( item.id ), source: result.source, context: result.context  } ];
-        event['time'] = item.created_at;
-        
+        event.time = item.created_at;
+
         // this can be null maybe cause the user account has been deleted
         if ( item.actor ) {
-            event['creator'] =  item.actor.login;
+            event.creator =  item.actor.login;
         }
-        
+
         else {
             event.creator = null;
         }
-        
-        event['type'] = item.event;
-        
-        if ( item.event == 'open' || item.event == 'closed' ) {
-            event.state = item.event;
+
+        event.type = item.event;
+
+        if( item.event == 'open') {
+            event.isStatechange = true;
+            //event.state = item.event;
+            event.statechange = {
+                from : "",
+                to : "open"
+            };
         }
-        
-        if ( item.event === 'reopened' ) {
-           event.state = 'open';
+        else if(item.event == 'closed' ){
+            event.isStatechange = true;
+            //event.state = item.event;
+            event.statechange = {
+                from : "open",
+                to : "closed"
+            };
         }
-        
+        else if ( item.event === 'reopened' ) {
+            event.isStatechange = true;
+            event.statechange = {
+                from : "closed",
+                to: "open"
+            };
+            //event.state = 'open';
+        }
+
         // general note: seems that events can point to issues that no longer exists i.e. have been deleted
-        
+
         var meta = {};
         if ( item.commit_id ) {
             meta.commit_id = item.commit_id;
         }
-        
+
         if ( item.milestone ) {
             meta.milestone = item.milestone.title;
         }
-        
+
         if ( item.assignee ) {
             meta.assignee = item.assignee.login;
         }
-        
+
         if ( item.label ) {
-            meta['label'] = item.label.name;
-        }    
-        
+            meta.label = item.label.name;
+        }
+
         if ( item.rename ) {
             meta.rename = item.rename;
         }
-        
-        event['data'] = meta;
-        postToDb( apiUrl +'events/', event, result, result.eventIds, callback, function ( newEvent ) {
-            // save the id of the new event so that it can be associated to the issue construct
-            // seems that events can point to issues that no longer exists i.e. have been deleted
-            if ( item.issue && result.issues[ item.issue.number ] ) {
-                result.issues[ item.issue.number ].eventIds.push( newEvent._id );
-            }
-        });
+
+        event.data = meta;
+        if(event.isStatechange === true){
+            postToDb( apiUrl +'events/', event, result, result.statechangeIds, callback, function ( newEvent ) {
+                // save the id of the new event so that it can be associated to the issue construct
+                // seems that events can point to issues that no longer exists i.e. have been deleted
+                if ( item.issue && result.issues[ item.issue.number ] ) {
+                    result.issues[ item.issue.number ].statechangeIds.push( newEvent._id );
+                }
+            });
+        }
+        else{
+            postToDb( apiUrl +'events/', event, result, result.eventIds, callback, function ( newEvent ) {
+                // save the id of the new event so that it can be associated to the issue construct
+                // seems that events can point to issues that no longer exists i.e. have been deleted
+                if ( item.issue && result.issues[ item.issue.number ] ) {
+                    result.issues[ item.issue.number ].eventIds.push( newEvent._id );
+                }
+            });
+        }
+
     }
-    
+
     // process a single issue comment
     function processComment( item, result, callback ) {
         var comment = {};
-        
+
         comment.origin_id = [ { source_id: String( item.id ), source: result.source, context: result.context  } ];
-        comment['type'] = 'comment';
-        comment['time'] = item.created_at;
-        comment['updated'] = item.updated_at;
-        
+        comment.type = 'comment';
+        comment.time = item.created_at;
+        comment.updated = item.updated_at;
+
         // this can be null maybe cause the user account has been deleted
         if ( item.user ) {
-            comment['creator'] =  item.user.login;
+            comment.creator =  item.user.login;
         }
         else {
             comment.creator = null;
         }
-        
+
         var meta = {};
         meta.message = item.body;
-        comment['data'] = meta;
-                
+        comment.data = meta;
+
         postToDb( apiUrl + 'events/', comment, result, result.commentIds, callback, function ( newComment ) {
             // save the id of the new comment so that it can be associated to the issue construct later
             result.issues[result.issueKeys[result.issueIterator]].commentIds.push(newComment._id);
         });
     }
-    
+
     //gets one issue's comments and stores them to the database. If all issues have been processed, links issues and comments and calls callback
     function getIssueComments(err, result) {
         if ( err ) {
             callback( err, result );
             return;
         }
-        
+
         result.issueIterator++;
 
         if (result.issueIterator < Object.keys(result.issues).length ) {
@@ -447,113 +480,154 @@ function parseIssues( config, callback ) {
         }
         else {
             //all issue comments saved, move on to linking them
-            
+
             // initialize variables for buffered linking of issue constructs and related comments
             result.commentIterator = 0;
             result.issueCommentLinks = [];
-            
+
             // add the required comment-issue links to the total link count
             _.each( result.issues, function ( item ) {
                result.linkCount += item.commentIds.length;
                result.commentLinks += item.commentIds.length;
-               
+
                if (item.commentIds.length > 0) {
                     _.each( item.commentIds, function ( commentId ) {
                         result.issueCommentLinks.push({issueID: item.id, commentID: commentId});
                     });
                }
             });
-            
+
             if ( result.linkCount == result.linked + result.failedLinks ) {
                 console.log('No need to link issues to comments, processing finished');
                 // no need to do anything, we're done here.
                 callback(null, result);
             }
-            
+
             console.log('Linking issues to comments');
             //start the comment linking process
-            linkIssuesToComments(result); 
+            linkIssuesToComments(result);
         }
     }
-    
+
     //buffers the linking process so that the server gets 20 requests at a time until all are processed
     function linkIssuesToEvents(result) {
         var initialIterator = result.eventIterator;
         var initialLinks = result.linked+result.failedLinks;
-        
+
+        var resFunction = function( reqErr, response ){
+            if ( reqErr || response.statusCode != 200 ) {
+                // maybe should do something else
+                result.failedLinks += 1;
+                console.log('Failed to link: issue/event, initial links: ' + initialLinks);
+            }
+            else {
+                result.linked += 1;
+            }
+
+            if ( result.linkCount == result.linked + result.failedLinks ) {
+                console.log('Getting comments from GitHub');
+                // all updates done. move on to processing comments
+                getIssueComments(null, result);
+            }
+            else if (result.linked + result.failedLinks == initialLinks+20) {
+                linkIssuesToEvents(result);
+            }
+        };
+
         while(result.eventIterator < initialIterator+20 && result.eventIterator < result.issueEventLinks.length) {
             var body = { id: result.issueEventLinks[result.eventIterator].eventID, type: 'event' };
-            request.put( { 
+            request.put( {
                 url: apiUrl +'constructs/' + result.issueEventLinks[result.eventIterator].issueID +'/link',
                 json: true,
                 body: body
-            }, function ( reqErr, response ) {
-                if ( reqErr || response.statusCode != 200 ) {
-                    // maybe should do something else
-                    result.failedLinks += 1;
-                    console.log('Failed to link: issue/event, initial links: ' + initialLinks);
-                }
-                else {
-                    result.linked += 1;
-                }
-            
-                if ( result.linkCount == result.linked + result.failedLinks ) {
-                    console.log('Getting comments from GitHub');
-                    // all updates done. move on to processing comments
-                    getIssueComments(null, result);
-                }
-                else if (result.linked + result.failedLinks == initialLinks+20) {
-                    linkIssuesToEvents(result);
-                }
-            });
-            
+            }, resFunction);
+
             result.eventIterator++;
         }
     }
-    
+
+    //buffers the linking process so that the server gets 20 requests at a time until all are processed
+    function linkIssuesToStatechanges(result) {
+        var initialIterator = result.statechangeIterator;
+        var initialLinks = result.linked+result.failedLinks;
+
+        var resFunction = function( reqErr, response ){
+            if ( reqErr || response.statusCode != 200 ) {
+                // maybe should do something else
+                result.failedLinks += 1;
+                console.log('Failed to link: issue/statechange, initial links: ' + initialLinks);
+            }
+            else {
+                result.linked += 1;
+            }
+
+            if ( result.statechangeLinkCount == result.linked + result.failedLinks ) {
+                console.log('Linking events.');
+                // all updates done. move on to linking events
+                linkIssuesToEvents(result);
+            }
+            else if (result.linked + result.failedLinks == initialLinks+20) {
+                linkIssuesToStatechanges(result);
+            }
+        };
+
+        while(result.statechangeIterator < initialIterator+20 && result.statechangeIterator < result.issueStatechangeLinks.length) {
+            var body = { id: result.issueStatechangeLinks[result.statechangeIterator].eventID, type: 'statechange' };
+            request.put( {
+                url: apiUrl +'constructs/' + result.issueStatechangeLinks[result.statechangeIterator].issueID +'/link',
+                json: true,
+                body: body
+            }, resFunction);
+
+            result.statechangeIterator++;
+        }
+    }
+
     //buffers the linking process so that the server gets 20 requests at a time until all are processed
     function linkIssuesToComments(result) {
         var initialIterator = result.commentIterator;
         var initialLinks = result.linked+result.failedLinks;
-        
+
+        var resFunction = function ( reqErr, response ) {
+            if ( reqErr || response.statusCode != 200 ) {
+                // maybe should do something else
+                result.failedLinks += 1;
+                console.log('Failed to link: issue/comment, initial links: ' + initialLinks);
+            }
+            else {
+                result.linked += 1;
+            }
+
+            if ( result.linkCount == result.linked + result.failedLinks ) {
+                console.log('Processing finished');
+                // no need to do anything, we're done here.
+                callback(null, result);
+            }
+            else if (result.linked + result.failedLinks == initialLinks+20) {
+                linkIssuesToComments(result);
+            }
+        };
+
         while(result.commentIterator < initialIterator+20 && result.commentIterator < result.issueCommentLinks.length) {
             var body = { id: result.issueCommentLinks[result.commentIterator].commentID, type: 'event' };
-            request.put( { 
+            request.put( {
                 url: apiUrl +'constructs/' + result.issueCommentLinks[result.commentIterator].issueID +'/link',
                 json: true,
                 body: body
-            }, function ( reqErr, response ) {
-                if ( reqErr || response.statusCode != 200 ) {
-                    // maybe should do something else
-                    result.failedLinks += 1;
-                    console.log('Failed to link: issue/comment, initial links: ' + initialLinks);
-                }
-                else {
-                    result.linked += 1;
-                }
-            
-                if ( result.linkCount == result.linked + result.failedLinks ) {
-                    console.log('Processing finished');
-                    // no need to do anything, we're done here.
-                    callback(null, result);
-                }
-                else if (result.linked + result.failedLinks == initialLinks+20) {
-                    linkIssuesToComments(result);
-                }
-            });
-            
+            }, resFunction);
+
             result.commentIterator++;
         }
     }
-    
+
     console.log('Getting issues from GitHub');
     // get issues from github and save them as constructs
-    getFromGitHub( github, github.issues.repoIssues, { user: config.user, repo: config.repo, state: 'all'  }, result, processIssue, function ( err, result ) { 
+    getFromGitHub( github, github.issues.repoIssues, { user: config.user, repo: config.repo, state: 'all'  }, result, processIssue, function ( err, result ) {
         if ( err ) {
             callback( err, result );
             return;
         }
-        
+
         console.log('Getting issue events from GitHub');
         // now we have all issues. Next get all the events associated with this repo's issues
         getFromGitHub( github, github.issues.getRepoEvents, { user: config.user, repo: config.repo }, result, processIssueEvent, function ( err, result ) {
@@ -561,39 +635,50 @@ function parseIssues( config, callback ) {
                 callback( err, result );
                 return;
             }
-            
+
             // now we have saved all issue events.
-            
+
             //store issue numbers as a basic array for comment fetching later
             result.issueIterator = -1;
             result.issueKeys = Object.keys(result.issues);
-            
+
             // initialize variables for buffered linking of issue constructs and related events
             result.eventIterator = 0;
             result.issueEventLinks = [];
-            
+            result.statechangeIterator = 0;
+            result.issueStatechangeLinks = [];
+
             // how many links between issues and their events need to be created i.e. how many issue events do we have
             // there are at least as many issue events as there are issues since every issue has an opening event
             //also collect links to a bufferarray for processing
             _.each( result.issues, function ( item ) {
-               result.linkCount += item.eventIds.length;
-               
+               result.statechangeLinkCount += item.statechangeIds.length;
+               result.eventLinkCount += item.eventIds.length;
+
                if (item.eventIds.length > 0) {
                     _.each( item.eventIds, function ( eventId ) {
                         result.issueEventLinks.push({issueID: item.id, eventID: eventId});
                     });
                }
+               if (item.statechangeIds.length > 0) {
+                    _.each( item.statechangeIds, function ( eventId ) {
+                        result.issueStatechangeLinks.push({issueID: item.id, eventID: eventId});
+                    });
+               }
             });
-            
-            if ( result.linkCount == 0 ) {
+            result.linkCount += result.statechangeLinkCount;
+            result.linkCount += result.eventLinkCount;
+
+            if ( result.linkCount === 0 ) {
                 console.log('No need to link issues to events, getting comments from GitHub');
                 // no need to do anything, move on to processing comments
                 getIssueComments(null, result);
             }
-            
-            console.log('Linking issues to events');
+
+            console.log('Linking issues to statechanges');
             //start the linking process
-            linkIssuesToEvents(result);
+            //linkIssuesToEvents(result);
+            linkIssuesToStatechanges(result);
         });
     });
 }
