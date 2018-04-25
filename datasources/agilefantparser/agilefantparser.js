@@ -63,30 +63,34 @@ function getStories() {
         }
         },
         function (error, response, body) {
+            console.log(error);
             o = JSON.parse(body);
             var item = {};
             for(var i = 0; i < o.length; i++) {
 
                 item = {};
                 item = o[i];
-                var constructResult = {};
-                var construct = {};
-                construct.type = 'story'
-                construct.origin_id = [ { 'source_id': String( item.id ), 'source': agileRepo, context: item.name } ];
-                construct.name = item.name;
-                var meta = {};
-                meta.startTime = item.startDate;
-                meta.endTime = item.endDate;
-                meta.id = item.id;
-                construct.data = meta;
+                if(item.endDate != null && item.startDate != null) {
+                    var constructResult = {};
+                    var construct = {};
+                    construct.type = 'story'
+                    construct.origin_id = [ { 'source_id': String( item.id ), 'source': agileRepo, context: item.name } ];
+                    construct.name = item.name;
+                    var meta = {};
+                    meta.startTime = new Date(item.startDate);
+                    meta.endTime = new Date(item.endDate);
+                    //add 1 second to endTime so the visualizator doesn't spazz out if the endtime is the same as the start
+                    meta.endTime.setSeconds(meta.endTime.getSeconds() + 10);
+                    meta.id = item.id;
+                    construct.data = meta;
 
 
-                postToDb(constructsApi, construct, constructResult, constructResult.eventIds, function ( newConstruct ) {
-                    
-                    createStateChangeEvents(newConstruct);
-                    getComments(newConstruct);
-                });
-
+                    postToDb(constructsApi, construct, constructResult, constructResult.eventIds, function ( newConstruct ) {
+                        
+                        createStateChangeEvents(newConstruct);
+                        getComments(newConstruct);
+                    });
+                }
             }
         }
     );
@@ -102,7 +106,6 @@ function getComments(construct) {
         },
         function (error, response, body) {
             o = JSON.parse(body);
-            //console.log(o.length);
             var item = {};
             for(var i = 0; i < o.length; i++) {
 
@@ -114,13 +117,13 @@ function getComments(construct) {
                     event.type = 'comment'
                     event.origin_id = [ { 'source_id': String( item.id ), 'source': agileRepo, context: agileRepo } ];
                     event.creator = "agilefant";
-                    event.time = item.createDate;
+                    event.time = new Date(item.createDate);
                     event.data = {};
                     event.data.comment = item.content;
                     event.isStatechange = false;
 
                     postToDb(eventsApi, event, storyResult, storyResult.eventIds, function ( newEvent ) {
-                        console.log("added comment " + newEvent.data.comment + " " + construct.origin_id[0].source_id);
+                        console.log("added comment " + newEvent.origin_id[0].source_id);
                         linkEventToConstruct(newEvent._id, construct._id);
                     });
                 }
