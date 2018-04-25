@@ -70,10 +70,10 @@ function getStories() {
 
                 item = {};
                 item = o[i];
-                if(item.endDate != null && item.startDate != null) {
+                if(item.endDate != null && item.startDate != null && item.iteration.name != null) {
                     var constructResult = {};
                     var construct = {};
-                    construct.type = 'story'
+                    construct.type = item.iteration.name;
                     construct.origin_id = [ { 'source_id': String( item.id ), 'source': agileRepo, context: item.name } ];
                     construct.name = item.name;
                     var meta = {};
@@ -138,6 +138,8 @@ function createStateChangeEvents(construct) {
     var event = {};
     event.origin_id = [ { 'source_id': String( construct.data.id ), 'source': agileRepo, context: agileRepo } ];
     event.creator = "agilefant";
+    event.data = {};
+    event.data.iteration = construct.type;
     if(construct.data.startTime != null) {
         event.type = 'open'
         event.time = construct.data.startTime;
