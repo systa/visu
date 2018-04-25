@@ -48,7 +48,6 @@ function postToDb( url, item, result, idList, processNewItem ) {
                     console.log('Failed to add: ' + item.type + ' ' + item.origin_id[0].source_id);
                     console.log(response);
                 } else {
-                    //console.log("added " + item.id + "to " + url);
                     processNewItem( body );
                 }
 
@@ -64,9 +63,7 @@ function getStories() {
         }
         },
         function (error, response, body) {
-            console.log(error);
             o = JSON.parse(body);
-            //console.log(o.length);
             var item = {};
             for(var i = 0; i < o.length; i++) {
 
@@ -87,7 +84,46 @@ function getStories() {
                 postToDb(constructsApi, construct, constructResult, constructResult.eventIds, function ( newConstruct ) {
                     
                     createStateChangeEvents(newConstruct);
+                    getComments(newConstruct);
                 });
+
+            }
+        }
+    );
+}
+
+function getComments(construct) {
+    request(
+        {
+            url : agileRepo + "/api/v1/stories/" + construct.origin_id[0].source_id + "/comments?templates=Update",
+            headers : {
+                "Authorization" : auth
+        }
+        },
+        function (error, response, body) {
+            o = JSON.parse(body);
+            //console.log(o.length);
+            var item = {};
+            for(var i = 0; i < o.length; i++) {
+
+                var storyResult = {};
+                item = {};
+                item = o[i];
+                if(item.content != null) {
+                    var event = {};
+                    event.type = 'comment'
+                    event.origin_id = [ { 'source_id': String( item.id ), 'source': agileRepo, context: agileRepo } ];
+                    event.creator = "agilefant";
+                    event.time = item.createDate;
+                    event.data = {};
+                    event.data.comment = item.content;
+                    event.isStatechange = false;
+
+                    postToDb(eventsApi, event, storyResult, storyResult.eventIds, function ( newEvent ) {
+                        console.log("added comment " + newEvent.data.comment + " " + construct.origin_id[0].source_id);
+                        linkEventToConstruct(newEvent._id, construct._id);
+                    });
+                }
 
             }
         }
@@ -97,33 +133,34 @@ function getStories() {
 function createStateChangeEvents(construct) {
     var storyResult = {};
     var event = {};
-    event.type = 'open'
     event.origin_id = [ { 'source_id': String( construct.data.id ), 'source': agileRepo, context: agileRepo } ];
     event.creator = "agilefant";
-    event.time = construct.data.startTime;
-    //var start = new Date(item.startDate);
-    //var end = new Date(item.endDate);
-    //event.duration = end.getTime() - start.getTime();
-    event.isStatechange = true;
-    event.statechange = {
-        from : "",
-        to : "open"
-    };
+    if(construct.data.startTime != null) {
+        event.type = 'open'
+        event.time = construct.data.startTime;
+        event.isStatechange = true;
+        event.statechange = {
+            from : "",
+            to : "open"
+        };
 
-    postToDb(eventsApi, event, storyResult, storyResult.eventIds, function ( newEvent ) {
-        linkEventToConstruct(newEvent._id, construct._id);
-    });
+        postToDb(eventsApi, event, storyResult, storyResult.eventIds, function ( newEvent ) {
+            linkEventToConstruct(newEvent._id, construct._id);
+        });
+    }
 
-    event.type = 'closed'
-    event.time = construct.data.endTime;
-    event.statechange = {
-        from : "open",
-        to : "closed"
-    };
+    if(construct.data.endTime != null) {
+        event.type = 'closed'
+        event.time = construct.data.endTime;
+        event.statechange = {
+            from : "open",
+            to : "closed"
+        };
 
-    postToDb(eventsApi, event, storyResult, storyResult.eventIds, function ( newEvent ) {
-        linkEventToConstruct(newEvent._id, construct._id);
-    });
+        postToDb(eventsApi, event, storyResult, storyResult.eventIds, function ( newEvent ) {
+            linkEventToConstruct(newEvent._id, construct._id);
+        });
+    }
 }
 
 function getBacklogs() {
@@ -136,7 +173,6 @@ function getBacklogs() {
         },
         function (error, response, body) {
             o = JSON.parse(body);
-            //console.log(o.length);
             var item = {};
             for(var i = 0; i < o.length; i++) {
                 item = {};
