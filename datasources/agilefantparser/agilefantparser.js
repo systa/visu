@@ -74,7 +74,7 @@ function getStories() {
                     var constructResult = {};
                     var construct = {};
                     construct.type = item.iteration.name;
-                    construct.origin_id = [ { 'source_id': String( item.id ), 'source': agileRepo, context: item.name } ];
+                    construct.origin_id = [ { 'source_id': String( item.id ), 'source': agileRepo, context: item.backlog.id } ];
                     construct.name = item.name;
                     var meta = {};
                     meta.startTime = new Date(item.startDate);
@@ -136,7 +136,7 @@ function getComments(construct) {
 function createStateChangeEvents(construct) {
     var storyResult = {};
     var event = {};
-    event.origin_id = [ { 'source_id': String( construct.data.id ), 'source': agileRepo, context: agileRepo } ];
+    event.origin_id = [ { 'source_id': String( construct.data.id ), 'source': agileRepo, context: construct.origin_id[0].context } ];
     event.creator = "agilefant";
     event.data = {};
     event.data.iteration = construct.type;
