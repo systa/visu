@@ -55,45 +55,75 @@ function postToDb( url, item, result, idList, processNewItem ) {
             });
 }
 
-function getStories(backlog) {
+function getStories() {
     request(
         {
-            url : agileRepo + "/api/v1/backlogs/" + backlog.origin_id[0].source_id + "/stories" + "?templates=Update",
+            url : agileRepo + "/api/v1/stories/search" + "?templates=Update",
             headers : {
                 "Authorization" : auth
         }
         },
         function (error, response, body) {
+            console.log(error);
             o = JSON.parse(body);
             //console.log(o.length);
             var item = {};
             for(var i = 0; i < o.length; i++) {
+
                 item = {};
                 item = o[i];
-                var result = {};
-                var storyEvent = {};
-                storyEvent.type = 'story'
-                storyEvent.origin_id = [ { 'source_id': String( item.id ), 'source': agileRepo, context: item.backlog.name } ];
-                storyEvent.creator = "agilefant";
-                storyEvent.time = item.startDate;
-                var start = new Date(item.startDate);
-                var end = new Date(item.endDate);
-                storyEvent.duration = end.getTime() - start.getTime();                                                                                                                                                                                          
+                var constructResult = {};
+                var construct = {};
+                construct.type = 'story'
+                construct.origin_id = [ { 'source_id': String( item.id ), 'source': agileRepo, context: item.name } ];
+                construct.name = item.name;
+                var meta = {};
+                meta.startTime = item.startDate;
+                meta.endTime = item.endDate;
+                meta.id = item.id;
+                construct.data = meta;
 
-                storyEvent.data = { 'name': item.name };
 
-                storyEvent.data.additions = "0"; //defaults to be updated later
-                storyEvent.data.deletions = "0";
-                storyEvent.data.total = "0";
-
-                postToDb(eventsApi, storyEvent, result, result.eventIds, function ( newEvent ) {
-                    storyCount++;
-                    linkEventToConstruct(newEvent._id, backlog._id);
+                postToDb(constructsApi, construct, constructResult, constructResult.eventIds, function ( newConstruct ) {
+                    
+                    createStateChangeEvents(newConstruct);
                 });
 
             }
         }
     );
+}
+
+function createStateChangeEvents(construct) {
+    var storyResult = {};
+    var event = {};
+    event.type = 'open'
+    event.origin_id = [ { 'source_id': String( construct.data.id ), 'source': agileRepo, context: agileRepo } ];
+    event.creator = "agilefant";
+    event.time = construct.data.startTime;
+    //var start = new Date(item.startDate);
+    //var end = new Date(item.endDate);
+    //event.duration = end.getTime() - start.getTime();
+    event.isStatechange = true;
+    event.statechange = {
+        from : "",
+        to : "open"
+    };
+
+    postToDb(eventsApi, event, storyResult, storyResult.eventIds, function ( newEvent ) {
+        linkEventToConstruct(newEvent._id, construct._id);
+    });
+
+    event.type = 'closed'
+    event.time = construct.data.endTime;
+    event.statechange = {
+        from : "open",
+        to : "closed"
+    };
+
+    postToDb(eventsApi, event, storyResult, storyResult.eventIds, function ( newEvent ) {
+        linkEventToConstruct(newEvent._id, construct._id);
+    });
 }
 
 function getBacklogs() {
@@ -145,4 +175,4 @@ function linkEventToConstruct(eventId, constructId) {
     });
 }
 
-getBacklogs();
+getStories();
