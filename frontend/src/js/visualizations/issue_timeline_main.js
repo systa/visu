@@ -83,7 +83,7 @@ var ISSUE_TIMELINE_MAIN = function(par){
             timeframe = data.timeframe;
         }
         
-        _issueChartMargins.left = _layout.getSVGTextWidth(data.longestId)+2;
+        _issueChartMargins.left = _layout.getSVGTextWidth(data.longestId)*2+2;
         _issueChartMargins.right = _layout.getSVGTextWidth(data.longestType)+2;
         _timeSelectorMargins.left =  _issueChartMargins.left;
         _timeSelectorMargins.right = _issueChartMargins.right;
