@@ -71,7 +71,7 @@ function getStories() {
 
                 item = {};
                 item = o[i];
-                if(item.endDate != null && item.startDate != null && item.iteration.name != null) {
+                if(item.endDate != null && item.startDate != null && item.iteration != null && item.iteration.name != null) {
                     var constructResult = {};
                     var construct = {};
                     construct.type = item.iteration.name;
