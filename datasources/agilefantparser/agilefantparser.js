@@ -14,9 +14,10 @@ var request = require('request');
 //var repo = process.argv[4];
 //var token = process.argv[5];
 var agileRepo = process.argv[2];//"https://app.agilefant.com/TTY-TIE";
+var projectId = process.argv[3];
 //console.log(path);
-var username = process.argv[3];
-var password = process.argv[4];
+var username = process.argv[4];
+var password = process.argv[5];
 if(process.argv[4] == null) {
     console.log("usage: node agilefantparser.js <repo_url> <username> <password>")
     return;
@@ -57,13 +58,13 @@ function postToDb( url, item, result, idList, processNewItem ) {
 function getStories() {
     request(
         {
-            url : agileRepo + "/api/v1/stories/search" + "?templates=Update",
+            url : agileRepo + "/api/v1//backlogs/" + projectId + "/stories" + "?templates=Update",
             headers : {
                 "Authorization" : auth
         }
         },
         function (error, response, body) {
-            console.log(error);
+            //console.log(error);
             o = JSON.parse(body);
             var item = {};
             for(var i = 0; i < o.length; i++) {

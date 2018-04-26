@@ -2,4 +2,4 @@
 
 ## Usage
 
-node agilefantparser.js "repo_url" "email" "password"
+node agilefantparser.js "repo_url" "project id" "email" "password"
