@@ -1,0 +1,5 @@
+25.01.2017 09:07:23 user AA in session 1: Document Kvazaar.PC-System.sysdesign (1.0_student) closed.
+25.01.2017 09:07:23 user AA in session 2: Document Kvazaar (1.0_student) closed.
+25.01.2017 09:07:23 user e740034089ce25e7629f7fede416660e in session 3: Document Kvazaar closed.
+25.01.2017 09:07:23 user e740034089ce25e7629f7fede416660e in session 3: Document Kvazaar (1.0_student) closed.
+25.01.2017 09:07:23 user e740034089ce25e7629f7fede416660e in session 4: Document Kvazaar (1.0_student) closed.

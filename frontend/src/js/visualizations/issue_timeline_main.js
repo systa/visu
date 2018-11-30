@@ -83,8 +83,8 @@ var ISSUE_TIMELINE_MAIN = function(par){
             timeframe = data.timeframe;
         }
         
-        _issueChartMargins.left = _layout.getSVGTextWidth(data.longestId)+6;
-        _issueChartMargins.right = _layout.getSVGTextWidth(data.longestType)+6;
+        _issueChartMargins.left = _layout.getSVGTextWidth(data.longestId)+2;
+        _issueChartMargins.right = _layout.getSVGTextWidth(data.longestType)+2;
         _timeSelectorMargins.left =  _issueChartMargins.left;
         _timeSelectorMargins.right = _issueChartMargins.right;
         
@@ -194,7 +194,7 @@ var ISSUE_TIMELINE_MAIN = function(par){
     
     var eventsLoaded = function(data){
         _events = data;
-        console.log("Events: ", _events);
+        console.log("[issue_timeline_main]Events: ", _events);
         whenLoaded();
     };
     
@@ -204,7 +204,7 @@ var ISSUE_TIMELINE_MAIN = function(par){
     };
     var statesLoaded = function(data){
         _states = data;
-        console.log("Statechanges: ", _states);
+        console.log("[issue_timeline_main]Statechanges: ", _states);
         whenLoaded();
     };
     

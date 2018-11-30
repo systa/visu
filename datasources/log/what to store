@@ -1,0 +1,16 @@
+constructs:
+
+> artefact
+- item.description
+- item.title
+- item.id or item.key
+- origin.source
+- origin.context
+- meta (see below)
+
+> meta
+- item.created
+- item.updated
+- item.created
+- item.number
+- item.state

@@ -471,7 +471,7 @@ function sendToDb( issueData, origin ) {
 
     // links issues to milestones and constructs to events using the previously collected information
     function link() {
-        console.log("linking");
+        console.log("[Poster]linking");
         // variables used to determine when we are done linking
         var linkCount = 0; // how many to be created
         var linked = 0; // how many linked
@@ -524,7 +524,7 @@ function sendToDb( issueData, origin ) {
                 if ( linked === linkCount ) {
                     // all links formed we are done
                     // could call a callback here if we had one
-                    console.log( 'Everything saved to database.' );
+                    console.log( '[Poster]Everything saved to database.' );
                 }
             });
         });

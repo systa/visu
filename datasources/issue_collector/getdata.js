@@ -135,7 +135,7 @@ function getItems( baseRequest, api, type, itemDesc, userParams, result, status,
          return;
       }
 
-      console.log(type);
+      console.log('[Getdata]' + type);
 
       //for jira parser issues and change history 
       if(type === "jiraIssues" || type === "jiraChanges") {

@@ -89,8 +89,7 @@ var LIFSPAN_TIMELINE_PROCESSOR = function(par){
                             rowId : rid,
                             start : st,
                             state : state,
-                            end : sc.time,
-                            iteration : statechanges[0].data.iteration
+                            end : sc.time
                         };
                         lifespans.push(tmp);
                         st = sc.time;
@@ -119,8 +118,7 @@ var LIFSPAN_TIMELINE_PROCESSOR = function(par){
                         rowId : rid,
                         start : st,
                         state : state,
-                        end : rt,
-                        iteration : statechanges[0].data.iteration
+                        end : rt
                     });
                 }
             }
@@ -344,8 +342,7 @@ var LIFSPAN_TIMELINE_PROCESSOR = function(par){
             if(idHelper[lp.rowId] === undefined){
                 idHelper[lp.rowId] = {
                     start: lp.start,
-                    end : lp.end,
-                    iteration : lp.iteration
+                    end : lp.end
                 };
             }
             else{
@@ -370,16 +367,10 @@ var LIFSPAN_TIMELINE_PROCESSOR = function(par){
         });
         for(var obj in idHelper){
             if(idHelper.hasOwnProperty(obj)){
-                lptmp.push({start : idHelper[obj].start, end : idHelper[obj].end, rowId : obj, iteration : idHelper[obj].iteration});
+                lptmp.push({start : idHelper[obj].start, end : idHelper[obj].end, rowId : obj});
             }
         }
         lptmp.sort(function(lp1, lp2){
-            if(lp1.iteration > lp2.iteration) {
-                return 1;
-            }
-            if(lp1.iteration < lp2.iteration) {
-                return -1;
-            }
             var s1 = new Date(lp1.start).getTime();
             var s2 = new Date(lp2.start).getTime();
             

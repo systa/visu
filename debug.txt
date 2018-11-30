@@ -1,0 +1,16 @@
+everything : 14 entries, stuck on LOADING
+-----------------------------------------
+
+'comment' : 3 entries, display ***
+'milestoned' : 1 entry, display ***
+'labeled' : 1 entry, display ***
+'assigned' : 1 entry, display ***
+'updated' : 3 enties, display ***
+
+'opened' : 3 entries, stuck on LOADING
+'closed' : 2 entries, stuck on LOADING
+
+*** : Nothing shows in graph, 'Unexpected value NaN parsing cy attribute.' & 'Unexpected value NaN parsing y attribute.' (bower errors)
+
+/!\ When mouse hovers on ref IDs : ReferenceError: event is not defined
+---> Event has not been correctly created...

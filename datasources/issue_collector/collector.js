@@ -216,17 +216,17 @@ function gotOrigin( err, origin ) {
     });
     
     // get the issue data
-    console.log( 'Fetching issue management data.' );
+    console.log( '[Collector]Fetching issue management data...' );
     getData( baseRequest, api, userParams, function ( result ) {
         // print debug information how many items of each type we got and what is the last item
-        console.log( 'Issue management data fetched from source.' );
+        console.log( '[Collector]Issue management data fetched from source.' );
         _.each( result, function ( value, key ) {
             console.log( value.length +' ' +key +' last of which is:');
             console.log( value[value.length -1] );
         });
 
         // send the issue data to the db
-        console.log( 'Sending data to database.' );
+        console.log( '[Collector]Sending data to database.' );
         poster( result, origin );
     });
 }
