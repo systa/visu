@@ -58,7 +58,7 @@ function sourceSelected( err, result ) {
     }
      
     // get the usage data
-    console.log( '[Collector]Fetching usage data from [' + result.source + '].');
+    console.log( '[Collector]Fetching usage data from [' + result.source + '].\n');
     
     getData( result.source, function ( result ) {
         // print debug information how many items of each type we got and what is the last item
@@ -70,7 +70,7 @@ function sourceSelected( err, result ) {
         });
 
         // send the issue data to the db
-        console.log( '[Collector]Sending data to database.\n\n' );
+        console.log( '[Collector]Sending data to database.\n' );
         poster( result );
     });
 }

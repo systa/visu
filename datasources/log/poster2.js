@@ -26,7 +26,7 @@ function parseJenkinsTime(jenkinsTime){
 // sends the data to db
 // logData : parsed log content
 function sendToDb( logData ) {
-    console.log("[Poster]sendToDb()");
+   console.log("[Poster]sendToDb()");
 
    // the api urls
    var config = require('./config.json');
@@ -48,6 +48,9 @@ function sendToDb( logData ) {
    // add stuff to the db in this order 
    var entityOrder = [ 'users', 'sessions', 'documents', 'pages', 'events', 'state-changes' ];
    
+   // create an origin
+   origin = { context: "kactus2", source: "logs"};
+   
    // get every list from the issue data and add every item from them to db
    entityOrder.forEach( function ( type ) {
         var list = logData[type];
@@ -56,215 +59,63 @@ function sendToDb( logData ) {
         }
         count += list.length; // every item from the list should be added      
         type = type.substr( 0, type.length -1 ); // e.g. comments -> comment
-
+      
         list.forEach( function ( item ) {
             var artefact = {};
             var event = {};
+            var state_change = {};
             var meta = {};
-
-            if ( type === 'issue' || type === 'milestone' ) {
-                // we are creating a construct / artefact from an issue or milestone
+           
+            if ( type === "user" || type === "session" || type === "document" || type === "page" ) {
+                // we are creating a construct / artefact from a user, session, document or page
                 artefact.type = type;
-                artefact.description = item.description;
-                artefact.name = item.title;
-                artefact.origin_id = { context: origin.context, source: origin.source, source_id: String( item.id ) };
-
-                meta.created = item.created;
-                meta.updated = item.updated;
-                meta.number = item.number;
-                meta.state = item.state.toLowerCase();
-                if ( type === 'milestone' ) {
-                    meta.duedate = item.duedate;
+                //artefact.description = item.description;
+               
+                if ( type === "user" ) artefact.name = item.user_id;
+                else if ( type === "session" ) artefact.name = item.session_id;
+                else artefact.name = item.name;
+                  
+                artefact.origin_id = { context: origin.context, source: origin.source, source_id: String( artefact.name ) };
+               
+                if ( type == "document" ) {
+                   meta.hash = item.hash;
+                   artefact.data = meta;
                 }
-
-                else if ( type === 'issue' ) {
-                    meta.assignee = item.assignee;
-                }
-
-                artefact.data = meta;
-
-                //body = artefact;
-                //url = artefactApi;
+               
                 pending.push({body: artefact, url: artefactApi, type: type, sent: false, item : item});
             }
-            else if( type === 'jiraIssue' ) {
-                // we are creating a construct / artefact from a jiraIssue
-                artefact.type = item.type.toLowerCase();
-                if(item.description !== null && item.description !== undefined) {
-                    artefact.description = item.description;
-                } else {
-                    artefact.description = "";
-                }
 
-                if(item.summary !== null && item.summary !== undefined){
-                    artefact.name = item.summary;
-                }
-                else{
-                    artefact.name = "";
-                }
-                
-                artefact.origin_id = {
-                    context: origin.context,
-                    source: origin.source,
-                    source_id: String( item.key )
-                };
-                meta.id = item.id;
-                meta.created = item.created;
-                meta.updated = item.updated;
-                meta.timespent = item.timespent;
-                meta.priority = item.priority;
-                meta.state = item.state.toLowerCase();
-
-                artefact.data = meta;
-                pending.push({body: artefact, url: artefactApi, type: type, sent: false, item : item});
+            else if ( type === "event" ) {
+               event.type = type;
+               event.time = item.date + "@" + item.time;
+               event.duration = 0;
+               event.creator = item.session_id;
+               event.data = {hash: item.hash, action: item.action};
+               
+               pending.push({body: events, url: eventApi, type: type, sent: false, item : item});
             }
-            else if( type === 'jiraChange'){
-
-                //all the events are passed to the db as an array
-                var events = [];
-
-                //Create event is a special case. No other creation info than time comes from api.
-                var createEvent = {};
-                createEvent.origin_id = {
-                    source_id: String( item.key ),
-                    source: origin.source,
-                    context: origin.context
-                };
-                createEvent.time = item.created;
-                createEvent.creator = item.creator;
-                createEvent.type = "statechange";
-                createEvent.isStatechange = true;
-                createEvent.statechange = {
-                    from : "",
-                    to: "open"
-                };
-                events.push(createEvent);
-                
-                //one item generates multiple events from the history
-                for(var i = 0; i < item.history.length; ++i){
-                    //one history item can contain multiple changes
-                    for(var j = 0; j < item.history[i].items.length; ++j){
-                        //not cropped item
-                        if(croppedItems.indexOf(item.history[i].items[j].field) < 0 ){
-                            //jeve == jira event
-                            var jeve = {
-                                origin_id : {
-                                    source_id: String(item.history[i].id)+String(item.key),
-                                    source: origin.source,
-                                    context: origin.context
-                                },
-                                time : item.history[i].created,
-                                creator : item.history[i].author.name,
-                                type : item.history[i].items[j].field.toLowerCase(),
-                                data : {}
-                            };
-                            
-                            //If the event is an state change event we retrieve the state change
-                            if(item.history[i].items[j].field.toLowerCase() === "status"){
-                                isStatechange = true;
-                                jeve.isStatechange = true;
-                                //jeve.state = item.history[i].items[j].toString.toLowerCase();
-                                jeve.statechange = {
-                                    from : item.history[i].items[j].fromString.toLowerCase(),
-                                    to: item.history[i].items[j].toString.toLowerCase()
-                                };
-                            }//From resolution events we can find state changes to resolution state and reopened issues
-                            else if(item.history[i].items[j].field.toLowerCase() === "resolution"){
-                                if(debugParse){
-                                    console.log(item.history[i].items[j]);
-                                }
-                                
-                                if(item.history[i].items[j].toString !== null &&
-                                item.history[i].items[j].toString !== undefined){
-                                    jeve.isStatechange = true; 
-                                    jeve.statechange = {
-                                        from : "",
-                                        to: item.history[i].items[j].toString.toLowerCase()
-                                    };
-                                    if(item.history[i].items[j].fromString !== null &&
-                                        item.history[i].items[j].fromString !== undefined){
-                                        jeve.statechange.from = item.history[i].items[j].fromString.toLowerCase();
-                                    }
-                                }
-                                
-                            }//Otherwise the event is not a state change
-                            
-                            //Lets store some interesting metadata
-                            if(item.history[i].items[j].toString !== null &&
-                            item.history[i].items[j].toString !== undefined){
-                                jeve.data.toString = item.history[i].items[j].toString.toLowerCase();
-                            }
-                            if(item.history[i].items[j].fromString !== null &&
-                            item.history[i].items[j].fromString !== undefined){
-                                jeve.data.fromString = item.history[i].items[j].fromString.toLowerCase();
-                            }
-                            events.push(jeve);
-                        } 
-                    }
-                }//For iterating item history ends!
-
-                //Imported issues do not have anything it their histories and that is why we need to
-                //dig the possible resolution from issues resolution field.
-                if(item.history.length < 1){
-                    if(item.resolutiondate !== null && item.resolutiondate !== undefined){
-                        //resev == resolution event
-                        var resev = {
-                            origin_id : {
-                                source_id: String(item.key),
-                                source: origin.source,
-                                context: origin.context
-                            },
-                            time : item.resolutiondate,
-                            creator : item.assignee,
-                            type : "statechange",
-                            //state : item.status.toLowerCase(),
-                            statechange : {
-                                from : "open",
-                                to : item.status.toLowerCase()
-                            },
-                            isStatechange : true
-                        };
-                        if(resev.creator === null || resev.creator === undefined){
-                            resev.creator = "unknown";
-                        }
-                        events.push(resev);
-                    }
-                }
-                pending.push({body: events, url: eventApi, type: type, sent: false, item : item});
+           
+           
+            else if ( type === "state-change" ) {
+               state_change.event = item.event;
+               state_change.from = item.from;
+               state_change.to = item.to;
+               
+               //Add state-change to event
+               for (var i = 0; i < events.length; i++) {
+                  if (events[i].data.hash === item.event) {
+                     events[i].isStatechange = true;
+                     events[i].statechange = {from: item.from, to: item.to};
+                  }
+               }
             }
-            else if ( type === 'build') {
-                artefact.type = 'job';
-                artefact.name = item.name;
-                artefact.description = item.description;
-                
-                artefact.origin_id = { context: origin.context, source: origin.source, source_id: String( item.id ) };
-                pending.push({body: artefact, url: artefactApi, type: type, sent: false, item : item});
+           
+            else {
+               console.log("[ERROR]Unknown data type:" + type);
             }
-            else if ( type === 'buildHistory') {
 
-                event.type = "build";
-                event.origin_id = {
-                    source_id: String( item.id ),
-                    source: origin.source,
-                    context: origin.context
-                };
-                event.duration = item.duration;
-                event.creator = item.creator;
-                event.time = parseJenkinsTime(item.time);
-                event.isStatechange = true;
-                event.statechange = {
-                    to : item.state.toLowerCase(),
-                    from : ""
-                };
-                if( event.creator === null || event.creator === undefined)  {
-                    event.creator = "unknown";
-                }
-
-                //item.issue is added because linking is based on "issue" field.
-                //name is something like "hello #123" where "hello" is the job name and followed by build number
-                item.issue = item.name.substr(0, item.name.indexOf('#') - 1);
-                pending.push({body: event, url: eventApi, type: type, sent: false, item : item});
-            }
+            //// OLD 
+           /*
             else if ( type === 'comment' || type === 'changeEvent' ) {
                 // we are creating a event from an issue comment or changeEvent
                 event.origin_id = {
@@ -317,6 +168,8 @@ function sendToDb( logData ) {
                 
                 pending.push({body: event, url: eventApi, type: type, sent: false, item : item});
             }
+            */
+           
         });//LIST FOR EACH END
     });//ENTITY ORDER FOR EACH END
     

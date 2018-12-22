@@ -1,8 +1,6 @@
-1
-2
-coin-quin
-duckspace0722
-gfx-rs
-gfx
-github
-gfx
+: [90mCollect issues from?
+1 github
+2 gitlab
+3 jenkins
+4 jira
+[39m[90m: [39m 

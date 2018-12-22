@@ -157,7 +157,7 @@ function display(result) {
 
 //Returns the list of users, sessions, documents, etc
 function getData( source, callback ) {
-    console.log('[GetData] Parsing...');
+    console.log('[GetData]Parsing...');
 
     var fs = require("fs");
     var file = fs.readFileSync(source);
