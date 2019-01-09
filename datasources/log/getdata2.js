@@ -191,9 +191,21 @@ function getData( source, callback ) {
         for (var j = 0; j < entries.length; j++) {
             entry = entries[j];
             var str = new String(entry.action);
-                 
+            var double = false;
+           
+            //Remove duplicate entries
+            if (j > 0){
+               prev_entry = entries[j-1];
+               if (prev_entry.action === entry.action){
+                  double = true;
+               }  
+            }
+           
             //Document list
-            if (str.includes("Document")) {
+            if (double) {
+               //console.log("DOUBLE ENTRY: " + entry.action);
+            }
+            else if (str.includes("Document")) {
                 //Isolate document name
                 words = str.split(' ');
                 var document = {name: words[1], user_id: session.user_id, hash: hashCode(words[1]+session.user_id)};

@@ -19,7 +19,6 @@ module.exports = function() {
     });
 
     mongoose.model('ConstructOrigin', originSchema);
-
     var constructSchema = new mongoose.Schema({
         //Origin id is object containing the name of the origin system and the actual identifier in the system.
         origin_id: {type: [originSchema], required: true},
