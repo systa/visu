@@ -23,6 +23,16 @@ function parseJenkinsTime(jenkinsTime){
    return time;
 }
 
+function parseMyTime(myTime, myDate){
+   var time = new Date(myDate.substr(6,4), //year
+                      myDate.substr(3,2)-1,//month
+                      myDate.substr(0,2),  //day
+                      myTime.substr(0,2),  //hour
+                      myTime.substr(3,2),  //min
+                      myTime.substr(6,2)); //sec
+   return time;
+}
+
 // sends the data to db
 // logData : parsed log content
 function sendToDb( logData, source ) {
@@ -107,7 +117,7 @@ function sendToDb( logData, source ) {
          else if ( type === "event" ) {
             event.type = type;
             //TODO solve time formatting
-            event.time = 0;
+            event.time = parseMyTime(item.time, item.date);
             //event.time = item.date + "-" + item.time;
             event.duration = 0;
             event.creator = item.session_id;
@@ -210,7 +220,7 @@ function sendToDb( logData, source ) {
                      console.log("COUNT: ", count);
                   }
 
-                  //link(logData);
+                  link(logData);
                }
             });
       

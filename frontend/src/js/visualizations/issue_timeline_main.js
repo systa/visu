@@ -207,7 +207,7 @@ var ISSUE_TIMELINE_MAIN = function(par){
         console.log("[issue_timeline_main]Statechanges: ", _states);
         whenLoaded();
     };
-    
+       
     _query.getFilteredConstructs(_queryFilters.constructFilters, constructsLoaded);
     _query.getFilteredStatechanges(_queryFilters.eventFilters, statesLoaded);
     _query.getFilteredEvents(_queryFilters.eventFilters, eventsLoaded);
