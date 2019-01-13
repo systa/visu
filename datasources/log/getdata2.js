@@ -230,13 +230,13 @@ function getData( source, callback ) {
                         stateChange.from = "(doc) locked"; stateChange.to = "(doc) unlocked";
                         break;
                     case "opened.":
-                        var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Open Document", hash: entry.hash, document: document.hash, page: null};
+                        var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Open Document", hash: entry.hash, document: document.hash, page: null, statechange:stateChange};
                         events.push(event);
                         
                         stateChange.from = "(doc) closed"; stateChange.to = "(doc) opened";  
                         break;
                     case "closed.":
-                        var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Close Document", hash: entry.hash, document: document.hash, page: null};
+                        var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Close Document", hash: entry.hash, document: document.hash, page: null, statechange:stateChange};
                         events.push(event);
                         
                         stateChange.from = "(doc) opened"; stateChange.to = "(doc) closed";  
@@ -254,7 +254,8 @@ function getData( source, callback ) {
                 //Isolate page name
                 words = str.split(' ');
                 var page = {name: words[2]};
-                
+                var stateChange;
+               
                 if (words.length > 2) {
                     //Create construct page
                     if (notIn3(pages, page)) {
@@ -264,16 +265,18 @@ function getData( source, callback ) {
                     
                     //Create state change
                     var detail = words[words.length-1]; //Opened, closed, locked, unlocked
-                    var stateChange = {event: entry.hash, from: "(help) closed", to:"(help) opened"}; //Link to related event
+                    stateChange = {event: entry.hash, from: "(help) closed", to:"(help) opened"}; //Link to related event
                     stateChanges.push(stateChange);
+                    event.statechange = stateChange;
                 }
                 
                 //Create event
-                var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Help", hash: entry.hash, document: null};
+                var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Help", hash: entry.hash, document: null, statechange:stateChange};
                 if (str.includes("Clicked"))
                     event.page = "Help";
                 else
                     event.page = page.name;
+                              
                 events.push(event);    
             }
             
@@ -293,6 +296,7 @@ function getData( source, callback ) {
                         //Create state change
                         var stateChange = {event: entry.hash, from: "(session) open", to: "(session) closed"}; 
                         stateChanges.push(stateChange);
+                        event.statechange = stateChange;
                         break;
                     //Unspecific cases
                     /*case "Configure Library":
@@ -335,13 +339,14 @@ function getData( source, callback ) {
             }
           
             else if (str.includes("Program started.")) {
-                //Create event
-                var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: entry.action, hash: entry.hash, document: null, page: null};
-                events.push(event);
-                
                 //Create state change
                 var stateChange = {event: entry.hash, from: "(session) closed", to: "(session) open"}; 
                 stateChanges.push(stateChange);
+               
+                //Create event
+                var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: entry.action, hash: entry.hash, document: null, page: null, statechange:stateChange};
+                events.push(event);
+                
             }
             
             else if (str.includes("Library path added")) {
@@ -354,7 +359,7 @@ function getData( source, callback ) {
         
     }
     
-    var result = {events: events, users: users, sessions: sessions, documents:documents, stateChanges: stateChanges, pages: pages};
+    var result = {events: events, users: users, sessions: sessions, documents:documents, statechanges: stateChanges, pages: pages};
     //display(result);
 
     callback(result);

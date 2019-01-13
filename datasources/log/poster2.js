@@ -13,7 +13,7 @@ var request = require( 'request' );
 var _ = require( 'underscore' );
 
 var debugLink = true;
-var debugSend = false;
+var debugSend = true;
 var debugParse = false;
 
 function parseJenkinsTime(jenkinsTime){
@@ -25,9 +25,10 @@ function parseJenkinsTime(jenkinsTime){
 
 // sends the data to db
 // logData : parsed log content
-function sendToDb( logData ) {
+function sendToDb( logData, source ) {
    if (debugSend) {
       console.log("[Poster]sendToDb()");
+      console.log("[Poster]Source:" + source);
    }
    
    // the api urls
@@ -41,6 +42,7 @@ function sendToDb( logData ) {
    var bufferSize = 10;
    
    var pending = [];//List of requests to be send
+   var neweventlist = [];
    //However actually the requests that are already send are not moved away from the list
    //so it's kind of misleading name.
     
@@ -48,10 +50,10 @@ function sendToDb( logData ) {
    var added = 0;
    
    // add stuff to the db in this order 
-   var entityOrder = [ 'users', 'sessions', 'documents', 'pages', 'events', 'state-changes' ];
+   var entityOrder = [ 'users', 'sessions', 'documents', 'pages', 'events', 'statechanges' ];
    
    // create an origin
-   origin = { context: "kactus2", source: "logs"};
+   origin = { context: "kactus2", source: source};
    
    // get every list from the issue data and add every item from them to db
    entityOrder.forEach( function ( type ) {
@@ -61,8 +63,16 @@ function sendToDb( logData ) {
       
       var list = logData[type];
       if ( !list ) {
+         if(debugSend){
+            console.log("[Poster]List empty");
+         }
          return;
       }
+      
+      if(type === "events"){
+         eventlist = list;
+      }
+      
       count += list.length; // every item from the list should be added      
       type = type.substr( 0, type.length -1 ); // e.g. comments -> comment
       
@@ -103,25 +113,39 @@ function sendToDb( logData ) {
             event.creator = item.session_id;
             event.data = {hash: item.hash, action: item.action};
             event.origin_id =  { context: origin.context, source: origin.source, source_id: String( item.hash ) };
+            
+            if(item.statechange){
+               console.log("Event is a state-change");
+               event.isStatechange = true;
+               event.statechange = {from: item.statechange.from, to: item.statechange.to};
+            }
 
             pending.push({body: event, url: eventApi, type: type, sent: false, item : item});
+            //neweventlist.push(event);
          }
 
-
+         
          // TODO Check that this actually adds correctly the state-change to the event
          // If the item is an state-change, add it to the event 
-         else if ( type === "state-change" ) {
+         else if ( type === "statechange" ) {
+            /*
             state_change.event = item.event;
             state_change.from = item.from;
             state_change.to = item.to;
 
             //Add state-change to event
+            events = neweventlist;
             for (var i = 0; i < events.length; i++) {
+               //console.log("Event:"+events[i].data);
                if (events[i].data.hash === item.event) {
+                  console.log("Event is a state change");
                   events[i].isStatechange = true;
                   events[i].statechange = {from: item.from, to: item.to};
+               }else{
+                  //console.log("Event is not a state change");
                }
             }
+            */
          }
 
          else {
@@ -186,7 +210,7 @@ function sendToDb( logData ) {
                      console.log("COUNT: ", count);
                   }
 
-                  link(logData);
+                  //link(logData);
                }
             });
       
