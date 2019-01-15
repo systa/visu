@@ -13,15 +13,8 @@ var request = require( 'request' );
 var _ = require( 'underscore' );
 
 var debugLink = true;
-var debugSend = true;
+var debugSend = false;
 var debugParse = false;
-
-function parseJenkinsTime(jenkinsTime){
-   //var d = new Date(year, month, day, hours, minutes, seconds, milliseconds); 
-   var time = new Date(jenkinsTime.substr(0,4), jenkinsTime.substr(5,2)-1, jenkinsTime.substr(8,2),
-                       jenkinsTime.substr(11,2), jenkinsTime.substr(14,2), jenkinsTime.substr(17,2), "000");
-   return time;
-}
 
 function parseMyTime(myTime, myDate){
    var time = new Date(myDate.substr(6,4), //year
@@ -29,7 +22,8 @@ function parseMyTime(myTime, myDate){
                       myDate.substr(0,2),  //day
                       myTime.substr(0,2),  //hour
                       myTime.substr(3,2),  //min
-                      myTime.substr(6,2)); //sec
+                      myTime.substr(6,2),  //sec
+                      "000"); //millisec
    return time;
 }
 
@@ -52,15 +46,16 @@ function sendToDb( logData, source ) {
    var bufferSize = 10;
    
    var pending = [];//List of requests to be send
-   var neweventlist = [];
    //However actually the requests that are already send are not moved away from the list
    //so it's kind of misleading name.
     
    var count = 0;
    var added = 0;
    
+   var idToID = {};
+   
    // add stuff to the db in this order 
-   var entityOrder = [ 'users', 'sessions', 'documents', 'pages', 'events', 'statechanges' ];
+   var entityOrder = [ 'users', 'sessions', 'documents', 'pages', 'events'/*, 'statechanges' */];
    
    // create an origin
    origin = { context: "kactus2", source: source};
@@ -97,18 +92,25 @@ function sendToDb( logData, source ) {
             artefact.type = type;
             //artefact.description = item.description;
 
-            if ( type === "user" ) artefact.name = item.user_id;
-            else if ( type === "session" ) artefact.name = item.session_id;
+            if ( type === "user" ) {
+               artefact.name = item.id;
+            }
+            else if ( type === "session" ) artefact.name = item.id;
             else artefact.name = item.name;
+            
+            if ( type == "page" ) {
+               item.id = item.name;
+            }
 
-            artefact.origin_id = { context: origin.context, source: origin.source, source_id: String( artefact.name ) };
+            artefact.origin_id = { context: origin.context, source: origin.source, source_id: String( item.id ) };
 
             if ( type == "document" ) {
                meta.hash = item.hash;
+               item.id = item.hash;
                artefact.data = meta;
                artefact.origin_id.source_id = item.hash; //override s previous source_id
             }
-
+            
             // Add the artefact to the pending list
             pending.push({body: artefact, url: artefactApi, type: type, sent: false, item : item});
          }
@@ -116,46 +118,22 @@ function sendToDb( logData, source ) {
          // If the item is an event, create the event 
          else if ( type === "event" ) {
             event.type = type;
-            //TODO solve time formatting
             event.time = parseMyTime(item.time, item.date);
-            //event.time = item.date + "-" + item.time;
             event.duration = 0;
             event.creator = item.session_id;
             event.data = {hash: item.hash, action: item.action};
+            event.id = item.hash;
+            
+            item.id = item.hash;
             event.origin_id =  { context: origin.context, source: origin.source, source_id: String( item.hash ) };
             
             if(item.statechange){
-               console.log("Event is a state-change");
+               //console.log("Event is a state-change");
                event.isStatechange = true;
                event.statechange = {from: item.statechange.from, to: item.statechange.to};
             }
 
             pending.push({body: event, url: eventApi, type: type, sent: false, item : item});
-            //neweventlist.push(event);
-         }
-
-         
-         // TODO Check that this actually adds correctly the state-change to the event
-         // If the item is an state-change, add it to the event 
-         else if ( type === "statechange" ) {
-            /*
-            state_change.event = item.event;
-            state_change.from = item.from;
-            state_change.to = item.to;
-
-            //Add state-change to event
-            events = neweventlist;
-            for (var i = 0; i < events.length; i++) {
-               //console.log("Event:"+events[i].data);
-               if (events[i].data.hash === item.event) {
-                  console.log("Event is a state change");
-                  events[i].isStatechange = true;
-                  events[i].statechange = {from: item.from, to: item.to};
-               }else{
-                  //console.log("Event is not a state change");
-               }
-            }
-            */
          }
 
          else {
@@ -252,6 +230,17 @@ function sendToDb( logData, source ) {
          
                added++; // one item added
                
+               var item = obj.item;
+               var type = obj.type;
+               
+               if (!idToID[item.id]){
+                  idToID[item.id] = body._id;
+               } 
+               
+               if(debugLink){
+                  console.log("[Poster]"+ type +": idToID["+item.id+"] = "+idToID[item.id]);
+               }
+               
                obj.sent = true;
                resolve("post");
             });
@@ -259,7 +248,6 @@ function sendToDb( logData, source ) {
    }//end createPromise()
     
    //TODO: THROTTLE LINKING LIKE SENDING!!!
-
    // links issues to milestones and constructs to events using the previously collected information
    function link(logData) {
       if(debugLink){
@@ -272,7 +260,7 @@ function sendToDb( logData, source ) {
       // will contain objects that have the id of the construct to be linked,
       // the other object to be linked and the type of the other object (construct or event)
       var links = [];
-
+      
       // Link sessions to user
       if(debugLink){
          console.log("[Poster]Linking sessions"+ logData.sessions.length);
@@ -281,37 +269,38 @@ function sendToDb( logData, source ) {
       var sessions = logData.sessions;
       
       _.each(sessions, function (session){
-         links.push( { construct: session.session_id, target: session.user_id, type: 'construct' } );
+         links.push( { construct: idToID[session.id], target: idToID[session.user_id], type: 'construct' } );
       });
       
+      
       // Link events to session & document/help page (if needed)
-      /*
+      
       if(debugLink){
          console.log("[Poster]Linking events"+ logData.events.length);
       }
       var events = logData.events;
       _.each(events, function (event){
-         links.push( { construct: event.id, target: event.session_id, type: 'construct' } );
+         links.push( { construct: idToID[event.session_id], target: idToID[event.id], type: 'event' } );
          
          if(event.document) {
-            links.push( { construct: event.id, target: event.document, type: 'construct' } );   
+            links.push( { construct: idToID[event.document], target: idToID[event.id], type: 'event' } );   
          }
          else if(event.page) {
-            links.push( { construct: event.id, target: event.page, type: 'construct' } );   
+            links.push( { construct: idToID[event.page], target: idToID[event.id], type: 'event' } );   
          }
          
       });
-      */
+      
       // Link documents to users
-      /*
+      
       if(debugLink){
          console.log("[Poster]Linking documents: "+ logData.documents.length);
       }
       var documents = logData.documents;
       _.each(documents, function (document){
-         links.push( { construct: document.hash, target: document.user_id, type: 'construct' } );
+         links.push( { construct: idToID[document.hash], target: idToID[document.user_id], type: 'construct' } );
       });
-      */
+      
       linkCount = links.length;
       if(debugLink){
          console.log("Links: " + linkCount);

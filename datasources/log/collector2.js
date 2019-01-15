@@ -25,6 +25,8 @@ var poster = require( './poster2' );
 // the text shown to the user
 var text = 'Collect logs from?\n' ;
 
+var debug = false;
+
 // start the prompt
 prompt.start();
 // by default prompt prints prompt before the question
@@ -66,11 +68,13 @@ function sourceSelected( err, result ) {
         // print debug information how many items of each type we got and what is the last item
         console.log( '[Collector]Usage data fetched from source.' );
         
-        _.each( result, function ( value, key ) {
-            console.log( value.length +' ' +key +' last of which is:');
-            console.log( value[value.length -1] );
-        });
-
+        if (debug) {
+           _.each( result, function ( value, key ) {
+              console.log( value.length +' ' +key +' last of which is:');
+               console.log( value[value.length -1] );
+            });
+        }
+       
         // send the issue data to the db
         console.log( '[Collector]Sending data to database.\n' );
         poster( result, file);

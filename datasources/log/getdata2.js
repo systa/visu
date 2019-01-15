@@ -33,9 +33,6 @@ function hashCode(string) {
 
 /* parseLog will get the content of the log file
 * and parse return a data object
-* This data is composed of a list of sessions
-* Each session is composed of a session_id, user_id and a list of log entries
-* Each entry is composed of date, time, user_id, session_id, action and hash (unique identifier)
 */
 function parseLog( content ) {
     //All the data
@@ -61,21 +58,21 @@ function parseLog( content ) {
                         
         //Session detection
         if (session.entries.length>0) {
-            if (session.session_id != entry.session_id) {
-                var toPush = {session_id: session.session_id, user_id: session.user_id, entries: session.entries};
+            if (session.id != entry.session_id) {
+                var toPush = {id: session.id, user_id: session.user_id, entries: session.entries};
                 data.push(toPush); //Add previous session to data
                 
-                session = {session_id: entry.session_id, user_id: entry.user_id, entries: []};
+                session = {id: entry.session_id, user_id: entry.user_id, entries: []};
             }
         }else{ //First session
-            session = {session_id: entry.session_id, user_id: entry.user_id, entries: []};
+            session = {id: entry.session_id, user_id: entry.user_id, entries: []};
         }
   
         //Create new entry and add it to the list
         session.entries.push(entry);
     }
 
-    var toPush = {session_id: session.session_id, user_id: session.user_id, entries: session.entries};
+    var toPush = {id: session.id, user_id: session.user_id, entries: session.entries};
     data.push(toPush); //Add last session to data
     
     return data;
@@ -176,13 +173,13 @@ function getData( source, callback ) {
         
         //User list
         if (notIn2(users, session.user_id)) {
-            var toPush = session.user_id;
+            var toPush = {id: session.user_id};
             users.push(toPush);
         }
         
         //Session list
-        if (notIn4(sessions, session.session_id)) {
-            var toPush = {session_id: session.session_id, user_id: session.user_id};
+        if (notIn4(sessions, session.id)) {
+            var toPush = {id: session.id, user_id: session.user_id};
             sessions.push(toPush);
         }
         
