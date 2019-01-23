@@ -12,9 +12,31 @@
 var request = require( 'request' );
 var _ = require( 'underscore' );
 
+var crypto = require('crypto');
+
 var debugLink = true;
-var debugSend = false;
-var debugParse = false;
+var debugSend = true;
+var debugParse = true;
+
+function hashCode(string) {
+   var shasum = crypto.createHash('sha1');
+   shasum.update(string);
+   return shasum.digest('base64');
+}
+
+// Creates a hash for a given string 
+// TODO check validity of hash function
+function hashCode2(string) {
+    var hash = 0, i, chr;
+    if (string.length === 0) return hash;
+    
+    for (i = 0; i < string.length; i++) {
+        chr   = string.charCodeAt(i);
+        hash  = ((hash << 5) - hash) + chr;
+        hash |= 0; // Convert to 32bit integer
+    }
+    return parseInt(hash);
+} //end hashCode()
 
 function parseMyTime(myTime, myDate){
    var time = new Date(myDate.substr(6,4), //year
@@ -89,27 +111,25 @@ function sendToDb( logData, source ) {
 
          // If the item is a construct, create the artefact
          if ( type === "user" || type === "session" || type === "document" || type === "page" ) {
-            artefact.type = type;
-            //artefact.description = item.description;
-
-            if ( type === "user" ) {
-               artefact.name = item.id;
-            }
-            else if ( type === "session" ) artefact.name = item.id;
-            else artefact.name = item.name;
             
-            if ( type == "page" ) {
-               item.id = item.name;
-            }
-
-            artefact.origin_id = { context: origin.context, source: origin.source, source_id: String( item.id ) };
-
-            if ( type == "document" ) {
-               meta.hash = item.hash;
+            artefact.type = type;
+            
+            if (type === "user") {
+               artefact.name = String(item.id); //Name is simply the hash
+            }else if (type === "session") {
+               artefact.name = item.id; //Name is simply the hash
+            }else if (type === "document") {
+               artefact.name = item.name; //Name is the doc name
                item.id = item.hash;
+               meta.hash = item.hash;
                artefact.data = meta;
-               artefact.origin_id.source_id = item.hash; //override s previous source_id
+            }else if (type === "page") {
+               artefact.name = item.name; //Name is the page name
+               item.id = hashCode(item.name);
+               //item.id = item.name;
             }
+
+            artefact.origin_id = { context: origin.context, source: origin.source, source_id: String(item.id) };
             
             // Add the artefact to the pending list
             pending.push({body: artefact, url: artefactApi, type: type, sent: false, item : item});
@@ -125,7 +145,7 @@ function sendToDb( logData, source ) {
             event.id = item.hash;
             
             item.id = item.hash;
-            event.origin_id =  { context: origin.context, source: origin.source, source_id: String( item.hash ) };
+            event.origin_id =  { context: origin.context, source: origin.source, source_id: String(item.hash) };
             
             if(item.statechange){
                //console.log("Event is a state-change");
@@ -286,7 +306,7 @@ function sendToDb( logData, source ) {
             links.push( { construct: idToID[event.document], target: idToID[event.id], type: 'event' } );   
          }
          else if(event.page) {
-            links.push( { construct: idToID[event.page], target: idToID[event.id], type: 'event' } );   
+            links.push( { construct: idToID[hashCode(event.page)], target: idToID[event.id], type: 'event' } );   
          }
          
       });

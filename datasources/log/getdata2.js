@@ -17,9 +17,17 @@ var parse = require( 'parse-link-header' );
 // for evaluating JsonPaths
 var jsonPath = require( 'JSONPath' );
 
+var crypto = require('crypto');
+
+function hashCode(string) {
+   var shasum = crypto.createHash('sha1');
+   shasum.update(string);
+   return shasum.digest('base64');
+}
+
 // Creates a hash for a given string 
 // TODO check validity of hash function
-function hashCode(string) {
+function hashCode2(string) {
     var hash = 0, i, chr;
     if (string.length === 0) return hash;
     
@@ -28,7 +36,7 @@ function hashCode(string) {
         hash  = ((hash << 5) - hash) + chr;
         hash |= 0; // Convert to 32bit integer
     }
-    return hash;
+    return parseInt(hash);
 } //end hashCode()
 
 /* parseLog will get the content of the log file
@@ -48,12 +56,11 @@ function parseLog( content ) {
         var entry = {};
         var words = line.split(' ');
 
-        entry = {date: words[0], time: words[1], user_id: words[3], session_id: words[6].substring(0, words[6].length-1), action: words[7]};
+        entry = {date: words[0], time: words[1], user_id: hashCode(words[3]), session_id: hashCode(words[6].substring(0, words[6].length-1)), action: words[7]};
         for(var n_words = 8; n_words < words.length; n_words++) {
             entry.action = entry.action + " " + words[n_words];
         }
-          
-        //toHash = line + n_line;
+      
         entry.hash = hashCode(line + n_line);
                         
         //Session detection
