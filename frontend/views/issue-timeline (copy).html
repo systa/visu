@@ -17,10 +17,9 @@
     <script type="text/javascript" src="dist/js/app.min.js"></script>
     
   </head>
-  <body onload="DEMO_QUERY_UI(true, CUSTOM_TIMELINE_MAIN)">
+  <body onload="DEMO_QUERY_UI(true, ISSUE_TIMELINE_MAIN)">
         <div id = "queryui" class = "ui">
             <form id ="queryform">
-                <H1>/!\TESTING SHIT/!\</H1>
                 <H1>Data Filtering</H1>
                 <p>
                     <H2>Time range filtering</H2>
@@ -74,7 +73,7 @@
                     </p>
                     <p>
                         Resolution states separated by comma:</br>
-                        <input type = "text" name = "resolution" id = "resolution" value = "(doc) closed, (session) closed"></input>
+                        <input type = "text" name = "resolution" id = "resolution" value = "closed, resolved, resolution, done, fixed, cancelled, duplicate, won't fix, won't do, cannot reproduce"></input>
                     </p>
                 </p>
             </form>

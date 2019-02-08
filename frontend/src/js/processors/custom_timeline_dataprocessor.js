@@ -12,10 +12,9 @@
 //mapping is to determine which field of construct is used as a Y axis index values
 //if anonymize flag is set to true the Y axis index values are anonymized using the base string provided
 //in astring parameter and order number. If no base string is provided only order numbers are used to anonymize the ids.
-var LIFSPAN_TIMELINE_PROCESSOR = function(par){
+var ISSUE_TIMELINE_PROCESSOR = function(par){
+    console.log("HUGO TESTING SHIT in custom_timeline_dataprocessor.js");
    
-   console.log("HUGO TESTING SHIT in lifespan_timeline_main.js");
-    
     var p = par || {};
     
     var _rowId = p.rowId !== undefined ? p.rowId : "_id";
@@ -23,9 +22,16 @@ var LIFSPAN_TIMELINE_PROCESSOR = function(par){
     var _anonymize = p.anonymize !== undefined ? p.anonymize : false;
     var _astring = p.astring !== undefined ? p.astring : "";
     var _states = p.states !== undefined ? p.states : {};
-
-    var _resolution = _states.resolution !== undefined ? _states.resolution : [];
-    console.log("[lifespan_timeline_main]Resolution:",_resolution);
+    
+    if(!_states.start){
+        _states.start = [];
+    }
+    if(!_states.intermediate){
+        _states.intermediate = [];
+    }
+    if(!_states.resolution){
+        _states.resolution = [];
+    }
     
     //Splitting the Y-index mapping from . so we can do the mapping properly
     //even if it is a field of nested object.
@@ -36,85 +42,119 @@ var LIFSPAN_TIMELINE_PROCESSOR = function(par){
     // and close events are allways larger than other events
     // if both events have the same timestamp and are both start or close events or neither of them
     // the ordering is done based on rowid (alphabetically)
-    var stSortFunction = function(e1, e2){
-        var t1 = new Date(e1.time).getTime();
-        var t2 = new Date(e2.time).getTime();
-
-        if(t1 === t2){
-
-            if(e1.statechange === undefined || e2.statechange === undefined){
-                console.log("o1: ", e1, " o2: ", e2);
-                return 0;
-            }
-
-            if(e1.statechange.from === "" || e1.statechange.from === null || e1.statechange.from === undefined){
-                return 1;
-            }
-            else if(e2.statechange.from === "" || e2.statechange.from === null || e2.statechange.from === undefined){
-                return -1;
-            }
-        }
-
-        return t1-t2;
-    };
-    
     var eventSortFunction = function(e1, e2){
         var t1 = new Date(e1.time).getTime();
         var t2 = new Date(e2.time).getTime();
+        if(t1 === t2){
+            
+            var start1 = _states.start.indexOf(e1.type);
+            var start2 = _states.start.indexOf(e2.type);
+            
+            var closed1 = _states.resolution.indexOf(e1.type);
+            var closed2 = _states.resolution.indexOf(e2.type);
+            
+            if(start1 !== -1 && start2 === -1){
+                return -1;//e1 is smaller as it is start event and e2 is not
+            }
+            else if(start2 !== -1 && start1 === -1){
+                return 1;//e2 is smaller as it is start event and e1 is not
+            }
+            else if(closed1 !== -1 && closed2 === -1){
+                return 1;//e2 is smaller as it is not resolution event and e1 is
+            }
+            else if(closed2 !== -1 && closed1 === -1){
+                return -1;//e1 is smaller as it is not resolution event and e2 is
+            }
+            else{
+                if(e1.rowId !== undefined && e2.rowId !== undefined){
+                    return e1.rowId.localeCompare(e2.rowId);
+                }
+                else if(e1.rowId !== undefined){
+                    return -1;
+                }
+                else if(e2.rowId !== undefined){
+                    return 1;
+                }
+                else{
+                    return 0;
+                }
+            }
+            
+            
+            
+        }
         return t1-t2;
     };
     
-    var parseLifespans = function(statelist){
+    
+    var parseLifespans = function(states){
         var lifespans = [];
-        //Looping through all constructs
-        for(var rid in statelist){
-            if(statelist.hasOwnProperty(rid)){
-                var statechanges = statelist[rid];
-                statechanges.sort(stSortFunction);
+        for(var rid in states){
+            if(states.hasOwnProperty(rid)){
+                var constructStates = states[rid];
+                if(constructStates.length === 0){
+                    continue;
+                }
+                //sorting the events based on the event time
+                //this way we can just take the first event as the start event and
+                //we can allways assume that the next event is chronologically behind the first event
+                constructStates.sort(eventSortFunction);
 
-                //The first state in the array is the first statechange taken into account
-                var st = statechanges[0].time; //start time
-                var state = statechanges[0].statechange.to; //state we are in
+                //We assume that the first event in time is the open event
+                var st = constructStates[0].time; //start time
+                var state = constructStates[0].state; //state we are in
                 var rt = false;//resolution time
                 
                 //skip flag which is used for not to draw states
                 //between resolution state and next start state e.g. in cases of reopened issues
                 var skip = false;
-
-                //Looping through state changes of one construct
-                for(var i = 0; i < statechanges.length; ++i){
-                    var sc = statechanges[i];
-                    var trimmedState = sc.statechange.to.replace(/\s/g,'');
+                //however if the first state wasn't start state then we go into skip mode.
+                if(_states.start.indexOf(state.replace(/\s/g,'')) === -1){
+                    skip = true;
+                }
+                
+                //as the order has to be preserved normal for-loop is used
+                for(var j = 1; j < constructStates.length; ++j){
+                    var c = constructStates[j];
+                    var trimmedState = c.state.replace(/\s/g,'');
 
                     if(!skip){
                         var tmp = {
                             rowId : rid,
                             start : st,
                             state : state,
-                            end : sc.time
+                            end : c.time
                         };
                         lifespans.push(tmp);
-                        st = sc.time;
-                        state = sc.statechange.to;
+                        st = c.time;
+                        state = c.state;
                     }
-                    else{
-                        st = sc.time;
-                        state = sc.statechange.to;
-                        skip = false;
+                    
+                    //If we are in skip mode we wait next start state
+                    if(skip){
+                        //If we found the start state we come out from skip mode and assign new start time and state
+                        if(_states.start.indexOf(trimmedState) !== -1){
+                            st = c.time;
+                            state = c.state;
+                            skip = false;
+                        }
+                        //other wise we keep skiping untill next start state comes
                     }
-
+                    
                     //if the final statechange is a resolution event we store the resolution time
                     //otherwise the resolution time is left open --> construct's lifespan has not ended
-                    if(i === statechanges.length-1 && _states.resolution.indexOf(trimmedState) !== -1){
-                        rt = sc.time;
+                    if(j === constructStates.length-1 && _states.resolution.indexOf(trimmedState) !== -1){
+                        rt = c.time;
                     }
                     else if(_states.resolution.indexOf(trimmedState) !== -1){
                         //if there were resolution event in between we don't want to draw line from it
                         //to the start state but end the line. thus we need to skip next push
                         skip = true;
                     }
-
                 }
+                //adding the final state change if it is not yet added
+                //if we are in skip mode we are still waitin for start state --> construct is in its resolution state
+                //otherwise we haven't yet pushed the final state change
                 if(!skip){
                     lifespans.push({
                         rowId : rid,
@@ -132,8 +172,10 @@ var LIFSPAN_TIMELINE_PROCESSOR = function(par){
     //the topmost drawn row in the visualization is the row where the first event happened and so on. This is the default ordering of rows for the visualization.
     //Construct map is a helper data structure which contains all constructs in a object where the key is the construct _id (MongoDB). The helper has been formed in
     //parseConstructs function --> parseConstructs NEEDS TO BE CALLED BEFORE THIS FUNCTION (PRECONDITION)!
-    var parseStates = function(statechangeEvents, constructMap){
+    var parseEvents = function(events, constructMap){
+        var evs = [];
         var types = [];
+        var statechanges = [];
         
         //helper datastructure for parsing lifespans
         var states = {};
@@ -143,7 +185,7 @@ var LIFSPAN_TIMELINE_PROCESSOR = function(par){
         
         var identity_helper = [];
         
-        statechangeEvents.forEach(function(ev){
+        events.forEach(function(ev){
             //Ignoring duplicates
             if(identity_helper.indexOf(ev._id) === -1){
                 identity_helper.push(ev._id);
@@ -157,9 +199,15 @@ var LIFSPAN_TIMELINE_PROCESSOR = function(par){
                 if(time > end || end === false){
                     end = time;
                 }
-
-                if(types.indexOf(ev.statechange.to) === -1){
-                    types.push(ev.statechange.to);
+                
+                if(ev.state !== "" && ev.state !== null &&
+                ev.state !== undefined && ev.state !== false){
+                    if(statechanges.indexOf(ev.state) === -1){
+                        statechanges.push(ev.state);
+                    }
+                }
+                if(types.indexOf(ev.type) === -1){
+                    types.push(ev.type);
                 }
                 
                 for(var i = 0; i < ev.related_constructs.length; ++i){
@@ -182,70 +230,44 @@ var LIFSPAN_TIMELINE_PROCESSOR = function(par){
                         if(!states[tmp.rowId]){
                             states[tmp.rowId] = [];
                         }
-                        states[tmp.rowId].push(tmp);
-                    }
-                }//for related_constructs ends
-            }//if id is found ends
-        });//For each statechange ends
-        //getting the lifespans from state data
-        var lifespans = parseLifespans(states);
-        return {
-            lifespans : lifespans,
-            timeframe:[new Date(start), new Date(end)],
-            types : types
-        };
-    };
 
-    var parseEvents = function(events, constructMap){
-        var evs = [];
-        var types = [];
-        
-        var start = false;
-        var end = false;
-        
-        var identity_helper = [];
-        
-        events.forEach(function(ev){
-            //Ignoring duplicates
-            if(identity_helper.indexOf(ev._id) === -1){
-                identity_helper.push(ev._id);
-                
-                var time = new Date(ev.time).getTime();
-                
-                //detecting the timeframe
-                if(time < start || start === false){
-                    start = time;
-                }
-                if(time > end || end === false){
-                    end = time;
-                }
-
-                if(types.indexOf(ev.type) === -1){
-                    types.push(ev.type);
-                }
-                
-                for(var i = 0; i < ev.related_constructs.length; ++i){
-                    if(ev.related_constructs[i] !== null || ev.related_constructs[i] !== undefined){
-                        var tmp  = {};
-                        //Cloning the event object as it can have multiple constructs it is related to.
-                        //as we want to visualize all events related to a construct in a single line
-                        //we need to clone the event for all the constructs it relates to.
-                        for(var property in ev){
-                            if(ev.hasOwnProperty(property)){
-                                tmp[property] = ev[property];
+                        //storing states for calculating lifespans
+                        if(tmp.state !== "" && tmp.state !== null &&
+                        tmp.state !== undefined && tmp.state !== false){
+                            
+                            var trimmedState = tmp.state.replace(/\s/g,'');
+                            
+                            if(_states.start.indexOf(trimmedState) !== -1 || 
+                            _states.intermediate.indexOf(trimmedState) !== -1 ||
+                            _states.resolution.indexOf(trimmedState) !== -1){
+                                
+                                states[tmp.rowId].push(tmp);
                             }
                         }
-                        //Storing the link between events and constructs so that the visualization understands it.
-                        if(constructMap[ev.related_constructs[i].toString()] !== undefined){
-                            tmp.rowId = constructMap[ev.related_constructs[i].toString()].rowId;
-                            evs.push(tmp); 
-                        }
+                        evs.push(tmp); 
                     }
                 }
             }
             
         });
-        return {events: evs, timeframe:[new Date(start), new Date(end)], types : types};
+        
+        //getting the lifespans from state data
+        var lifespans = parseLifespans(states);
+        
+        //to get the ids sorted by the event time, we need to go through the sorted event array!
+        //this needs to be done in order thus for loop instead of forEach function is used.
+        //For each does not preserve order!
+        evs.sort(eventSortFunction);
+        /*var ids = [];
+        for(var k = 0; k < evs.length; ++k){
+            var id = evs[k].rowId;
+            if(ids.indexOf(id) === -1){
+                ids.push(id);
+            }
+        }*/
+        statechanges.sort();
+        types.sort();
+        return {events:evs, lifespans : lifespans, timeframe:[new Date(start), new Date(end)], statechanges : statechanges, types: types};
     };
     
     //Parses construct data and state option data from constructs.
@@ -255,13 +277,6 @@ var LIFSPAN_TIMELINE_PROCESSOR = function(par){
         var ids_help = [];
         var anonymized = [];
         var processedConstructs = [];
-
-        var ids = [];
-        var lenId = 0;
-        var longestId = "";
-
-        var lenType = 0;
-        var longestType = "";
         
         var identity_helper = [];
         
@@ -311,31 +326,41 @@ var LIFSPAN_TIMELINE_PROCESSOR = function(par){
                 }
                 constructHelpper[construct._id.toString()] = construct;
                 processedConstructs.push(construct);
-                if(construct.type.length > lenType){
-                    lenType = construct.type.length;
-                    longestType = construct.type;
-                }
-
-                if(ids.indexOf(construct.rowId) === -1){
-                    ids.push(construct.rowId);
-
-                    if(construct.rowId.length > lenId){
-                        lenId = construct.rowId.length;
-                        longestId = construct.rowId;
+            }
+            
+            
+            
+        });
+        return{helper:constructHelpper, processedConstructs : processedConstructs};
+    };
+    
+    var removeUnwantedConstructs = function(ids, processedConstructs){
+        var filteredStates = [];
+        var lenId = 0;
+        var longestId = "";
+        
+        var lenType = 0;
+        var longestType = "";
+        processedConstructs.forEach(function(construct){
+            if(construct.rowId !== undefined){
+                var id = construct.rowId;
+                if(ids.indexOf(id) !== -1){
+                    filteredStates.push(construct);
+                    if(id.length > lenId){
+                        lenId = id.length;
+                        longestId = id;
+                    }
+                    if(construct.type.length > lenType){
+                        lenType = construct.type.length;
+                        longestType = construct.type;
                     }
                 }
             }
-            
         });
-        return{
-            helper:constructHelpper,
-            processedConstructs : processedConstructs,
-            ids : ids,
-            longestId : longestId,
-            longestType: longestType
-        };
+        return {constructs: filteredStates, longestType : longestType, longestId: longestId};
     };
-
+    
+    
     var sortRows = function(lifespans){
         var idHelper = {};
         var lptmp = [];
@@ -406,53 +431,28 @@ var LIFSPAN_TIMELINE_PROCESSOR = function(par){
         }
         return ids;
     };
-
-    var mergeIdLists = function(stateId, constructId){
-        for(var i = 0; i < constructId.length; ++i){
-            if(stateId.indexOf(constructId[i]) === -1){
-                stateId.push(constructId);
-            }
-        }
-        return stateId;
-    };
     
-    var parseData = function(constructs, events, statechanges){
+    var parseData = function(constructs, events){
         //object for the processed data
         var data = {};
         
         //from constructs we parse ids and constructs that are used
         //it also adds property rowID to constructs in _constructs list!
         var constructData = parseConstructs(constructs);
+        
         var eventData = parseEvents(events, constructData.helper);
-        var stateData = parseStates(statechanges, constructData.helper);
-
-        data.constructs = constructData.processedConstructs;
-        data.longestId = constructData.longestId;
-        data.longestType = constructData.longestType;
         data.events = eventData.events;
-        data.lifespans = stateData.lifespans;
-        data.types = eventData.types.concat(stateData.types);
-        data.types.sort();
-
-        var scId = sortRows(stateData.lifespans);
-        data.ids = mergeIdLists(scId, constructData.ids);
-
-        var start = eventData.timeframe[0];
-        var s1 = eventData.timeframe[0].getTime();
-        var s2 = stateData.timeframe[0].getTime();
-        if(s2 < s1){
-            start = stateData.timeframe[0];
-        }
-
-        var end = eventData.timeframe[1];
-        var e1 = eventData.timeframe[1].getTime();
-        var e2 = stateData.timeframe[1].getTime();
-        if(e2 > e1){
-            end = stateData.timeframe[1];
-        }
-
-        data.timeframe = [new Date(start.getFullYear(), start.getMonth(), start.getDate()),
-            new Date(end.getFullYear(), end.getMonth(), end.getDate()+1)];
+        data.timeframe = [new Date(eventData.timeframe[0].getFullYear(), eventData.timeframe[0].getMonth(), eventData.timeframe[0].getDate()-1),
+            new Date(eventData.timeframe[1].getFullYear(), eventData.timeframe[1].getMonth(), eventData.timeframe[1].getDate()+1)];
+        data.lifespans = eventData.lifespans;
+        data.statechanges = eventData.statechanges;
+        data.types = eventData.types;
+        data.ids = sortRows(eventData.lifespans);
+        
+        var stripped = removeUnwantedConstructs(data.ids, constructData.processedConstructs);
+        data.constructs = stripped.constructs;
+        data.longestType = stripped.longestType;
+        data.longestId = stripped.longestId;
         
         //giving the data to who needs it
         return data;

@@ -8,7 +8,9 @@
 */
 
 var DEMO_QUERY_UI = function(states, callback){
-    
+   
+    console.log("HUGO TEST: DEMO_QUERY_UI");
+   
     var _states = states;
     
     var parseStates = function(states){

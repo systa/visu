@@ -32,5 +32,9 @@ router.get('/backlog-timeline', function(req, res) {
   res.sendfile('./frontend/views/backlog-timeline.html');
 });
 
+router.get('/custom-timeline', function(req, res) {
+  res.sendfile('./frontend/views/custom-timeline.html');
+});
+
 
 module.exports = router;
