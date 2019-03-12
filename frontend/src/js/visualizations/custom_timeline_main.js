@@ -86,7 +86,7 @@ var CUSTOM_TIMELINE_MAIN = function(par){
         
         if(!timeframe){
             timeframe = data.timeframe;
-            console.log("[custom_timelmine_main.js]data.timeframe:", timeframe);
+            console.log("[custom_timelmine_main.js]data.timeframe: [", +timeframe[0], +timeframe[1],"] in miliseconds.");
         }
         
         _issueChartMargins.left = _layout.getSVGTextWidth(data.longestId)+2;
@@ -115,8 +115,8 @@ var CUSTOM_TIMELINE_MAIN = function(par){
             margins : _timeSelectorMargins,
             timeframe : timeframe,
             onBrushFunction : onBrush,
-            linear: false,
-            customTime: true
+            linear: true,
+            customTime: false
         });
         
         createLegend(data.types);
@@ -179,10 +179,12 @@ var CUSTOM_TIMELINE_MAIN = function(par){
     var _timeframe = false;
     if(_filters.startTime && _filters.endTime){
          //Filters based on time
-        _timeframe = [_filters.startTime, _filters.endTime]; //[new Date(_filters.startTime), new Date(_filters.endTime)];
+         
+        _timeframe = [+(new Date(_filters.startTime)), +(new Date(_filters.endTime))]; //[new Date(_filters.startTime), new Date(_filters.endTime)];
         //_timeframe = [0, 1000];
     }
     
+    _mapping.anonymize = true;
     var _parser = CUSTOM_TIMELINE_PROCESSOR(_mapping);
     var _queryFilters = QUERY_UTILITIES().formatFilters(_filters);
     var _search = PROCESSOR_UTILITES();

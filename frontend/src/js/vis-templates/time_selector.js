@@ -7,7 +7,7 @@
 * Main authors: Antti Luoto, Anna-Liisa Mattila, Henri Terho
 */
 
-//Time selector visualization component
+//Time selector visualization component: The brush !
 
 /*PARAMETERS:
     svg : svg element where the visualization is rendered wrapped with d3
@@ -44,7 +44,8 @@ var TimeSelector = function(par){
     var _scale;
     //dynamic scale for showing timeframe
     if(_linear){
-        _scale = d3.scale.linear().domain([0,_xDomain[1]-_xDomain[0]]);
+        //_scale = d3.scale.linear().domain([0,_xDomain[1]-_xDomain[0]]);
+        _scale = d3.scale.linear().domain(_xDomain);
     }
     else{
        _scale = d3.time.scale().domain(_xDomain);

@@ -12,9 +12,9 @@
 //mapping is to determine which field of construct is used as a Y axis index values
 //if anonymize flag is set to true the Y axis index values are anonymized using the base string provided
 //in astring parameter and order number. If no base string is provided only order numbers are used to anonymize the ids.
-var LIFSPAN_TIMELINE_PROCESSOR = function(par){
+var CUSTOM_TIMELINE_PROCESSOR = function(par){
    
-   console.log("HUGO TESTING SHIT in custom_timeline_main.js");
+   console.log("HUGO TESTING SHIT in custom_timeline_dataprocessor.js");
     
     var p = par || {};
     
@@ -26,7 +26,7 @@ var LIFSPAN_TIMELINE_PROCESSOR = function(par){
     var _states = p.states !== undefined ? p.states : {};
 
     var _resolution = _states.resolution !== undefined ? _states.resolution : [];
-    console.log("[lifespan_timeline_main]Resolution:",_resolution);
+    console.log("[custom_timeline_dataprocessor]Resolution:",_resolution);
     
     //Splitting the Y-index mapping from . so we can do the mapping properly
     //even if it is a field of nested object.
@@ -452,8 +452,11 @@ var LIFSPAN_TIMELINE_PROCESSOR = function(par){
             end = stateData.timeframe[1];
         }
 
-        data.timeframe = [new Date(start.getFullYear(), start.getMonth(), start.getDate()),
-            new Date(end.getFullYear(), end.getMonth(), end.getDate()+1)];
+        //Define the actual timeframe ???
+        data.timeframe = [+(new Date(start.getFullYear(), start.getMonth(), start.getDate(), start.getHours())),
+            +(new Date(end.getFullYear(), end.getMonth(), end.getDate(), start.getHours()+1))];
+        
+        console.log("[custom_timeline_dataprocessor.js]timeframe: ", data.timeframe);
         
         //giving the data to who needs it
         return data;

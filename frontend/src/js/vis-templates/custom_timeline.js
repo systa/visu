@@ -125,8 +125,13 @@ var CustomTimeline = function(par){
     
     var getLpStart = function(data){
         var domain = _timeScale.domain();
-        var start = data.start; //new Date(data.start);
-        var end = data.end; //new Date(data.end);
+       
+        //Start the constructs at 0
+        var start = 0; //new Date(data.start);
+        
+        var d_end = + (new Date(data.end));
+        var d_start = + (new Date(data.start));
+        var end = d_end - d_start; //new Date(data.end);
         
         //if end is false...
         //data endpoint is mapped to the domain end point
@@ -147,8 +152,13 @@ var CustomTimeline = function(par){
     
     var getLpEnd = function(data){
         var domain = _timeScale.domain();
-        var start = data.start; //new Date(data.start);
-        var end = data.end; //new Date(data.end);
+
+        //Start the constructs at 0   
+        var start = 0; //new Date(data.start);
+        
+        var d_end = + (new Date(data.end));
+        var d_start = + (new Date(data.start));
+        var end = d_end - d_start; //new Date(data.end);
 
         //if end is false...
         //data endpoint is mapped to the domain end point
@@ -176,15 +186,19 @@ var CustomTimeline = function(par){
     //The start point is the x-coordinate of the runtime bar
     var getX = function(data){
         var domain = _timeScale.domain();
-        var start = data.time; //new Date(data.time);
+        var date = new Date(data.time);
+        var start = +date;
         var circleDiameter = _rowHeight*0.33*2;
 
         //clipping the coordinates to brush selection
         if(start <= domain[0] || start >= domain[domain.length-1]){
+            //console.log("[custom_timeline.js]Clipping in ", data);
             return -circleDiameter;
         }
 
         var x = _timeScale(start);
+        
+        //console.log("[custom_timeline.js]No clipping in ", data, ". start at ", x);
         return x;
     };
   
@@ -212,7 +226,9 @@ var CustomTimeline = function(par){
                    
                 }else if ($.isArray(data[atr])) {
                    for(var atr2 in data[atr]){
-                      dispstring += "tab("+atr2+"): "+data[atr][atr2].toString()+"</br>";
+                       if(!$.isPlainObject(data[atr]) && !$.isArray(data[atr])){
+                           dispstring += "tab("+atr2+"): "+data[atr][atr2].toString()+"</br>";
+                       }
                    }
                 }else if ($.isPlainObject(data[atr])) {
                    for(var atr2 in data[atr]){
