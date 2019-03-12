@@ -183,7 +183,7 @@ var CUSTOM_TIMELINE_MAIN = function(par){
         //_timeframe = [0, 1000];
     }
     
-    var _parser = LIFSPAN_TIMELINE_PROCESSOR(_mapping);
+    var _parser = CUSTOM_TIMELINE_PROCESSOR(_mapping);
     var _queryFilters = QUERY_UTILITIES().formatFilters(_filters);
     var _search = PROCESSOR_UTILITES();
 

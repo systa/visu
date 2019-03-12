@@ -12,9 +12,9 @@
 //mapping is to determine which field of construct is used as a Y axis index values
 //if anonymize flag is set to true the Y axis index values are anonymized using the base string provided
 //in astring parameter and order number. If no base string is provided only order numbers are used to anonymize the ids.
-var LIFSPAN_TIMELINE_PROCESSOR = function(par){
+var CUSTOM_TIMELINE_PROCESSOR = function(par){
    
-   console.log("HUGO TESTING SHIT in lifespan_timeline_main.js");
+   console.log("HUGO TESTING SHIT in lifespan_timeline_processor.js");
     
     var p = par || {};
     
