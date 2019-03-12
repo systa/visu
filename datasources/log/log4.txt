@@ -1,0 +1,7 @@
+25.01.2017 09:25:29 user 2ac246473b284b67c533c80e99a84749 in session 67761b6d-c1ef-4bdc-b6a4-dee0b638e1b3: Program started.
+25.01.2017 09:37:39 user 2ac246473b284b67c533c80e99a84749 in session 67761b6d-c1ef-4bdc-b6a4-dee0b638e1b3: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
+25.01.2017 09:45:52 user 2ac246473b284b67c533c80e99a84749 in session 3175409c-fb4a-488d-a595-c68161d59043: Program started.
+25.01.2017 09:49:52 user 2ac246473b284b67c533c80e99a84749 in session 3175409c-fb4a-488d-a595-c68161d59043: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/general.html opened.-
+25.01.2017 09:51:07 user 2ac246473b284b67c533c80e99a84749 in session 3175409c-fb4a-488d-a595-c68161d59043: Clicked on Exit.
+25.01.2017 10:02:42 user e740034089ce25e7629f7fede416660e in session 9ed14693-f3c8-4bed-b171-520f8aa378ea: Program started.
+25.01.2017 10:29:42 user e740034089ce25e7629f7fede416660e in session 9ed14693-f3c8-4bed-b171-520f8aa378ea: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.

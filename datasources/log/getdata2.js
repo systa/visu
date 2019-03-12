@@ -192,21 +192,43 @@ function getData( source, callback ) {
         
         //The rest
         var entries = session.entries;
-        for (var j = 0; j < entries.length; j++) {
-            entry = entries[j];
-            var str = new String(entry.action);
-            var double = false;
+        for (var j = 0; j <= entries.length; j++) {
+           var str;
+           var double = false;
            
-            //Remove duplicate entries
-            if (j > 0){
-               prev_entry = entries[j-1];
-               if (prev_entry.action === entry.action){
-                  double = true;
-               }  
+            if (j < entries.length){
+               entry = entries[j];
+               str = new String(entry.action);
+               
+               //Ignore duplicate entries
+               if (j > 0){
+                  prev_entry = entries[j-1];
+                  if (prev_entry.action === entry.action){
+                     double = true;
+                  }  
+               }
             }
            
-            //Document list
-            if (double) {
+            //Force last entry to be Exit
+            if(j == entries.length) {
+               console.log("All entries processed...");
+               //Add event
+               entry = entries[j-1]; //No real way to know how long the session has lasted before ending, hence copy previous time
+               
+               if (entry.action != "Clicked on Exit."){
+                  console.log("Last entry is not Exit: ", entry.action);
+                  
+                  var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Exit", hash: entry.hash, document: null, page: null};
+                  events.push(event);
+
+                  //Add statechange
+                  var stateChange = {event: entry.hash, from: "(session) open", to: "(session) closed"}; 
+                  stateChanges.push(stateChange);
+                  event.statechange = stateChange;
+                  
+                  console.log("Forced Exit Action !");
+               }
+            }else if (double) { //ignore duplicate entries
                //console.log("DOUBLE ENTRY: " + entry.action);
             }
             else if (str.includes("Document")) {

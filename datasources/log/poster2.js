@@ -14,8 +14,8 @@ var _ = require( 'underscore' );
 
 var crypto = require('crypto');
 
-var debugLink = true;
-var debugSend = true;
+var debugLink = false;
+var debugSend = false;
 var debugParse = true;
 
 function hashCode(string) {
