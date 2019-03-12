@@ -36,6 +36,7 @@ var CUSTOM_TIMELINE_MAIN = function(par){
     
     //Function for resize event
     var onResize = function(){
+       console.log("[custom_timelmine_main.js]onResize");
         var container = _layout.getContainer();
 
         _containerWidth = window.innerWidth-_containerMargins.left-_containerMargins.right;
@@ -69,6 +70,7 @@ var CUSTOM_TIMELINE_MAIN = function(par){
     
     
     var createLegend = function(types){
+       console.log("[custom_timelmine_main.js]createLegend");
         var scale = _issueChart.getColorScale();
         for(var i = 0; i < types.length; ++i){
             var color = scale(types[i]);
@@ -78,11 +80,13 @@ var CUSTOM_TIMELINE_MAIN = function(par){
     
     //Initializes the chart template and draws the visualization.
     var initCharts = function(data, timeframe){
+      console.log("[custom_timelmine_main.js]initCharts");
         
         var elements = _layout.createLayout();
         
         if(!timeframe){
             timeframe = data.timeframe;
+            console.log("[custom_timelmine_main.js]timeframe:", timeframe);
         }
         
         _issueChartMargins.left = _layout.getSVGTextWidth(data.longestId)+2;
@@ -111,7 +115,8 @@ var CUSTOM_TIMELINE_MAIN = function(par){
             margins : _timeSelectorMargins,
             timeframe : timeframe,
             onBrushFunction : onBrush,
-            linear: false
+            linear: false,
+            customTime: true
         });
         
         createLegend(data.types);
@@ -173,7 +178,9 @@ var CUSTOM_TIMELINE_MAIN = function(par){
     var _filters = p.filters !== undefined ? p.filters : false;
     var _timeframe = false;
     if(_filters.startTime && _filters.endTime){
-        _timeframe = [new Date(_filters.startTime), new Date(_filters.endTime)];
+         //Filters based on time
+        _timeframe = [_filters.startTime, _filters.endTime]; //[new Date(_filters.startTime), new Date(_filters.endTime)];
+        //_timeframe = [0, 1000];
     }
     
     var _parser = LIFSPAN_TIMELINE_PROCESSOR(_mapping);
@@ -189,25 +196,30 @@ var CUSTOM_TIMELINE_MAIN = function(par){
     var whenLoaded = function(){
         if(_events && _constructs && _states){
             var parsed_data = _parser(_constructs, _events, _states);
-            initCharts(parsed_data, _timeframe);
+                      
+           parsed_data.timeframe = [0,10000];
+           initCharts(parsed_data, null); //initCharts(parsed_data, _timeframe);
+           
+           console.log("[custom_timeline_main]Events: ", _events);
+           console.log("[custom_timeline_main]Statechanges: ", _states);
+           console.log("[custom_timeline_main]Constructs: ", _constructs);
+           console.log("[custom_timeline_main]Parsed Data: ", parsed_data);
+           
         }
         return false;
     };
     
     var eventsLoaded = function(data){
         _events = data;
-        console.log("[custom_timeline_main]Events: ", _events);
         whenLoaded();
     };
     
     var constructsLoaded = function(data){
         _constructs = data;
-       console.log("[custom_timeline_main]Constructs: ", _states);
         whenLoaded();
     };
     var statesLoaded = function(data){
         _states = data;
-        console.log("[custom_timeline_main]Statechanges: ", _states);
         whenLoaded();
     };
        
@@ -215,3 +227,4 @@ var CUSTOM_TIMELINE_MAIN = function(par){
     _query.getFilteredStatechanges(_queryFilters.eventFilters, statesLoaded);
     _query.getFilteredEvents(_queryFilters.eventFilters, eventsLoaded);
 };
+ 

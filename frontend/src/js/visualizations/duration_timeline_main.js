@@ -67,7 +67,7 @@ var DURATION_TIMELINE_MAIN = function(par){
     var createLegend = function(){
         var scale = _eventTimesChart.getColorScale();
         var domain = scale.domain();
-        var parent = document.getElementById("legendContainer");
+        //var parent = document.getElementById("legendContainer");
         for(var i = 0; i < domain.length; ++i){
             var color = scale(domain[i]);
             _layout.appendLabel({bgcolor: color, text: domain[i]});

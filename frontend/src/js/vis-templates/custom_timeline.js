@@ -26,6 +26,8 @@
     colorScale  : d3.js color scale used in showing states, events and labels. if not specified d3.scale.category20 is used.
 */
 var CustomTimeline = function(par){
+     console.log("[custom_timeline.js]Parameters:", par);
+   
     var p = par || {};
     
     var _svg  = p.svg !== undefined ? p.svg : false;
@@ -37,7 +39,7 @@ var CustomTimeline = function(par){
     var _width = p.width !== undefined ? p.width : 256;
     var _height = p.height !== undefined ? p.height : 32;
     var _margins = p.margins !== undefined ? p.margins : {top: 0, bottom : 0, left: 0, right: 0};
-    var _xDomain = p.timeframe !== undefined ? p.timeframe : [0, 1000];
+    var _xDomain = p.timeframe !== undefined ? p.timeframe : [0, 100000]; //useless because already defined in _main
     var _labelDomain = p.labelColors !== undefined ? p.labelColors : [];
     var _typeDomain = p.stateColors !== undefined ? p.stateColors : [];
     var _yDomain = p.ids !== undefined ? p.ids : [];
@@ -47,15 +49,31 @@ var CustomTimeline = function(par){
     //If we want to display the construct types or not?
     var _displayTypes = p.displayTypes !== undefined ? p.displayTypes : true;
     var _colorScale = p.colorScale !== undefined ? p.colorScale : d3.scale.category20();
-    
-    var _range = 0;
-    var _timeScale = d3.time.scale().domain(_xDomain);
-    
-    _timeScale.range([_margins.left, _width-_margins.right]);
-    
-    //the tick size is negative because the orient of the axis is top. This reverts the axis...
-    var _timeAxis = d3.svg.axis().orient("top").scale(_timeScale).tickSize(-_height+_margins.top+_margins.bottom);
+     
+   try{
+      console.log("[custom_timeline.js]Modifying timescale...");
+      var _range = 0;
+      
+      console.log("[custom_timeline.js]Domain:", _xDomain);
+      //var _timeScale = d3.time.scale().domain(_xDomain);
+      
+      var _timeScale = d3.scale.linear();
+      _timeScale.domain(_xDomain);
+      
+      console.log("[custom_timeline.js]Range:", [_margins.left, _width-_margins.right]);
+       _timeScale.range([_margins.left, _width-_margins.right]);
 
+       //the tick size is negative because the orient of the axis is top. This reverts the axis...
+       var _timeAxis = d3.svg.axis().orient("top").scale(_timeScale).tickSize(-_height+_margins.top+_margins.bottom);
+       //_timeAxis.ticks(0.00001);
+      //_timeAxis.tickFormat(d3.format(",.0f"))
+      
+      console.log("[custom_timeline.js]...no crash yet!");
+   }catch(e){
+      console.log("[custom_timeline.js]...fuck",e);
+      
+   }
+  
     //building ordinal scale for test sets based on the build id
     var _scaleY = d3.scale.ordinal().rangeBands([_margins.top, _height-_margins.bottom]).domain(_yDomain);
 
@@ -108,8 +126,8 @@ var CustomTimeline = function(par){
     
     var getLpStart = function(data){
         var domain = _timeScale.domain();
-        var start = new Date(data.start);
-        var end = new Date(data.end);
+        var start = data.start; //new Date(data.start);
+        var end = data.end; //new Date(data.end);
         
         //if end is false...
         //data endpoint is mapped to the domain end point
@@ -130,8 +148,8 @@ var CustomTimeline = function(par){
     
     var getLpEnd = function(data){
         var domain = _timeScale.domain();
-        var start = new Date(data.start);
-        var end = new Date(data.end);
+        var start = data.start; //new Date(data.start);
+        var end = data.end; //new Date(data.end);
 
         //if end is false...
         //data endpoint is mapped to the domain end point
@@ -159,7 +177,7 @@ var CustomTimeline = function(par){
     //The start point is the x-coordinate of the runtime bar
     var getX = function(data){
         var domain = _timeScale.domain();
-        var start = new Date(data.time);
+        var start = data.time; //new Date(data.time);
         var circleDiameter = _rowHeight*0.33*2;
 
         //clipping the coordinates to brush selection
@@ -182,6 +200,7 @@ var CustomTimeline = function(par){
         return y;
     };
     
+    //WHAT IS DISPLAYED ON MOUSE OVER !!!
     var onMouseOver = function(data){
         var dispstring = "";
         for(var atr in data){

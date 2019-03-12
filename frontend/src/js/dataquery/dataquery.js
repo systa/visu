@@ -128,7 +128,7 @@ var DATA_QUERY = function(){
     //filters: An object containing the filters
     //callback : Function that is called when the data is loaded. Gets the data as an argument. user specifies.
     pub.getFilteredConstructs = function(filters, callback){
-        getFiltered(_constructPath, filters, callback);
+       getFiltered(_constructPath, filters, callback);
     };
     
     /*TODO:
@@ -136,7 +136,7 @@ var DATA_QUERY = function(){
         - Get related statechanges
         - Get related events for list of constructs
         - Get related statechanges for list of constructs
-    
     */
+   
     return pub;
 };

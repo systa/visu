@@ -28,6 +28,7 @@ var TimeSelector = function(par){
     
     var _svg  = p.svg !== undefined ? p.svg : false;
     var _linear = p.linear !== undefined ? p.linear : true;
+    var _customTime = p.customTime !== undefined ? p.customTime : false;
     if(!_svg){
         console.log("SVG parameter is mandatory for TimeSelector -chart!");
         return false;
@@ -46,13 +47,16 @@ var TimeSelector = function(par){
         _scale = d3.scale.linear().domain([0,_xDomain[1]-_xDomain[0]]);
     }
     else{
-        _scale = d3.time.scale().domain(_xDomain);
+       _scale = d3.time.scale().domain(_xDomain);
     }
     _scale.range([_margins.left, _width-_margins.right]);
     
-    
-    var _brushAxis = d3.svg.axis().orient("bottom").tickSize((_height-(_margins.top+_margins.bottom))*0.5).scale(_scale);
-
+   var _brushAxis = d3.svg.axis().orient("bottom").tickSize((_height-(_margins.top+_margins.bottom))*0.5).scale(_scale);
+   
+   if(_customTime){
+      _brushAxis.tickFormat(d3.time.format("%S.%L"));
+   }
+   
     //event listener for brush events
     var onBrush = function(){
         _brushCallback(_brush.empty() ? _scale.domain() : _brush.extent());

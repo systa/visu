@@ -13,6 +13,8 @@ var DEMO_TEMPLATE = function(mpar){
     
     //The main container parameters
     var _mainParameters = mpar || {};
+   
+    console.log("[demo_template.js]Parameters:", mpar);
     
     var _mclassName = _mainParameters.className !== undefined ? _mainParameters.className : "container";
     var _containerId = _mainParameters.id !== undefined ? _mainParameters.id : "container";
@@ -76,6 +78,7 @@ var DEMO_TEMPLATE = function(mpar){
         
             var className = p.className !== undefined ? p.className : "brush";
             var id = p.id !== undefined ? p.id : "brushContainer";
+         var id = p.id !== undefined ? p.id : "brushContainer";
             var svgId = p.svgId !== undefined ? p.svgId : "brush";
             var parent = p.parent !== undefined ? p.parent : _container;
             
@@ -168,7 +171,7 @@ var DEMO_TEMPLATE = function(mpar){
     //---------------------------------------
     //    PUBLIC METHODS
     //---------------------------------------
-    var pub = {};
+    var pub = {}; //Public methods are used in InitChart by custom_timeline_main.js
     
     //---------------------------------------
     //    GETTERS FOR SVG & HTML ELEMENTS
