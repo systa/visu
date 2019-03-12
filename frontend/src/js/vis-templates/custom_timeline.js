@@ -39,7 +39,7 @@ var CustomTimeline = function(par){
     var _width = p.width !== undefined ? p.width : 256;
     var _height = p.height !== undefined ? p.height : 32;
     var _margins = p.margins !== undefined ? p.margins : {top: 0, bottom : 0, left: 0, right: 0};
-    var _xDomain = p.timeframe !== undefined ? p.timeframe : [0, 100000]; //useless because already defined in _main
+    var _xDomain = p.timeframe !== undefined ? p.timeframe : [0, 1000]; //useless because already defined in _main
     var _labelDomain = p.labelColors !== undefined ? p.labelColors : [];
     var _typeDomain = p.stateColors !== undefined ? p.stateColors : [];
     var _yDomain = p.ids !== undefined ? p.ids : [];
@@ -65,8 +65,7 @@ var CustomTimeline = function(par){
 
        //the tick size is negative because the orient of the axis is top. This reverts the axis...
        var _timeAxis = d3.svg.axis().orient("top").scale(_timeScale).tickSize(-_height+_margins.top+_margins.bottom);
-       //_timeAxis.ticks(0.00001);
-      //_timeAxis.tickFormat(d3.format(",.0f"))
+       _timeAxis.tickFormat(d3.format(",f")); //Number format on graph axis
       
       console.log("[custom_timeline.js]...no crash yet!");
    }catch(e){
@@ -203,13 +202,27 @@ var CustomTimeline = function(par){
     //WHAT IS DISPLAYED ON MOUSE OVER !!!
     var onMouseOver = function(data){
         var dispstring = "";
+       
+        dispstring += "data: " + data.toString() + "</br>"; 
+       
         for(var atr in data){
             if(data.hasOwnProperty(atr)){
                 if(!$.isPlainObject(data[atr]) && !$.isArray(data[atr])){
                     dispstring += atr+": "+data[atr].toString()+"</br>";
+                   
+                }else if ($.isArray(data[atr])) {
+                   for(var atr2 in data[atr]){
+                      dispstring += "tab("+atr2+"): "+data[atr][atr2].toString()+"</br>";
+                   }
+                }else if ($.isPlainObject(data[atr])) {
+                   for(var atr2 in data[atr]){
+                      dispstring += "object("+atr2+"): "+data[atr][atr2].toString()+"</br>";
+                   }
                 }
             }
         }
+       
+        dispstring += "End of lol </br>"; 
         _tooltip.html(dispstring);
         return _tooltip.style("visibility", "visible");
     };

@@ -53,8 +53,10 @@ var TimeSelector = function(par){
     
    var _brushAxis = d3.svg.axis().orient("bottom").tickSize((_height-(_margins.top+_margins.bottom))*0.5).scale(_scale);
    
+   //On brush axis
    if(_customTime){
-      _brushAxis.tickFormat(d3.time.format("%S.%L"));
+      _brushAxis.tickFormat(d3.time.format("%S")); //Seconds
+      //_brushAxis.tickFormat(d3.time.format("%X")); //Full time
    }
    
     //event listener for brush events

@@ -86,7 +86,7 @@ var CUSTOM_TIMELINE_MAIN = function(par){
         
         if(!timeframe){
             timeframe = data.timeframe;
-            console.log("[custom_timelmine_main.js]timeframe:", timeframe);
+            console.log("[custom_timelmine_main.js]data.timeframe:", timeframe);
         }
         
         _issueChartMargins.left = _layout.getSVGTextWidth(data.longestId)+2;
@@ -196,9 +196,12 @@ var CUSTOM_TIMELINE_MAIN = function(par){
     var whenLoaded = function(){
         if(_events && _constructs && _states){
             var parsed_data = _parser(_constructs, _events, _states);
+           
+           console.log("[custom_timeline_main]Timeframe: ", _timeframe);
+           console.log("[custom_timeline_main]Parsed Timeframe: ", parsed_data.timeframe);
                       
-           parsed_data.timeframe = [0,10000];
-           initCharts(parsed_data, null); //initCharts(parsed_data, _timeframe);
+           //parsed_data.timeframe = _timeframe;
+           initCharts(parsed_data, _timeframe); //initCharts(parsed_data, _timeframe);
            
            console.log("[custom_timeline_main]Events: ", _events);
            console.log("[custom_timeline_main]Statechanges: ", _states);

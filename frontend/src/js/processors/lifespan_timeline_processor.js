@@ -20,7 +20,7 @@ var LIFSPAN_TIMELINE_PROCESSOR = function(par){
     
     var _rowId = p.rowId !== undefined ? p.rowId : "_id";
     var _fromOrigin = p.rowIdIsFromOrigin !== undefined ? p.rowIdIsFromOrigin : false;
-    var _anonymize = p.anonymize !== undefined ? p.anonymize : true;
+    var _anonymize = p.anonymize !== undefined ? p.anonymize : false;
     //var _anonymize = p.anonymize !== undefined ? p.anonymize : false;
     var _astring = p.astring !== undefined ? p.astring : "";
     var _states = p.states !== undefined ? p.states : {};
