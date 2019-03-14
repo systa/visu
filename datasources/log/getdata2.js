@@ -159,6 +159,17 @@ function display(result) {
     }
 }
 
+function parseMyTime(myTime, myDate){
+   var time = new Date(myDate.substr(6,4), //year
+                      myDate.substr(3,2)-1,//month
+                      myDate.substr(0,2),  //day
+                      myTime.substr(0,2),  //hour
+                      myTime.substr(3,2),  //min
+                      myTime.substr(6,2),  //sec
+                      "000"); //millisec
+   return time;
+}
+
 //Returns the list of users, sessions, documents, etc
 function getData( source, callback ) {
     console.log('[GetData]Parsing...');
@@ -192,6 +203,7 @@ function getData( source, callback ) {
         
         //The rest
         var entries = session.entries;
+        var first_event_time = parseMyTime(entries[0].time, entries[0].date);
         for (var j = 0; j <= entries.length; j++) {
            var str;
            var double = false;
@@ -208,7 +220,7 @@ function getData( source, callback ) {
                   }  
                }
             }
-           
+            
             //Force last entry to be Exit
             if(j == entries.length) {
                console.log("All entries processed...");
@@ -218,7 +230,7 @@ function getData( source, callback ) {
                if (entry.action != "Clicked on Exit."){
                   console.log("Last entry is not Exit: ", entry.action);
                   
-                  var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Exit", hash: entry.hash, document: null, page: null};
+                  var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Exit", hash: entry.hash, document: null, page: null, first_time: first_event_time};
                   events.push(event);
 
                   //Add statechange
@@ -230,8 +242,7 @@ function getData( source, callback ) {
                }
             }else if (double) { //ignore duplicate entries
                //console.log("DOUBLE ENTRY: " + entry.action);
-            }
-            else if (str.includes("Document")) {
+            }else if (str.includes("Document")) {
                 //Isolate document name
                 words = str.split(' ');
                 var document = {name: words[1], user_id: session.user_id, hash: hashCode(words[1]+session.user_id)};
@@ -256,13 +267,13 @@ function getData( source, callback ) {
                         stateChange.from = "(doc) locked"; stateChange.to = "(doc) unlocked";
                         break;
                     case "opened.":
-                        var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Open Document", hash: entry.hash, document: document.hash, page: null, statechange:stateChange};
+                        var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Open Document", hash: entry.hash, document: document.hash, page: null, statechange:stateChange, first_time: first_event_time};
                         events.push(event);
                         
                         stateChange.from = "(doc) closed"; stateChange.to = "(doc) opened";  
                         break;
                     case "closed.":
-                        var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Close Document", hash: entry.hash, document: document.hash, page: null, statechange:stateChange};
+                        var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Close Document", hash: entry.hash, document: document.hash, page: null, statechange:stateChange, first_time: first_event_time};
                         events.push(event);
                         
                         stateChange.from = "(doc) opened"; stateChange.to = "(doc) closed";  
@@ -294,10 +305,12 @@ function getData( source, callback ) {
                     stateChange = {event: entry.hash, from: "(help) closed", to:"(help) opened"}; //Link to related event
                     stateChanges.push(stateChange);
                     event.statechange = stateChange;
+                    
+                    //TODO: close previous help when a new one is opened
                 }
                 
                 //Create event
-                var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Help", hash: entry.hash, document: null, statechange:stateChange};
+                var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Help", hash: entry.hash, document: null, statechange:stateChange, first_time: first_event_time};
                 if (str.includes("Clicked"))
                     event.page = "Help";
                 else
@@ -307,61 +320,29 @@ function getData( source, callback ) {
             }
             
             else if (str.includes("Clicked on")) {
-                var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: entry.action, hash: entry.hash, document: null, page: null};
-                events.push(event);
+                var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: entry.action, hash: entry.hash, document: null, page: null, first_time: first_event_time};
+                var stateChange;
                                         
                 words = str.split(' ');
                 switch(words[2]){
-                    case "Unlocked":
+                    case "Unlocked.":
                         event.document = previous_document;
                         break;
-                    case "Locked":
+                    case "Locked.":
                         event.document = previous_document;
                         break;
-                    case "Exit":
+                    case "Exit.":
                         //Create state change
-                        var stateChange = {event: entry.hash, from: "(session) open", to: "(session) closed"}; 
+                        stateChange = {event: entry.hash, from: "(session) open", to: "(session) closed"}; 
                         stateChanges.push(stateChange);
+                        
                         event.statechange = stateChange;
                         break;
-                    //Unspecific cases
-                    /*case "Configure Library":
-                        break;
-                    case "Visible Windows":
-                        break;
-                    case "Makefile Generator":
-                        break;
-                    case "About":
-                        break;
-                    case "Default":
-                        break;
-                    case "Interconnection Tool":
-                        break;
-                    case "Save":
-                        break;
-                    case "MCAPI Code Generator":
-                        break;
-                    case "New":
-                        break;
-                    case "Settings":
-                        break;
-                    case "Refresh":
-                        break;
-                    case "Refresh Library":
-                        break;
-                    case "Save As":
-                        break;
-                    case "Save All":
-                        break;
-                    case "Select Tool":
-                        break;
-                    case "Undo":
-                        break;
-                    case "View Library Integrity Report":
-                        break;*/
                     default:
                         break;     
                 }
+                
+                events.push(event);
             }
           
             else if (str.includes("Program started.")) {
@@ -370,20 +351,22 @@ function getData( source, callback ) {
                 stateChanges.push(stateChange);
                
                 //Create event
-                var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: entry.action, hash: entry.hash, document: null, page: null, statechange:stateChange};
+                var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: entry.action, hash: entry.hash, document: null, page: null, statechange:stateChange, first_time: first_event_time};
                 events.push(event);
                 
             }
             
             else if (str.includes("Library path added")) {
                 //Create event
-                var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: entry.action, hash: entry.hash, document: null, page: null};
+                var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: entry.action, hash: entry.hash, document: null, page: null, first_time: first_event_time};
                 events.push(event);
             }
           
         }
         
     }
+    
+    //TODO force close all pages/documents at the end of session
     
     var result = {events: events, users: users, sessions: sessions, documents:documents, statechanges: stateChanges, pages: pages};
     //display(result);

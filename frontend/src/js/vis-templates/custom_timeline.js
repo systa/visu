@@ -26,7 +26,7 @@
     colorScale  : d3.js color scale used in showing states, events and labels. if not specified d3.scale.category20 is used.
 */
 var CustomTimeline = function(par){
-     console.log("[custom_timeline.js]Parameters:", par);
+    console.log("[custom_timeline.js]Parameters:", par);
    
     var p = par || {};
     
@@ -49,7 +49,7 @@ var CustomTimeline = function(par){
     //If we want to display the construct types or not?
     var _displayTypes = p.displayTypes !== undefined ? p.displayTypes : true;
     var _colorScale = p.colorScale !== undefined ? p.colorScale : d3.scale.category20();
-     
+    
    try{
       console.log("[custom_timeline.js]Modifying timescale...");
       var _range = 0;
@@ -66,11 +66,8 @@ var CustomTimeline = function(par){
        //the tick size is negative because the orient of the axis is top. This reverts the axis...
        var _timeAxis = d3.svg.axis().orient("top").scale(_timeScale).tickSize(-_height+_margins.top+_margins.bottom);
        _timeAxis.tickFormat(d3.format(",f")); //Number format on graph axis
-      
-      console.log("[custom_timeline.js]...no crash yet!");
    }catch(e){
-      console.log("[custom_timeline.js]...fuck",e);
-      
+      console.log("[custom_timeline.js]...fuck", e);
    }
   
     //building ordinal scale for test sets based on the build id
@@ -108,14 +105,19 @@ var CustomTimeline = function(par){
         var _states = _stateGroup.selectAll("rect").data(_constructData).enter().append("rect");
         var _labels = _stateGroup.selectAll("text").data(_constructData).enter().append("text");
     }
-    //Defining the data!
-    //Lifespan data
     
+    //Defining the data!
+    
+    //Lifespan data
     var _lifespanGroup = _svg.append("g");
     var _lifespans = _lifespanGroup.selectAll("line").data(_lifespanData).enter().append("line");
     
+    console.log("[custom_timeline.js]Lifespans:", _lifespans);
+    console.log("[custom_timeline.js]Lifespan Data:", _lifespanData);
+    
     //The event times
     var _eventGroup = _svg.append("g");
+    
     //var _events = _eventGroup.selectAll("rect").data(_eventData).enter().append("rect");
     var _events = _eventGroup.selectAll("circle").data(_eventData).enter().append("circle");
     
@@ -123,15 +125,16 @@ var CustomTimeline = function(par){
     
     var _tooltip = d3.select("body").append("div").attr('class', "tooltip");
     
+    //Lifespan start
     var getLpStart = function(data){
-        var domain = _timeScale.domain();
-       
-        //Start the constructs at 0
-        var start = 0; //new Date(data.start);
+        console.log("[custom_timeline.js]Ls Data:", data);
         
-        var d_end = + (new Date(data.end));
-        var d_start = + (new Date(data.start));
-        var end = d_end - d_start; //new Date(data.end);
+        var domain = _timeScale.domain();
+        
+        var base = + new Date(data.first_time);
+        
+        var start = + new Date(data.start);
+        var end = + new Date(data.end);
         
         //if end is false...
         //data endpoint is mapped to the domain end point
@@ -147,18 +150,19 @@ var CustomTimeline = function(par){
             start = domain[0];
         }
 
-        return _timeScale(start);
+        return _timeScale(start) - _timeScale(base);
     };
     
+    //Lifespan end
     var getLpEnd = function(data){
-        var domain = _timeScale.domain();
-
-        //Start the constructs at 0   
-        var start = 0; //new Date(data.start);
+        console.log("[custom_timeline.js]Lp Data:", data);
         
-        var d_end = + (new Date(data.end));
-        var d_start = + (new Date(data.start));
-        var end = d_end - d_start; //new Date(data.end);
+        var domain = _timeScale.domain();
+        
+        var base = + new Date(data.first_time);
+        
+        var start = + new Date(data.start);
+        var end = + new Date(data.end);
 
         //if end is false...
         //data endpoint is mapped to the domain end point
@@ -176,30 +180,25 @@ var CustomTimeline = function(par){
         if(end >= domain[domain.length-1] && start <= domain[domain.length-1]){
             end = domain[domain.length-1];
         }
-        var w = _timeScale(end);
         
-        return w;
-        
+        return _timeScale(end) - _timeScale(base);
     };
     
     //Gets the timeline bars start point
     //The start point is the x-coordinate of the runtime bar
     var getX = function(data){
         var domain = _timeScale.domain();
-        var date = new Date(data.time);
-        var start = +date;
+        var start = + new Date(data.time);
+        var base = + new Date(data.data.first_time);
+        //var start = (+ new Date(data.time)) - (+ new Date(data.first_time));
         var circleDiameter = _rowHeight*0.33*2;
 
         //clipping the coordinates to brush selection
         if(start <= domain[0] || start >= domain[domain.length-1]){
-            //console.log("[custom_timeline.js]Clipping in ", data);
             return -circleDiameter;
         }
 
-        var x = _timeScale(start);
-        
-        //console.log("[custom_timeline.js]No clipping in ", data, ". start at ", x);
-        return x;
+        return _timeScale(start) - _timeScale(base);
     };
   
     //Gets the data row based on buildId

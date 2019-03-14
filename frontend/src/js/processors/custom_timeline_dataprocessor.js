@@ -66,9 +66,11 @@ var CUSTOM_TIMELINE_PROCESSOR = function(par){
     };
     
     var parseLifespans = function(statelist){
+        console.log("[custom_timeline_dataprocessor]Parsing lifespans of states:", statelist);
+        
         var lifespans = [];
         //Looping through all constructs
-        for(var rid in statelist){
+        for(var rid in statelist){            
             if(statelist.hasOwnProperty(rid)){
                 var statechanges = statelist[rid];
                 statechanges.sort(stSortFunction);
@@ -83,6 +85,10 @@ var CUSTOM_TIMELINE_PROCESSOR = function(par){
                 var skip = false;
 
                 //Looping through state changes of one construct
+                
+                var first_time = statechanges[0].time;
+                console.log("[custom_timeline_dataprocessor]first time:", first_time);
+                
                 for(var i = 0; i < statechanges.length; ++i){
                     var sc = statechanges[i];
                     var trimmedState = sc.statechange.to.replace(/\s/g,'');
@@ -92,7 +98,8 @@ var CUSTOM_TIMELINE_PROCESSOR = function(par){
                             rowId : rid,
                             start : st,
                             state : state,
-                            end : sc.time
+                            end : sc.time,
+                            first_time : first_time
                         };
                         lifespans.push(tmp);
                         st = sc.time;
@@ -121,7 +128,8 @@ var CUSTOM_TIMELINE_PROCESSOR = function(par){
                         rowId : rid,
                         start : st,
                         state : state,
-                        end : rt
+                        end : rt,
+                        first_time : first_time
                     });
                 }
             }

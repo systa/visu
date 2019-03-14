@@ -36,7 +36,7 @@ var CUSTOM_TIMELINE_MAIN = function(par){
     
     //Function for resize event
     var onResize = function(){
-       console.log("[custom_timelmine_main.js]onResize");
+        console.log("[custom_timelmine_main.js]onResize");
         var container = _layout.getContainer();
 
         _containerWidth = window.innerWidth-_containerMargins.left-_containerMargins.right;
@@ -179,9 +179,7 @@ var CUSTOM_TIMELINE_MAIN = function(par){
     var _timeframe = false;
     if(_filters.startTime && _filters.endTime){
          //Filters based on time
-         
-        _timeframe = [+(new Date(_filters.startTime)), +(new Date(_filters.endTime))]; //[new Date(_filters.startTime), new Date(_filters.endTime)];
-        //_timeframe = [0, 1000];
+        _timeframe = [+(new Date(_filters.startTime)), +(new Date(_filters.endTime))];
     }
     
     _mapping.anonymize = true;
@@ -202,8 +200,7 @@ var CUSTOM_TIMELINE_MAIN = function(par){
            console.log("[custom_timeline_main]Timeframe: ", _timeframe);
            console.log("[custom_timeline_main]Parsed Timeframe: ", parsed_data.timeframe);
                       
-           //parsed_data.timeframe = _timeframe;
-           initCharts(parsed_data, _timeframe); //initCharts(parsed_data, _timeframe);
+           initCharts(parsed_data, _timeframe); //timeframe of the filters !
            
            console.log("[custom_timeline_main]Events: ", _events);
            console.log("[custom_timeline_main]Statechanges: ", _states);

@@ -141,7 +141,7 @@ function sendToDb( logData, source ) {
             event.time = parseMyTime(item.time, item.date);
             event.duration = 0;
             event.creator = item.session_id;
-            event.data = {hash: item.hash, action: item.action};
+            event.data = {hash: item.hash, action: item.action, first_time: item.first_time};
             event.id = item.hash;
             
             item.id = item.hash;
