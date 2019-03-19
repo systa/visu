@@ -179,15 +179,33 @@ var EventTimeline = function(par){
     var getLineY = function(data){
         var y = getY(data);
         y += _rowHeight*0.5;
+        if (data.data && data.data.collide && data.data.collide !== 0){
+            //console.log("[custom_timeline.js]Data collides:", data.data.collide);
+            y += (_rowHeight*0.2) * data.data.collide;
+        }
         return y;
     };
     
     var onMouseOver = function(data){
         var dispstring = "";
+       
+        dispstring += "data: " + data.toString() + "</br>"; 
+       
         for(var atr in data){
             if(data.hasOwnProperty(atr)){
                 if(!$.isPlainObject(data[atr]) && !$.isArray(data[atr])){
                     dispstring += atr+": "+data[atr].toString()+"</br>";
+                   
+                }else if ($.isArray(data[atr])) {
+                   for(var atr2 in data[atr]){
+                       if(!$.isPlainObject(data[atr]) && !$.isArray(data[atr])){
+                           dispstring += "tab("+atr2+"): "+data[atr][atr2].toString()+"</br>";
+                       }
+                   }
+                }else if ($.isPlainObject(data[atr])) {
+                   for(var atr2 in data[atr]){
+                      dispstring += "object("+atr2+"): "+data[atr][atr2].toString()+"</br>";
+                   }
                 }
             }
         }

@@ -55,17 +55,18 @@ var CustomTimeline = function(par){
       var _range = 0;
       
       console.log("[custom_timeline.js]Domain:", _xDomain);
-      //var _timeScale = d3.time.scale().domain(_xDomain);
       
-      var _timeScale = d3.scale.linear();
-      _timeScale.domain(_xDomain);
+      var _timeScale = d3.time.scale().domain(_xDomain);
+      //var _timeScale = d3.scale.linear();
       
-      console.log("[custom_timeline.js]Range:", [_margins.left, _width-_margins.right]);
+       _timeScale.domain(_xDomain);
+      
+      //console.log("[custom_timeline.js]Range:", [_margins.left, _width-_margins.right]);
        _timeScale.range([_margins.left, _width-_margins.right]);
 
        //the tick size is negative because the orient of the axis is top. This reverts the axis...
        var _timeAxis = d3.svg.axis().orient("top").scale(_timeScale).tickSize(-_height+_margins.top+_margins.bottom);
-       _timeAxis.tickFormat(d3.format(",f")); //Number format on graph axis
+       //_timeAxis.tickFormat(d3.format(",f")); //Number format on graph axis
    }catch(e){
       console.log("[custom_timeline.js]...fuck", e);
    }
@@ -75,8 +76,8 @@ var CustomTimeline = function(par){
 
     //calculaiting height for one row now that we know how many rows we will have
     var _rowHeight = ((_height-_margins.bottom-_margins.top)/_yDomain.length);
-    var _minRowHeight = 15;//12;
-    var _maxRowHeight = 20;//16;
+    var _minRowHeight = 30;//12;
+    var _maxRowHeight = 40;//16;
     if(_rowHeight < _minRowHeight){
         _rowHeight = _minRowHeight;
     }
@@ -127,14 +128,15 @@ var CustomTimeline = function(par){
     
     //Lifespan start
     var getLpStart = function(data){
-        console.log("[custom_timeline.js]Ls Data:", data);
+        //console.log("[custom_timeline.js]Ls Data:", data);
         
         var domain = _timeScale.domain();
         
-        var base = + new Date(data.first_time);
+        var base = new Date(data.first_time);
         
-        var start = + new Date(data.start);
-        var end = + new Date(data.end);
+        var start = new Date(data.start) - base;
+        var end = new Date(data.end) - base;
+        
         
         //if end is false...
         //data endpoint is mapped to the domain end point
@@ -142,6 +144,7 @@ var CustomTimeline = function(par){
             end = domain[domain.length-1];
         }
 
+        /*
         //clipping the coordinates to brush selection
         if(start <= domain[0] && end >= domain[0]){
             start = domain[0];
@@ -149,26 +152,42 @@ var CustomTimeline = function(par){
         else if((start < domain[0] && end < domain[0]) || start > domain[domain.length-1]){
             start = domain[0];
         }
-
-        return _timeScale(start) - _timeScale(base);
+        */
+        
+        return _timeScale(domain[0]); //_timeScale(start);// - _timeScale(base);
     };
     
     //Lifespan end
     var getLpEnd = function(data){
-        console.log("[custom_timeline.js]Lp Data:", data);
-        
         var domain = _timeScale.domain();
         
-        var base = + new Date(data.first_time);
+        console.log("Data: ", data, ", domain:", domain);
         
-        var start = + new Date(data.start);
-        var end = + new Date(data.end);
-
         //if end is false...
         //data endpoint is mapped to the domain end point
         if(!data.end){
-            end = domain[domain.length-1]; 
+            data.end = domain[domain.length-1]; 
         }
+        
+        try {
+            var n_end = new Date(data.end).getTime();
+            var n_first = new Date(data.first_time).getTime();
+            var y = n_end - n_first;
+            
+            console.log("y:", y, "+dom_end: ", + domain[domain.length-1]);
+
+            if (y >= + domain[domain.length-1]) {
+                return _timeScale(domain[domain.length-1]);
+            }else{
+                return _timeScale(y);
+            }
+
+        }catch(e){
+            console.log(e);
+            return 0;
+        }
+            
+        /*
         //If the start date is not in the selection range we draw nothing.
         if(start > domain[domain.length-1] || end < domain[0]){
             return _timeScale(domain[0]);
@@ -181,7 +200,7 @@ var CustomTimeline = function(par){
             end = domain[domain.length-1];
         }
         
-        return _timeScale(end) - _timeScale(base);
+        return _timeScale(end);// - _timeScale(base); */
     };
     
     //Gets the timeline bars start point
@@ -190,15 +209,17 @@ var CustomTimeline = function(par){
         var domain = _timeScale.domain();
         var start = + new Date(data.time);
         var base = + new Date(data.data.first_time);
-        //var start = (+ new Date(data.time)) - (+ new Date(data.first_time));
+        
         var circleDiameter = _rowHeight*0.33*2;
 
+        var x = start - base;
+        
         //clipping the coordinates to brush selection
-        if(start <= domain[0] || start >= domain[domain.length-1]){
+        if(x < domain[0] || x > domain[domain.length-1]){
             return -circleDiameter;
         }
 
-        return _timeScale(start) - _timeScale(base);
+        return _timeScale(x);
     };
   
     //Gets the data row based on buildId
@@ -208,7 +229,13 @@ var CustomTimeline = function(par){
     
     var getLineY = function(data){
         var y = getY(data);
-        y += _rowHeight*0.5;
+        y += _rowHeight*0.33;
+        
+        if (data.data && data.data.collide !== 0){
+            //console.log("[custom_timeline.js]Data collides:", data.data.collide);
+            y += (_rowHeight*0.1) * data.data.collide;
+        }
+        
         return y;
     };
     
@@ -298,9 +325,9 @@ var CustomTimeline = function(par){
             .on("mouseout", onMouseOut);
 
         _events.attr('fill', pub.getColor)
-            .attr('cx', getX)
-            .attr('cy', getLineY)
-            .attr('r', _rowHeight*0.33)
+            .attr('cx', getX) //X coordinate
+            .attr('cy', getLineY) //Y coordinate
+            .attr('r', _rowHeight*0.33*0.5) //Ray of event circle
             .on("mouseover", onMouseOver)
             .on("mousemove", onMouseMove)
             .on("mouseout", onMouseOut);
@@ -324,6 +351,7 @@ var CustomTimeline = function(par){
     };
     
     pub.onBrush = function(timeRange){
+         console.log("[custom_timeline.js]Onbrush: changing the domaine to new timerange: ", timeRange);
         _timeScale.domain(timeRange);        
         pub.draw();
     };

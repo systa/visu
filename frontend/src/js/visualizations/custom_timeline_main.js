@@ -107,6 +107,7 @@ var CUSTOM_TIMELINE_MAIN = function(par){
         });
 
         var onBrush= function(timeRange){
+            console.log("[custom_timelmine_main]OnBrush.");
             _issueChart.onBrush(timeRange);
         };
 
@@ -115,7 +116,7 @@ var CUSTOM_TIMELINE_MAIN = function(par){
             margins : _timeSelectorMargins,
             timeframe : timeframe,
             onBrushFunction : onBrush,
-            linear: true,
+            linear: false,
             customTime: false
         });
         

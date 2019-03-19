@@ -461,8 +461,9 @@ var CUSTOM_TIMELINE_PROCESSOR = function(par){
         }
 
         //Define the actual timeframe ???
-        data.timeframe = [+(new Date(start.getFullYear(), start.getMonth(), start.getDate(), start.getHours())),
-            +(new Date(end.getFullYear(), end.getMonth(), end.getDate(), start.getHours()+1))];
+        var t_start = +(new Date(start.getFullYear(), start.getMonth(), start.getDate(), start.getHours(), start.getMinutes(), start.getSeconds()));
+        var t_end = +(new Date(end.getFullYear(), end.getMonth(), end.getDate(), end.getHours(), end.getMinutes()+1, end.getSeconds()));
+        data.timeframe = [0, t_end - t_start];
         
         console.log("[custom_timeline_dataprocessor.js]timeframe: ", data.timeframe);
         

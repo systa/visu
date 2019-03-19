@@ -46,6 +46,7 @@ function parseMyTime(myTime, myDate){
                       myTime.substr(3,2),  //min
                       myTime.substr(6,2),  //sec
                       "000"); //millisec
+   console.log("Time:", myTime, " = ", time.toTimeString());
    return time;
 }
 
@@ -141,7 +142,7 @@ function sendToDb( logData, source ) {
             event.time = parseMyTime(item.time, item.date);
             event.duration = 0;
             event.creator = item.session_id;
-            event.data = {hash: item.hash, action: item.action, first_time: item.first_time};
+            event.data = {hash: item.hash, action: item.action, first_time: item.first_time, collide: item.collide};
             event.id = item.hash;
             
             item.id = item.hash;

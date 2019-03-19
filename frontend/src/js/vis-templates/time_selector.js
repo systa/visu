@@ -38,7 +38,7 @@ var TimeSelector = function(par){
     var _height = p.height !== undefined ? p.height : 40;
     var _margins = p.margins !== undefined ? p.margins : {top: 0, bottom : 0, left: 0, right: 0};
     var _xDomain = p.timeframe !== undefined ? p.timeframe : [0, 1000];
-    var _brushCallback = p.onBrushFunction !== undefined ? p.onBrushFunction : function(){};
+    var _brushCallback = p.onBrushFunction !== undefined ? p.onBrushFunction : function(){console.log("[time_selector.js]No brush fct defined...");};
 
     //static scale for selecting data shown
     var _scale;
@@ -62,6 +62,7 @@ var TimeSelector = function(par){
    
     //event listener for brush events
     var onBrush = function(){
+        console.log("[time_selector.js]Brush on the time selector.");
         _brushCallback(_brush.empty() ? _scale.domain() : _brush.extent());
     };
     var _brush = d3.svg.brush().x(_scale).on("brush", onBrush);
@@ -73,6 +74,7 @@ var TimeSelector = function(par){
     var pub = {};
 
     pub.draw = function(){
+        //console.log("[time_selector.js]Drawing the time selector.");
         _axisGraphic.attr("transform", "translate(0,"+_margins.top+")")
             .call(_brushAxis)
             .selectAll(".tick text")
@@ -83,6 +85,7 @@ var TimeSelector = function(par){
     };
     
     pub.onResize = function(width, height, margins){
+        //console.log("[time_selector.js]Resize on the time selector.");
         _width = width;
         _height = height;
         _margins = margins;

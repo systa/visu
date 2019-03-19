@@ -167,6 +167,7 @@ function parseMyTime(myTime, myDate){
                       myTime.substr(3,2),  //min
                       myTime.substr(6,2),  //sec
                       "000"); //millisec
+   console.log("Time:", myTime, " = ", time.toTimeString());
    return time;
 }
 
@@ -204,6 +205,7 @@ function getData( source, callback ) {
         //The rest
         var entries = session.entries;
         var first_event_time = parseMyTime(entries[0].time, entries[0].date);
+        //var collide = 0; 
         for (var j = 0; j <= entries.length; j++) {
            var str;
            var double = false;
@@ -221,6 +223,13 @@ function getData( source, callback ) {
                }
             }
             
+            entry.collide = 0; //Number of other entries that happen at the same time
+            if (j > 0){
+                if (entry.time == entries[j-1].time){
+                    entry.collide = entries[j-1].collide + 1;
+                }
+            }
+            
             //Force last entry to be Exit
             if(j == entries.length) {
                console.log("All entries processed...");
@@ -230,7 +239,7 @@ function getData( source, callback ) {
                if (entry.action != "Clicked on Exit."){
                   console.log("Last entry is not Exit: ", entry.action);
                   
-                  var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Exit", hash: entry.hash, document: null, page: null, first_time: first_event_time};
+                  var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Exit", hash: entry.hash, document: null, page: null, first_time: first_event_time, collide: entry.collide};
                   events.push(event);
 
                   //Add statechange
@@ -267,13 +276,13 @@ function getData( source, callback ) {
                         stateChange.from = "(doc) locked"; stateChange.to = "(doc) unlocked";
                         break;
                     case "opened.":
-                        var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Open Document", hash: entry.hash, document: document.hash, page: null, statechange:stateChange, first_time: first_event_time};
+                        var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Open Document", hash: entry.hash, document: document.hash, page: null, statechange:stateChange, first_time: first_event_time, collide: entry.collide};
                         events.push(event);
                         
                         stateChange.from = "(doc) closed"; stateChange.to = "(doc) opened";  
                         break;
                     case "closed.":
-                        var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Close Document", hash: entry.hash, document: document.hash, page: null, statechange:stateChange, first_time: first_event_time};
+                        var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Close Document", hash: entry.hash, document: document.hash, page: null, statechange:stateChange, first_time: first_event_time, collide: entry.collide};
                         events.push(event);
                         
                         stateChange.from = "(doc) opened"; stateChange.to = "(doc) closed";  
@@ -310,7 +319,7 @@ function getData( source, callback ) {
                 }
                 
                 //Create event
-                var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Help", hash: entry.hash, document: null, statechange:stateChange, first_time: first_event_time};
+                var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Help", hash: entry.hash, document: null, statechange:stateChange, first_time: first_event_time, collide: entry.collide};
                 if (str.includes("Clicked"))
                     event.page = "Help";
                 else
@@ -320,7 +329,7 @@ function getData( source, callback ) {
             }
             
             else if (str.includes("Clicked on")) {
-                var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: entry.action, hash: entry.hash, document: null, page: null, first_time: first_event_time};
+                var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: entry.action, hash: entry.hash, document: null, page: null, first_time: first_event_time, collide: entry.collide};
                 var stateChange;
                                         
                 words = str.split(' ');
@@ -351,14 +360,14 @@ function getData( source, callback ) {
                 stateChanges.push(stateChange);
                
                 //Create event
-                var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: entry.action, hash: entry.hash, document: null, page: null, statechange:stateChange, first_time: first_event_time};
+                var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: entry.action, hash: entry.hash, document: null, page: null, statechange:stateChange, first_time: first_event_time, collide: entry.collide};
                 events.push(event);
                 
             }
             
             else if (str.includes("Library path added")) {
                 //Create event
-                var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: entry.action, hash: entry.hash, document: null, page: null, first_time: first_event_time};
+                var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: entry.action, hash: entry.hash, document: null, page: null, first_time: first_event_time, collide: entry.collide};
                 events.push(event);
             }
           
