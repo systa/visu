@@ -125,81 +125,33 @@ var SessionTimeframe = function(par){
     
     var _tooltip = d3.select("body").append("div").attr('class', "tooltip");
     
-    //Lifespan start
+    //Lifespan start (always 0)
     var getLpStart = function(data){
-        //console.log("[custom_timeline.js]Ls Data:", data);
-        
         var domain = _timeScale.domain();
-        
-        var base = new Date(data.first_time);
-        
-        var start = new Date(data.start) - base;
-        var end = new Date(data.end) - base;
-        
-        
-        //if end is false...
-        //data endpoint is mapped to the domain end point
-        if(!data.end){
-            end = domain[domain.length-1];
-        }
 
-        /*
-        //clipping the coordinates to brush selection
-        if(start <= domain[0] && end >= domain[0]){
-            start = domain[0];
-        }
-        else if((start < domain[0] && end < domain[0]) || start > domain[domain.length-1]){
-            start = domain[0];
-        }
-        */
-        
-        return _timeScale(domain[0]); //_timeScale(start);// - _timeScale(base);
+        return _timeScale(domain[0]);
     };
     
     //Lifespan end
     var getLpEnd = function(data){
         var domain = _timeScale.domain();
         
-        //console.log("Data: ", data, ", domain:", domain);
-        
-        //if end is false...
-        //data endpoint is mapped to the domain end point
+        //if end is false, data endpoint is mapped to the domain end point
         if(!data.end){
             data.end = domain[domain.length-1]; 
         }
-        
-        try {
-            var n_end = new Date(data.end).getTime();
-            var n_first = new Date(data.first_time).getTime();
-            var y = n_end - n_first;
-            
-            //console.log("y:", y, "+dom_end: ", + domain[domain.length-1]);
 
-            if (y >= + domain[domain.length-1]) {
-                return _timeScale(domain[domain.length-1]);
-            }else{
-                return _timeScale(y);
-            }
+        var n_end = new Date(data.end).getTime();
+        var n_first = new Date(data.first_time).getTime();
+        var y = n_end - n_first;
 
-        }catch(e){
-            console.log(e);
-            return 0;
-        }
-            
-        /*
-        //If the start date is not in the selection range we draw nothing.
-        if(start > domain[domain.length-1] || end < domain[0]){
+        if (y >= + domain[domain.length-1]) {
+            return _timeScale(domain[domain.length-1]);
+        }else if (y <= + domain[0]) {    
             return _timeScale(domain[0]);
         }
-        //clipping the line to the current selection
-        if(start <= domain[0] && end >= domain[0]){
-            start = domain[0];
-        }
-        if(end >= domain[domain.length-1] && start <= domain[domain.length-1]){
-            end = domain[domain.length-1];
-        }
-        
-        return _timeScale(end);// - _timeScale(base); */
+            
+        return _timeScale(y);
     };
     
     //Gets the timeline bars start point
