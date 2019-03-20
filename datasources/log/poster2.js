@@ -14,8 +14,8 @@ var _ = require( 'underscore' );
 
 var crypto = require('crypto');
 
-var debugLink = false;
-var debugSend = false;
+var debugLink = true;
+var debugSend = true;
 var debugParse = true;
 
 function hashCode(string) {
@@ -46,7 +46,6 @@ function parseMyTime(myTime, myDate){
                       myTime.substr(3,2),  //min
                       myTime.substr(6,2),  //sec
                       "000"); //millisec
-   console.log("Time:", myTime, " = ", time.toTimeString());
    return time;
 }
 
@@ -104,6 +103,7 @@ function sendToDb( logData, source ) {
       count += list.length; // every item from the list should be added      
       type = type.substr( 0, type.length -1 ); // e.g. comments -> comment
       
+       var t = 0;
       list.forEach( function ( item ) {
          var artefact = {};
          var event = {};
@@ -157,15 +157,19 @@ function sendToDb( logData, source ) {
             //Seperate event types in categories
             var action = String(item.action);
             var event_type;
-            if (action.includes("Document")){
+            if (action.includes("Document") || action.includes("Locked") || action.includes("Unlocked")){
                 event_type = "doc";
             }else if (action.includes("Help")){
                 event_type = "help";
-            }else if (action.includes("Clicked on")){
+            }else if (action.includes("Program") || action.includes("Exit")){
+                event_type = "start/end";                
+            }else if (action.includes("Clicked on")|| action.includes("Library")){
                 event_type = "feature";
             }else {
                 event_type = "other";
             }
+             
+            console.log("Event ", t++, ": ", action);
              
             event.type = event_type;
             
@@ -175,7 +179,6 @@ function sendToDb( logData, source ) {
          else {
             console.log("[ERROR]Unknown data type:" + type);
          }
-
       });//LIST FOR EACH END
    });//ENTITY ORDER FOR EACH END
    
@@ -299,7 +302,7 @@ function sendToDb( logData, source ) {
       
       // Link sessions to user
       if(debugLink){
-         console.log("[Poster]Linking sessions"+ logData.sessions.length);
+         console.log("[Poster]Linking sessions: "+ logData.sessions.length);
       }
       //var sessions = logData[sessions];
       var sessions = logData.sessions;
@@ -312,12 +315,15 @@ function sendToDb( logData, source ) {
       // Link events to session & document/help page (if needed)
       
       if(debugLink){
-         console.log("[Poster]Linking events"+ logData.events.length);
+         console.log("[Poster]Linking events: "+ logData.events.length);
       }
       var events = logData.events;
       _.each(events, function (event){
          links.push( { construct: idToID[event.session_id], target: idToID[event.id], type: 'event' } );
-         
+         if(event.action.includes("Exit")){
+             console.log("Linked Exit action to: ", event.session_id);
+         }
+          
          if(event.document) {
             links.push( { construct: idToID[event.document], target: idToID[event.id], type: 'event' } );   
          }

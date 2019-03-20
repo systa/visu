@@ -64,7 +64,6 @@
 25.01.2017 09:07:23 user 2ac246473b284b67c533c80e99a84749 in session 67761b6d-c1ef-4bdc-b6a4-dee0b638e1b3: Document Kvazaar (1.0_student) closed.
 25.01.2017 09:07:23 user 2ac246473b284b67c533c80e99a84749 in session 67761b6d-c1ef-4bdc-b6a4-dee0b638e1b3: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/systemviews.html opened.
 25.01.2017 09:07:23 user 2ac246473b284b67c533c80e99a84749 in session 67761b6d-c1ef-4bdc-b6a4-dee0b638e1b3: Document Exercise_Returns (1.0) closed.
-25.01.2017 09:07:23 user 2ac246473b284b67c533c80e99a84749 in session 67761b6d-c1ef-4bdc-b6a4-dee0b638e1b3: Clicked on Exit
 25.01.2017 09:08:56 user 2ac246473b284b67c533c80e99a84749 in session 3175409c-fb4a-488d-a595-c68161d59043: Program started.
 25.01.2017 09:08:56 user 2ac246473b284b67c533c80e99a84749 in session 3175409c-fb4a-488d-a595-c68161d59043: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 25.01.2017 09:45:52 user 2ac246473b284b67c533c80e99a84749 in session 3175409c-fb4a-488d-a595-c68161d59043: Document Kvazaar (1.0_student) opened.
@@ -107,13 +106,10 @@
 25.01.2017 10:19:51 user 2ac246473b284b67c533c80e99a84749 in session 3175409c-fb4a-488d-a595-c68161d59043: Document Kvazaar.PC-System.sysdesign (1.0_student) closed.
 25.01.2017 10:19:51 user 2ac246473b284b67c533c80e99a84749 in session 3175409c-fb4a-488d-a595-c68161d59043: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/systemview.html opened.
 25.01.2017 10:19:51 user 2ac246473b284b67c533c80e99a84749 in session 3175409c-fb4a-488d-a595-c68161d59043: Document Kvazaar (1.0_student) closed.
-25.01.2017 10:19:51 user 2ac246473b284b67c533c80e99a84749 in session 3175409c-fb4a-488d-a595-c68161d59043: Clicked on Exit
 21.02.2017 12:58:44 user e740034089ce25e7629f7fede416660e in session aa5ed9d5-3a8d-470f-83e8-6ad338c5db36: Program started.
 21.02.2017 12:58:44 user e740034089ce25e7629f7fede416660e in session aa5ed9d5-3a8d-470f-83e8-6ad338c5db36: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
-21.02.2017 12:58:44 user e740034089ce25e7629f7fede416660e in session aa5ed9d5-3a8d-470f-83e8-6ad338c5db36: Clicked on Exit
 01.02.2017 13:48:56 user e740034089ce25e7629f7fede416660e in session 3a5f705e-b902-43f4-acc2-bc28ee1ce09e: Program started.
 01.02.2017 13:48:56 user e740034089ce25e7629f7fede416660e in session 3a5f705e-b902-43f4-acc2-bc28ee1ce09e: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
-01.02.2017 13:48:56 user e740034089ce25e7629f7fede416660e in session 3a5f705e-b902-43f4-acc2-bc28ee1ce09e: Clicked on Exit
 27.02.2017 13:52:42 user e740034089ce25e7629f7fede416660e in session 9ed14693-f3c8-4bed-b171-520f8aa378ea: Program started.
 27.02.2017 13:52:42 user e740034089ce25e7629f7fede416660e in session 9ed14693-f3c8-4bed-b171-520f8aa378ea: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 27.02.2017 13:52:56 user e740034089ce25e7629f7fede416660e in session 9ed14693-f3c8-4bed-b171-520f8aa378ea: Document LED-Blinker (1.0_student) opened.
@@ -450,7 +446,6 @@
 27.02.2017 16:32:53 user e740034089ce25e7629f7fede416660e in session 9ed14693-f3c8-4bed-b171-520f8aa378ea: Document LED-Blinker.PC-System.sysdesign (1.0_student) closed.
 27.02.2017 16:32:53 user e740034089ce25e7629f7fede416660e in session 9ed14693-f3c8-4bed-b171-520f8aa378ea: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/systemview.html opened.
 27.02.2017 16:32:53 user e740034089ce25e7629f7fede416660e in session 9ed14693-f3c8-4bed-b171-520f8aa378ea: Document LED-Blinker (1.0_student) closed.
-27.02.2017 16:32:53 user e740034089ce25e7629f7fede416660e in session 9ed14693-f3c8-4bed-b171-520f8aa378ea: Clicked on Exit
 23.02.2017 15:44:30 user e740034089ce25e7629f7fede416660e in session fd21ac67-831c-43a7-8e4c-4f803ae2e902: Program started.
 23.02.2017 15:44:30 user e740034089ce25e7629f7fede416660e in session fd21ac67-831c-43a7-8e4c-4f803ae2e902: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 23.02.2017 15:45:06 user e740034089ce25e7629f7fede416660e in session fd21ac67-831c-43a7-8e4c-4f803ae2e902: Document Kvazaar (1.0_student) opened.
@@ -475,7 +470,6 @@
 23.02.2017 19:22:28 user e740034089ce25e7629f7fede416660e in session fd21ac67-831c-43a7-8e4c-4f803ae2e902: Document Kvazaar.Simulation-System.sysdesign (1.0_student) closed.
 23.02.2017 19:22:28 user e740034089ce25e7629f7fede416660e in session fd21ac67-831c-43a7-8e4c-4f803ae2e902: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/systemview.html opened.
 23.02.2017 19:22:28 user e740034089ce25e7629f7fede416660e in session fd21ac67-831c-43a7-8e4c-4f803ae2e902: Document Kvazaar (1.0_student) closed.
-23.02.2017 19:22:28 user e740034089ce25e7629f7fede416660e in session fd21ac67-831c-43a7-8e4c-4f803ae2e902: Clicked on Exit
 27.02.2017 11:32:26 user e740034089ce25e7629f7fede416660e in session 439b4a3f-ef16-4b89-9efd-b9eff7722737: Program started.
 27.02.2017 11:32:26 user e740034089ce25e7629f7fede416660e in session 439b4a3f-ef16-4b89-9efd-b9eff7722737: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 27.02.2017 11:32:51 user e740034089ce25e7629f7fede416660e in session 439b4a3f-ef16-4b89-9efd-b9eff7722737: Document Terasic.Veek (1.2_student) opened.
@@ -486,7 +480,6 @@
 27.02.2017 11:33:06 user e740034089ce25e7629f7fede416660e in session 439b4a3f-ef16-4b89-9efd-b9eff7722737: Document Terasic.Veek (1.2_student) unlocked.
 27.02.2017 11:33:06 user e740034089ce25e7629f7fede416660e in session 439b4a3f-ef16-4b89-9efd-b9eff7722737: Clicked on Unlocked
 27.02.2017 11:46:26 user e740034089ce25e7629f7fede416660e in session 439b4a3f-ef16-4b89-9efd-b9eff7722737: Document Terasic.Veek (1.2_student) closed.
-27.02.2017 11:46:26 user e740034089ce25e7629f7fede416660e in session 439b4a3f-ef16-4b89-9efd-b9eff7722737: Clicked on Exit
 21.02.2017 12:59:28 user e740034089ce25e7629f7fede416660e in session ac252957-06fe-430b-926c-3fb398824a7b: Program started.
 21.02.2017 12:59:28 user e740034089ce25e7629f7fede416660e in session ac252957-06fe-430b-926c-3fb398824a7b: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 21.02.2017 13:04:22 user e740034089ce25e7629f7fede416660e in session ac252957-06fe-430b-926c-3fb398824a7b: Document CrypterSim (1.0_student) opened.
@@ -562,7 +555,6 @@
 21.02.2017 15:01:42 user e740034089ce25e7629f7fede416660e in session ac252957-06fe-430b-926c-3fb398824a7b: Document CrypterSim.SimSystem.sysdesign (1.0_student) closed.
 21.02.2017 15:01:42 user e740034089ce25e7629f7fede416660e in session ac252957-06fe-430b-926c-3fb398824a7b: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/general.html opened.
 21.02.2017 15:01:42 user e740034089ce25e7629f7fede416660e in session ac252957-06fe-430b-926c-3fb398824a7b: Document CrypterSim (1.0_student) closed.
-21.02.2017 15:01:42 user e740034089ce25e7629f7fede416660e in session ac252957-06fe-430b-926c-3fb398824a7b: Clicked on Exit
 23.02.2017 11:41:24 user e740034089ce25e7629f7fede416660e in session c7b1410b-53ad-4d43-80a9-3c82cdf466d5: Program started.
 23.02.2017 11:41:24 user e740034089ce25e7629f7fede416660e in session c7b1410b-53ad-4d43-80a9-3c82cdf466d5: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 23.02.2017 11:42:08 user e740034089ce25e7629f7fede416660e in session c7b1410b-53ad-4d43-80a9-3c82cdf466d5: Document KvazaarDriver (1.1) opened.
@@ -602,7 +594,6 @@
 23.02.2017 12:11:38 user e740034089ce25e7629f7fede416660e in session c7b1410b-53ad-4d43-80a9-3c82cdf466d5: Document Kvazaar (1.0_student) closed.
 23.02.2017 12:11:38 user e740034089ce25e7629f7fede416660e in session c7b1410b-53ad-4d43-80a9-3c82cdf466d5: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/general.html opened.
 23.02.2017 12:11:39 user e740034089ce25e7629f7fede416660e in session c7b1410b-53ad-4d43-80a9-3c82cdf466d5: Document KvazaarDriver (1.1) closed.
-23.02.2017 12:11:39 user e740034089ce25e7629f7fede416660e in session c7b1410b-53ad-4d43-80a9-3c82cdf466d5: Clicked on Exit
 01.02.2017 15:38:35 user e740034089ce25e7629f7fede416660e in session 23f0a5e5-9cc6-48b0-b0a9-2132e0d9208a: Program started.
 01.02.2017 15:38:35 user e740034089ce25e7629f7fede416660e in session 23f0a5e5-9cc6-48b0-b0a9-2132e0d9208a: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 01.02.2017 15:38:46 user e740034089ce25e7629f7fede416660e in session 23f0a5e5-9cc6-48b0-b0a9-2132e0d9208a: Clicked on Refresh Library
@@ -647,7 +638,6 @@
 01.02.2017 16:09:14 user e740034089ce25e7629f7fede416660e in session 23f0a5e5-9cc6-48b0-b0a9-2132e0d9208a: Document CrypterSim.SimSystem.sysdesign (1.0_student) closed.
 01.02.2017 16:09:14 user e740034089ce25e7629f7fede416660e in session 23f0a5e5-9cc6-48b0-b0a9-2132e0d9208a: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/systemview.html opened.
 01.02.2017 16:09:14 user e740034089ce25e7629f7fede416660e in session 23f0a5e5-9cc6-48b0-b0a9-2132e0d9208a: Document CrypterSim (1.0_student) closed.
-01.02.2017 16:09:14 user e740034089ce25e7629f7fede416660e in session 23f0a5e5-9cc6-48b0-b0a9-2132e0d9208a: Clicked on Exit
 28.02.2017 13:33:59 user e740034089ce25e7629f7fede416660e in session f3bd3b3e-baa4-4aa8-baac-d44148fc828a: Program started.
 28.02.2017 13:33:59 user e740034089ce25e7629f7fede416660e in session f3bd3b3e-baa4-4aa8-baac-d44148fc828a: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 28.02.2017 13:35:14 user e740034089ce25e7629f7fede416660e in session f3bd3b3e-baa4-4aa8-baac-d44148fc828a: Document LED-Blinker (1.0_student) opened.
@@ -671,7 +661,6 @@
 28.02.2017 14:16:21 user e740034089ce25e7629f7fede416660e in session f3bd3b3e-baa4-4aa8-baac-d44148fc828a: Document LED-Blinker.Veek-System.sysdesign (1.0) closed.
 28.02.2017 14:16:21 user e740034089ce25e7629f7fede416660e in session f3bd3b3e-baa4-4aa8-baac-d44148fc828a: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/systemview.html opened.
 28.02.2017 14:16:21 user e740034089ce25e7629f7fede416660e in session f3bd3b3e-baa4-4aa8-baac-d44148fc828a: Document LED-Blinker (1.0_student) closed.
-28.02.2017 14:16:21 user e740034089ce25e7629f7fede416660e in session f3bd3b3e-baa4-4aa8-baac-d44148fc828a: Clicked on Exit
 07.02.2017 13:14:16 user e740034089ce25e7629f7fede416660e in session 969e5d9c-08d1-4538-bca9-f33e1239872c: Program started.
 07.02.2017 13:14:16 user e740034089ce25e7629f7fede416660e in session 969e5d9c-08d1-4538-bca9-f33e1239872c: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 07.02.2017 13:22:05 user e740034089ce25e7629f7fede416660e in session 969e5d9c-08d1-4538-bca9-f33e1239872c: Document CrypterApp (1.0_student) opened.
@@ -805,7 +794,6 @@
 07.02.2017 17:00:16 user e740034089ce25e7629f7fede416660e in session 969e5d9c-08d1-4538-bca9-f33e1239872c: Document CrypterSim (1.0_student) closed.
 07.02.2017 17:00:16 user e740034089ce25e7629f7fede416660e in session 969e5d9c-08d1-4538-bca9-f33e1239872c: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/view.html opened.
 07.02.2017 17:00:16 user e740034089ce25e7629f7fede416660e in session 969e5d9c-08d1-4538-bca9-f33e1239872c: Document CrypterSimApp (1.0_student) closed.
-07.02.2017 17:00:16 user e740034089ce25e7629f7fede416660e in session 969e5d9c-08d1-4538-bca9-f33e1239872c: Clicked on Exit
 14.02.2017 11:59:26 user ac59e993ff5eba391fe553bcf0bae276 in session 82865555-7f2a-45cb-8dec-56bfc60dbc16: Program started.
 14.02.2017 11:59:26 user ac59e993ff5eba391fe553bcf0bae276 in session 82865555-7f2a-45cb-8dec-56bfc60dbc16: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 14.02.2017 11:59:50 user ac59e993ff5eba391fe553bcf0bae276 in session 82865555-7f2a-45cb-8dec-56bfc60dbc16: Document Terasic.Veek (1.2_student) opened.
@@ -847,7 +835,6 @@
 14.02.2017 13:07:26 user ac59e993ff5eba391fe553bcf0bae276 in session 82865555-7f2a-45cb-8dec-56bfc60dbc16: Document LED-Blinker (1.0_student) closed.
 14.02.2017 13:07:26 user ac59e993ff5eba391fe553bcf0bae276 in session 82865555-7f2a-45cb-8dec-56bfc60dbc16: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/general.html opened.
 14.02.2017 13:07:27 user ac59e993ff5eba391fe553bcf0bae276 in session 82865555-7f2a-45cb-8dec-56bfc60dbc16: Document Terasic.Veek (1.2_student) closed.
-14.02.2017 13:07:27 user ac59e993ff5eba391fe553bcf0bae276 in session 82865555-7f2a-45cb-8dec-56bfc60dbc16: Clicked on Exit
 21.02.2017 11:41:23 user ac59e993ff5eba391fe553bcf0bae276 in session e753d44c-3299-486d-82f9-0885a4710624: Program started.
 21.02.2017 11:41:23 user ac59e993ff5eba391fe553bcf0bae276 in session e753d44c-3299-486d-82f9-0885a4710624: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 21.02.2017 11:42:32 user ac59e993ff5eba391fe553bcf0bae276 in session e753d44c-3299-486d-82f9-0885a4710624: Document LED-Blinker (1.0_student) opened.
@@ -944,7 +931,6 @@
 21.02.2017 12:48:35 user ac59e993ff5eba391fe553bcf0bae276 in session e753d44c-3299-486d-82f9-0885a4710624: Document FPGAHAL (1.0) locked.
 21.02.2017 12:48:35 user ac59e993ff5eba391fe553bcf0bae276 in session e753d44c-3299-486d-82f9-0885a4710624: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/general.html opened.
 21.02.2017 12:48:41 user ac59e993ff5eba391fe553bcf0bae276 in session e753d44c-3299-486d-82f9-0885a4710624: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/filegeneral.html opened.
-21.02.2017 12:48:41 user ac59e993ff5eba391fe553bcf0bae276 in session e753d44c-3299-486d-82f9-0885a4710624: Clicked on Exit
 08.02.2017 12:41:13 user ac59e993ff5eba391fe553bcf0bae276 in session e6779201-3094-4879-862d-6f70eaff5150: Program started.
 08.02.2017 12:41:13 user ac59e993ff5eba391fe553bcf0bae276 in session e6779201-3094-4879-862d-6f70eaff5150: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 08.02.2017 12:41:30 user ac59e993ff5eba391fe553bcf0bae276 in session e6779201-3094-4879-862d-6f70eaff5150: Document Kvazaar (1.0_student) opened.
@@ -980,7 +966,6 @@
 08.02.2017 12:55:07 user ac59e993ff5eba391fe553bcf0bae276 in session e6779201-3094-4879-862d-6f70eaff5150: Document Kvazaar.Simulation-System.sysdesign (1.0_student) unlocked.
 08.02.2017 12:55:07 user ac59e993ff5eba391fe553bcf0bae276 in session e6779201-3094-4879-862d-6f70eaff5150: Clicked on Unlocked
 08.02.2017 12:55:08 user ac59e993ff5eba391fe553bcf0bae276 in session e6779201-3094-4879-862d-6f70eaff5150: Clicked on Makefile Generator
-08.02.2017 12:55:08 user ac59e993ff5eba391fe553bcf0bae276 in session e6779201-3094-4879-862d-6f70eaff5150: Clicked on Exit
 07.02.2017 12:07:22 user ac59e993ff5eba391fe553bcf0bae276 in session 9d010bd1-f850-48ce-a814-538f1af36a4a: Program started.
 07.02.2017 12:07:22 user ac59e993ff5eba391fe553bcf0bae276 in session 9d010bd1-f850-48ce-a814-538f1af36a4a: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 07.02.2017 12:07:37 user ac59e993ff5eba391fe553bcf0bae276 in session 9d010bd1-f850-48ce-a814-538f1af36a4a: Document CrypterSimApp (1.0_student) opened.
@@ -1065,7 +1050,6 @@
 07.02.2017 13:56:29 user ac59e993ff5eba391fe553bcf0bae276 in session 9d010bd1-f850-48ce-a814-538f1af36a4a: Document CrypterSim.SimSystem.sysdesign (1.0_student) closed.
 07.02.2017 13:56:29 user ac59e993ff5eba391fe553bcf0bae276 in session 9d010bd1-f850-48ce-a814-538f1af36a4a: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/view.html opened.
 07.02.2017 13:56:29 user ac59e993ff5eba391fe553bcf0bae276 in session 9d010bd1-f850-48ce-a814-538f1af36a4a: Document CrypterSim (1.0_student) closed.
-07.02.2017 13:56:29 user ac59e993ff5eba391fe553bcf0bae276 in session 9d010bd1-f850-48ce-a814-538f1af36a4a: Clicked on Exit
 31.01.2017 11:56:23 user ac59e993ff5eba391fe553bcf0bae276 in session 8549929f-cfe1-4e1a-9683-417de888bc76: Program started.
 31.01.2017 11:56:24 user ac59e993ff5eba391fe553bcf0bae276 in session 8549929f-cfe1-4e1a-9683-417de888bc76: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 31.01.2017 11:56:37 user ac59e993ff5eba391fe553bcf0bae276 in session 8549929f-cfe1-4e1a-9683-417de888bc76: Document CrypterApp (1.0_student) opened.
@@ -1114,7 +1098,6 @@
 31.01.2017 12:48:00 user ac59e993ff5eba391fe553bcf0bae276 in session 8549929f-cfe1-4e1a-9683-417de888bc76: Document CrypterSim.SimSystem.sysdesign (1.0_student) unlocked.
 31.01.2017 12:48:00 user ac59e993ff5eba391fe553bcf0bae276 in session 8549929f-cfe1-4e1a-9683-417de888bc76: Clicked on Unlocked
 31.01.2017 12:48:04 user ac59e993ff5eba391fe553bcf0bae276 in session 8549929f-cfe1-4e1a-9683-417de888bc76: Clicked on Makefile Generator
-31.01.2017 12:48:04 user ac59e993ff5eba391fe553bcf0bae276 in session 8549929f-cfe1-4e1a-9683-417de888bc76: Clicked on Exit
 31.01.2017 10:27:44 user fb325ad2c74fa6851e8ac35483ddd63b in session 7ccb5b88-1ef4-4de6-9fde-91d9b25b7c23: Program started.
 31.01.2017 10:27:44 user fb325ad2c74fa6851e8ac35483ddd63b in session 7ccb5b88-1ef4-4de6-9fde-91d9b25b7c23: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 31.01.2017 10:28:00 user fb325ad2c74fa6851e8ac35483ddd63b in session 7ccb5b88-1ef4-4de6-9fde-91d9b25b7c23: Document CrypterApp (1.0_student) opened.
@@ -1152,7 +1135,6 @@
 31.01.2017 14:18:31 user fb325ad2c74fa6851e8ac35483ddd63b in session 7ccb5b88-1ef4-4de6-9fde-91d9b25b7c23: Document CrypterSim.SimSystem.sysdesign (1.0_student) closed.
 31.01.2017 14:18:31 user fb325ad2c74fa6851e8ac35483ddd63b in session 7ccb5b88-1ef4-4de6-9fde-91d9b25b7c23: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/filegeneral.html opened.
 31.01.2017 14:18:31 user fb325ad2c74fa6851e8ac35483ddd63b in session 7ccb5b88-1ef4-4de6-9fde-91d9b25b7c23: Document CrypterApp (1.0_student) closed.
-31.01.2017 14:18:31 user fb325ad2c74fa6851e8ac35483ddd63b in session 7ccb5b88-1ef4-4de6-9fde-91d9b25b7c23: Clicked on Exit
 21.02.2017 12:30:30 user 821117cc01396e0aff5c91db9d9ec8c3 in session a7b2b04e-3e75-4aa2-9e54-bb08053516f5: Program started.
 21.02.2017 12:30:30 user 821117cc01396e0aff5c91db9d9ec8c3 in session a7b2b04e-3e75-4aa2-9e54-bb08053516f5: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 21.02.2017 12:31:25 user 821117cc01396e0aff5c91db9d9ec8c3 in session a7b2b04e-3e75-4aa2-9e54-bb08053516f5: Document Terasic.Veek (1.2_student) opened.
@@ -1378,10 +1360,8 @@
 21.02.2017 15:12:25 user 821117cc01396e0aff5c91db9d9ec8c3 in session a7b2b04e-3e75-4aa2-9e54-bb08053516f5: Document LED-Blinker (1.0_student) closed.
 21.02.2017 15:12:25 user 821117cc01396e0aff5c91db9d9ec8c3 in session a7b2b04e-3e75-4aa2-9e54-bb08053516f5: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/general.html opened.
 21.02.2017 15:12:25 user 821117cc01396e0aff5c91db9d9ec8c3 in session a7b2b04e-3e75-4aa2-9e54-bb08053516f5: Document Terasic.Veek (1.2_student) closed.
-21.02.2017 15:12:25 user 821117cc01396e0aff5c91db9d9ec8c3 in session a7b2b04e-3e75-4aa2-9e54-bb08053516f5: Clicked on Exit
 31.01.2017 12:21:47 user 821117cc01396e0aff5c91db9d9ec8c3 in session 9a932aca-4238-4aca-a0cc-bd2859bcebe0: Program started.
 31.01.2017 12:21:47 user 821117cc01396e0aff5c91db9d9ec8c3 in session 9a932aca-4238-4aca-a0cc-bd2859bcebe0: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
-31.01.2017 12:21:47 user 821117cc01396e0aff5c91db9d9ec8c3 in session 9a932aca-4238-4aca-a0cc-bd2859bcebe0: Clicked on Exit
 03.02.2017 19:00:53 user 821117cc01396e0aff5c91db9d9ec8c3 in session ff14e4d4-868a-4bf5-98e2-22ef46c1113d: Program started.
 03.02.2017 19:00:53 user 821117cc01396e0aff5c91db9d9ec8c3 in session ff14e4d4-868a-4bf5-98e2-22ef46c1113d: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 03.02.2017 19:02:04 user 821117cc01396e0aff5c91db9d9ec8c3 in session ff14e4d4-868a-4bf5-98e2-22ef46c1113d: Document Exercise_Returns (1.0) opened.
@@ -1405,7 +1385,6 @@
 03.02.2017 19:25:24 user 821117cc01396e0aff5c91db9d9ec8c3 in session ff14e4d4-868a-4bf5-98e2-22ef46c1113d: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/general.html opened.
 03.02.2017 19:25:30 user 821117cc01396e0aff5c91db9d9ec8c3 in session ff14e4d4-868a-4bf5-98e2-22ef46c1113d: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/fileset.html opened.
 03.02.2017 19:25:34 user 821117cc01396e0aff5c91db9d9ec8c3 in session ff14e4d4-868a-4bf5-98e2-22ef46c1113d: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/filegeneral.html opened.
-03.02.2017 19:25:34 user 821117cc01396e0aff5c91db9d9ec8c3 in session ff14e4d4-868a-4bf5-98e2-22ef46c1113d: Clicked on Exit
 31.01.2017 12:25:21 user 821117cc01396e0aff5c91db9d9ec8c3 in session 4b0b6e68-6361-484f-a474-e76b0e4c210e: Program started.
 31.01.2017 12:25:21 user 821117cc01396e0aff5c91db9d9ec8c3 in session 4b0b6e68-6361-484f-a474-e76b0e4c210e: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 31.01.2017 12:25:32 user 821117cc01396e0aff5c91db9d9ec8c3 in session 4b0b6e68-6361-484f-a474-e76b0e4c210e: Document CrypterApp (1.0_student) opened.
@@ -1493,7 +1472,6 @@
 31.01.2017 14:14:13 user 821117cc01396e0aff5c91db9d9ec8c3 in session 4b0b6e68-6361-484f-a474-e76b0e4c210e: Document CrypterSimApp (1.0_student) closed.
 31.01.2017 14:14:13 user 821117cc01396e0aff5c91db9d9ec8c3 in session 4b0b6e68-6361-484f-a474-e76b0e4c210e: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/filegeneral.html opened.
 31.01.2017 14:14:13 user 821117cc01396e0aff5c91db9d9ec8c3 in session 4b0b6e68-6361-484f-a474-e76b0e4c210e: Document CrypterApp (1.0_student) closed.
-31.01.2017 14:14:13 user 821117cc01396e0aff5c91db9d9ec8c3 in session 4b0b6e68-6361-484f-a474-e76b0e4c210e: Clicked on Exit
 07.02.2017 12:18:08 user 821117cc01396e0aff5c91db9d9ec8c3 in session dcf65b96-56eb-4b63-b9f3-a488233854d0: Program started.
 07.02.2017 12:18:08 user 821117cc01396e0aff5c91db9d9ec8c3 in session dcf65b96-56eb-4b63-b9f3-a488233854d0: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 07.02.2017 12:18:34 user 821117cc01396e0aff5c91db9d9ec8c3 in session dcf65b96-56eb-4b63-b9f3-a488233854d0: Document CrypterSimApp (1.0_student) opened.
@@ -1570,7 +1548,6 @@
 07.02.2017 14:01:59 user 821117cc01396e0aff5c91db9d9ec8c3 in session dcf65b96-56eb-4b63-b9f3-a488233854d0: Document CrypterSim (1.0_student) closed.
 07.02.2017 14:01:59 user 821117cc01396e0aff5c91db9d9ec8c3 in session dcf65b96-56eb-4b63-b9f3-a488233854d0: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/filegeneral.html opened.
 07.02.2017 14:01:59 user 821117cc01396e0aff5c91db9d9ec8c3 in session dcf65b96-56eb-4b63-b9f3-a488233854d0: Document CrypterSimApp_w_TLM (1.0) closed.
-07.02.2017 14:01:59 user 821117cc01396e0aff5c91db9d9ec8c3 in session dcf65b96-56eb-4b63-b9f3-a488233854d0: Clicked on Exit
 14.02.2017 12:06:52 user 821117cc01396e0aff5c91db9d9ec8c3 in session c7fdcdc7-3e85-45fd-abaa-c1e1b0b22bfb: Program started.
 14.02.2017 12:06:52 user 821117cc01396e0aff5c91db9d9ec8c3 in session c7fdcdc7-3e85-45fd-abaa-c1e1b0b22bfb: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 14.02.2017 12:07:56 user 821117cc01396e0aff5c91db9d9ec8c3 in session c7fdcdc7-3e85-45fd-abaa-c1e1b0b22bfb: Document Kvazaar (1.0_student) opened.
@@ -1609,7 +1586,6 @@
 14.02.2017 14:07:42 user 821117cc01396e0aff5c91db9d9ec8c3 in session c7fdcdc7-3e85-45fd-abaa-c1e1b0b22bfb: Document Kvazaar.Simulation-System.sysdesign (1.0_student) closed.
 14.02.2017 14:07:42 user 821117cc01396e0aff5c91db9d9ec8c3 in session c7fdcdc7-3e85-45fd-abaa-c1e1b0b22bfb: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/systemview.html opened.
 14.02.2017 14:07:42 user 821117cc01396e0aff5c91db9d9ec8c3 in session c7fdcdc7-3e85-45fd-abaa-c1e1b0b22bfb: Document Kvazaar (1.0_student) closed.
-14.02.2017 14:07:42 user 821117cc01396e0aff5c91db9d9ec8c3 in session c7fdcdc7-3e85-45fd-abaa-c1e1b0b22bfb: Clicked on Exit
 06.02.2017 14:20:56 user 849de36cfcb108a2105a5b179b7142d2 in session 21b73eba-7880-40e4-9422-fc5eda445e27: Program started.
 06.02.2017 14:20:56 user 849de36cfcb108a2105a5b179b7142d2 in session 21b73eba-7880-40e4-9422-fc5eda445e27: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 06.02.2017 14:21:24 user 849de36cfcb108a2105a5b179b7142d2 in session 21b73eba-7880-40e4-9422-fc5eda445e27: Document CrypterSim (1.0_student) opened.
@@ -1641,7 +1617,6 @@
 06.02.2017 15:46:46 user 849de36cfcb108a2105a5b179b7142d2 in session 21b73eba-7880-40e4-9422-fc5eda445e27: Document CrypterSim.SimSystem.sysdesign (1.0_student) closed.
 06.02.2017 15:46:46 user 849de36cfcb108a2105a5b179b7142d2 in session 21b73eba-7880-40e4-9422-fc5eda445e27: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/filegeneral.html opened.
 06.02.2017 15:46:46 user 849de36cfcb108a2105a5b179b7142d2 in session 21b73eba-7880-40e4-9422-fc5eda445e27: Document CrypterSim (1.0_student) closed.
-06.02.2017 15:46:46 user 849de36cfcb108a2105a5b179b7142d2 in session 21b73eba-7880-40e4-9422-fc5eda445e27: Clicked on Exit
 08.02.2017 08:10:52 user 849de36cfcb108a2105a5b179b7142d2 in session 44de8a5a-47e2-4c47-a621-c77a700d0305: Program started.
 08.02.2017 08:10:52 user 849de36cfcb108a2105a5b179b7142d2 in session 44de8a5a-47e2-4c47-a621-c77a700d0305: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 08.02.2017 08:11:27 user 849de36cfcb108a2105a5b179b7142d2 in session 44de8a5a-47e2-4c47-a621-c77a700d0305: Document CrypterApp (1.0_student) opened.
@@ -1754,7 +1729,6 @@
 08.02.2017 09:56:13 user 849de36cfcb108a2105a5b179b7142d2 in session 44de8a5a-47e2-4c47-a621-c77a700d0305: Document CrypterSimApp_w_TLM (1.0_student) closed.
 08.02.2017 09:56:13 user 849de36cfcb108a2105a5b179b7142d2 in session 44de8a5a-47e2-4c47-a621-c77a700d0305: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/general.html opened.
 08.02.2017 09:56:13 user 849de36cfcb108a2105a5b179b7142d2 in session 44de8a5a-47e2-4c47-a621-c77a700d0305: Document CrypterApp (1.0_student) closed.
-08.02.2017 09:56:13 user 849de36cfcb108a2105a5b179b7142d2 in session 44de8a5a-47e2-4c47-a621-c77a700d0305: Clicked on Exit
 25.01.2017 08:23:49 user 849de36cfcb108a2105a5b179b7142d2 in session 8a71131f-09a9-47fb-8ad1-4e10d1f22c67: Program started.
 25.01.2017 08:23:49 user 849de36cfcb108a2105a5b179b7142d2 in session 8a71131f-09a9-47fb-8ad1-4e10d1f22c67: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 25.01.2017 08:24:50 user 849de36cfcb108a2105a5b179b7142d2 in session 8a71131f-09a9-47fb-8ad1-4e10d1f22c67: Library path added.
@@ -1841,7 +1815,6 @@
 25.01.2017 10:10:27 user 849de36cfcb108a2105a5b179b7142d2 in session 8a71131f-09a9-47fb-8ad1-4e10d1f22c67: Document Kvazaar (1.0_student) closed.
 25.01.2017 10:10:27 user 849de36cfcb108a2105a5b179b7142d2 in session 8a71131f-09a9-47fb-8ad1-4e10d1f22c67: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/fileset.html opened.
 25.01.2017 10:10:38 user 849de36cfcb108a2105a5b179b7142d2 in session 8a71131f-09a9-47fb-8ad1-4e10d1f22c67: Document Exercise_Returns (1.0) closed.
-25.01.2017 10:10:38 user 849de36cfcb108a2105a5b179b7142d2 in session 8a71131f-09a9-47fb-8ad1-4e10d1f22c67: Clicked on Exit
 01.02.2017 08:23:03 user 849de36cfcb108a2105a5b179b7142d2 in session 1f0be888-540b-40a8-a28a-75dbdf21295b: Program started.
 01.02.2017 08:23:03 user 849de36cfcb108a2105a5b179b7142d2 in session 1f0be888-540b-40a8-a28a-75dbdf21295b: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 01.02.2017 08:24:13 user 849de36cfcb108a2105a5b179b7142d2 in session 1f0be888-540b-40a8-a28a-75dbdf21295b: Document CrypterApp (1.0_student) opened.
@@ -1933,7 +1906,6 @@
 01.02.2017 10:15:10 user 849de36cfcb108a2105a5b179b7142d2 in session 1f0be888-540b-40a8-a28a-75dbdf21295b: Document CrypterSim (1.0_student) closed.
 01.02.2017 10:15:10 user 849de36cfcb108a2105a5b179b7142d2 in session 1f0be888-540b-40a8-a28a-75dbdf21295b: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/filegeneral.html opened.
 01.02.2017 10:15:10 user 849de36cfcb108a2105a5b179b7142d2 in session 1f0be888-540b-40a8-a28a-75dbdf21295b: Document CrypterApp (1.0_student) closed.
-01.02.2017 10:15:10 user 849de36cfcb108a2105a5b179b7142d2 in session 1f0be888-540b-40a8-a28a-75dbdf21295b: Clicked on Exit
 06.02.2017 10:08:31 user 849de36cfcb108a2105a5b179b7142d2 in session a77324c3-c4c5-432c-a7fa-96f1369cc73d: Program started.
 06.02.2017 10:08:32 user 849de36cfcb108a2105a5b179b7142d2 in session a77324c3-c4c5-432c-a7fa-96f1369cc73d: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 06.02.2017 10:10:08 user 849de36cfcb108a2105a5b179b7142d2 in session a77324c3-c4c5-432c-a7fa-96f1369cc73d: Document CrypterSim (1.0_student) opened.
@@ -1986,7 +1958,6 @@
 06.02.2017 12:12:45 user 849de36cfcb108a2105a5b179b7142d2 in session a77324c3-c4c5-432c-a7fa-96f1369cc73d: Document CrypterSimApp (1.0_student) closed.
 06.02.2017 12:12:45 user 849de36cfcb108a2105a5b179b7142d2 in session a77324c3-c4c5-432c-a7fa-96f1369cc73d: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/systemview.html opened.
 06.02.2017 12:12:45 user 849de36cfcb108a2105a5b179b7142d2 in session a77324c3-c4c5-432c-a7fa-96f1369cc73d: Document CrypterSim (1.0_student) closed.
-06.02.2017 12:12:45 user 849de36cfcb108a2105a5b179b7142d2 in session a77324c3-c4c5-432c-a7fa-96f1369cc73d: Clicked on Exit
 25.01.2017 08:03:14 user 7636ac56ac4c6afd9c320edffdd470af in session c1026da4-f5d8-4274-9d69-bc050a41ca35: Program started.
 25.01.2017 08:03:14 user 7636ac56ac4c6afd9c320edffdd470af in session c1026da4-f5d8-4274-9d69-bc050a41ca35: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 25.01.2017 08:10:05 user 7636ac56ac4c6afd9c320edffdd470af in session c1026da4-f5d8-4274-9d69-bc050a41ca35: Library path added.
@@ -2062,7 +2033,6 @@
 25.01.2017 09:43:31 user 7636ac56ac4c6afd9c320edffdd470af in session c1026da4-f5d8-4274-9d69-bc050a41ca35: Document Exercise_Returns (1.0) locked.
 25.01.2017 09:43:31 user 7636ac56ac4c6afd9c320edffdd470af in session c1026da4-f5d8-4274-9d69-bc050a41ca35: Document Exercise_Returns (1.0) locked.
 25.01.2017 09:43:31 user 7636ac56ac4c6afd9c320edffdd470af in session c1026da4-f5d8-4274-9d69-bc050a41ca35: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/general.html opened.
-25.01.2017 09:43:31 user 7636ac56ac4c6afd9c320edffdd470af in session c1026da4-f5d8-4274-9d69-bc050a41ca35: Clicked on Exit
 21.02.2017 12:25:33 user 9634336d1c3f41bc0539974385b5615c in session 3d3d82db-85fd-4dca-8bd8-627537018abd: Program started.
 21.02.2017 12:25:33 user 9634336d1c3f41bc0539974385b5615c in session 3d3d82db-85fd-4dca-8bd8-627537018abd: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 21.02.2017 12:25:56 user 9634336d1c3f41bc0539974385b5615c in session 3d3d82db-85fd-4dca-8bd8-627537018abd: Document Terasic.Veek (1.2_student) opened.
@@ -2072,7 +2042,6 @@
 21.02.2017 12:26:03 user 9634336d1c3f41bc0539974385b5615c in session 3d3d82db-85fd-4dca-8bd8-627537018abd: Document Terasic.Veek (1.2_student) unlocked.
 21.02.2017 12:26:03 user 9634336d1c3f41bc0539974385b5615c in session 3d3d82db-85fd-4dca-8bd8-627537018abd: Document Terasic.Veek (1.2_student) unlocked.
 21.02.2017 12:26:03 user 9634336d1c3f41bc0539974385b5615c in session 3d3d82db-85fd-4dca-8bd8-627537018abd: Clicked on Unlocked
-21.02.2017 12:26:03 user 9634336d1c3f41bc0539974385b5615c in session 3d3d82db-85fd-4dca-8bd8-627537018abd: Clicked on Exit
 14.02.2017 12:18:50 user 9634336d1c3f41bc0539974385b5615c in session ad692e43-31d4-4a59-a560-e1e40efe6230: Program started.
 14.02.2017 12:18:50 user 9634336d1c3f41bc0539974385b5615c in session ad692e43-31d4-4a59-a560-e1e40efe6230: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 14.02.2017 12:19:39 user 9634336d1c3f41bc0539974385b5615c in session ad692e43-31d4-4a59-a560-e1e40efe6230: Document Kvazaar (1.0_student) opened.
@@ -2126,7 +2095,6 @@
 14.02.2017 15:15:50 user 9634336d1c3f41bc0539974385b5615c in session ad692e43-31d4-4a59-a560-e1e40efe6230: Document Kvazaar.Simulation-System.sysdesign (1.0_student) closed.
 14.02.2017 15:15:50 user 9634336d1c3f41bc0539974385b5615c in session ad692e43-31d4-4a59-a560-e1e40efe6230: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/systemview.html opened.
 14.02.2017 15:15:50 user 9634336d1c3f41bc0539974385b5615c in session ad692e43-31d4-4a59-a560-e1e40efe6230: Document Kvazaar (1.0_student) closed.
-14.02.2017 15:15:50 user 9634336d1c3f41bc0539974385b5615c in session ad692e43-31d4-4a59-a560-e1e40efe6230: Clicked on Exit
 31.01.2017 12:37:58 user 9634336d1c3f41bc0539974385b5615c in session 7620cb51-11ab-4f8a-b2e5-2048ed54b63f: Program started.
 31.01.2017 12:37:59 user 9634336d1c3f41bc0539974385b5615c in session 7620cb51-11ab-4f8a-b2e5-2048ed54b63f: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 31.01.2017 12:38:46 user 9634336d1c3f41bc0539974385b5615c in session 7620cb51-11ab-4f8a-b2e5-2048ed54b63f: Library path added.
@@ -2440,7 +2408,6 @@
 21.02.2017 15:17:30 user 9634336d1c3f41bc0539974385b5615c in session 4322553a-a312-4f37-8124-aa6889f631e1: Document BlinkerHAL (1.0_student) closed.
 21.02.2017 15:17:30 user 9634336d1c3f41bc0539974385b5615c in session 4322553a-a312-4f37-8124-aa6889f631e1: Document FPGAHAL (1.0) closed.
 21.02.2017 15:17:30 user 9634336d1c3f41bc0539974385b5615c in session 4322553a-a312-4f37-8124-aa6889f631e1: Document LED-Blinker.Veek-System.sysdesign (1.0_student) closed.
-21.02.2017 15:17:30 user 9634336d1c3f41bc0539974385b5615c in session 4322553a-a312-4f37-8124-aa6889f631e1: Clicked on Exit
 08.02.2017 10:09:42 user 9634336d1c3f41bc0539974385b5615c in session 75fec8f2-02a9-4ef5-a5a5-00b137c711a8: Program started.
 08.02.2017 10:09:42 user 9634336d1c3f41bc0539974385b5615c in session 75fec8f2-02a9-4ef5-a5a5-00b137c711a8: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 08.02.2017 10:10:20 user 9634336d1c3f41bc0539974385b5615c in session 75fec8f2-02a9-4ef5-a5a5-00b137c711a8: Document Kvazaar (1.0_student) opened.
@@ -2718,7 +2685,6 @@
 08.02.2017 12:12:51 user 9634336d1c3f41bc0539974385b5615c in session 75fec8f2-02a9-4ef5-a5a5-00b137c711a8: Document Kvazaar.Simulation-System.sysdesign (1.0_student) closed.
 08.02.2017 12:12:51 user 9634336d1c3f41bc0539974385b5615c in session 75fec8f2-02a9-4ef5-a5a5-00b137c711a8: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/instantiations.html opened.
 08.02.2017 12:12:51 user 9634336d1c3f41bc0539974385b5615c in session 75fec8f2-02a9-4ef5-a5a5-00b137c711a8: Document Kvazaar (1.0_student) closed.
-08.02.2017 12:12:51 user 9634336d1c3f41bc0539974385b5615c in session 75fec8f2-02a9-4ef5-a5a5-00b137c711a8: Clicked on Exit
 25.01.2017 08:10:34 user ce813f65453623831b1a4f1f93f18ca3 in session 5d4159d5-fd3e-41ce-90b4-6628b266355f: Program started.
 25.01.2017 08:10:34 user ce813f65453623831b1a4f1f93f18ca3 in session 5d4159d5-fd3e-41ce-90b4-6628b266355f: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 25.01.2017 08:10:49 user ce813f65453623831b1a4f1f93f18ca3 in session 5d4159d5-fd3e-41ce-90b4-6628b266355f: Library path added.
@@ -2815,7 +2781,6 @@
 25.01.2017 08:41:54 user ce813f65453623831b1a4f1f93f18ca3 in session 5d4159d5-fd3e-41ce-90b4-6628b266355f: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/fileset.html opened.
 25.01.2017 08:42:23 user ce813f65453623831b1a4f1f93f18ca3 in session 5d4159d5-fd3e-41ce-90b4-6628b266355f: Clicked on Save
 25.01.2017 08:42:39 user ce813f65453623831b1a4f1f93f18ca3 in session 5d4159d5-fd3e-41ce-90b4-6628b266355f: Clicked on View Library Integrity Report
-25.01.2017 08:42:39 user ce813f65453623831b1a4f1f93f18ca3 in session 5d4159d5-fd3e-41ce-90b4-6628b266355f: Clicked on Exit
 08.02.2017 08:13:01 user ce813f65453623831b1a4f1f93f18ca3 in session 3170f5bd-2d25-4eb0-b9b1-a0989ad761a6: Program started.
 08.02.2017 08:13:01 user ce813f65453623831b1a4f1f93f18ca3 in session 3170f5bd-2d25-4eb0-b9b1-a0989ad761a6: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 08.02.2017 08:13:09 user ce813f65453623831b1a4f1f93f18ca3 in session 3170f5bd-2d25-4eb0-b9b1-a0989ad761a6: Clicked on New
@@ -2863,7 +2828,6 @@
 08.02.2017 09:10:47 user ce813f65453623831b1a4f1f93f18ca3 in session 3170f5bd-2d25-4eb0-b9b1-a0989ad761a6: Document Kvazaar (1.0_student) closed.
 08.02.2017 09:10:47 user ce813f65453623831b1a4f1f93f18ca3 in session 3170f5bd-2d25-4eb0-b9b1-a0989ad761a6: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/general.html opened.
 08.02.2017 09:10:47 user ce813f65453623831b1a4f1f93f18ca3 in session 3170f5bd-2d25-4eb0-b9b1-a0989ad761a6: Document Kvazaar_sim_support (1.0_student) closed.
-08.02.2017 09:10:47 user ce813f65453623831b1a4f1f93f18ca3 in session 3170f5bd-2d25-4eb0-b9b1-a0989ad761a6: Clicked on Exit
 07.02.2017 14:35:12 user ce813f65453623831b1a4f1f93f18ca3 in session af3a59da-7fbb-4e1d-a4a8-45617c0ab0da: Program started.
 07.02.2017 14:35:12 user ce813f65453623831b1a4f1f93f18ca3 in session af3a59da-7fbb-4e1d-a4a8-45617c0ab0da: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 07.02.2017 14:35:24 user ce813f65453623831b1a4f1f93f18ca3 in session af3a59da-7fbb-4e1d-a4a8-45617c0ab0da: Document Kvazaar (1.0_student) opened.
@@ -2972,7 +2936,6 @@
 07.02.2017 17:21:07 user ce813f65453623831b1a4f1f93f18ca3 in session af3a59da-7fbb-4e1d-a4a8-45617c0ab0da: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/general.html opened.
 07.02.2017 17:21:07 user ce813f65453623831b1a4f1f93f18ca3 in session af3a59da-7fbb-4e1d-a4a8-45617c0ab0da: Document Kvazaar (1.0_student) locked.
 07.02.2017 17:21:08 user ce813f65453623831b1a4f1f93f18ca3 in session af3a59da-7fbb-4e1d-a4a8-45617c0ab0da: Document Kvazaar (1.0_student) closed.
-07.02.2017 17:21:08 user ce813f65453623831b1a4f1f93f18ca3 in session af3a59da-7fbb-4e1d-a4a8-45617c0ab0da: Clicked on Exit
 07.02.2017 12:31:52 user ce813f65453623831b1a4f1f93f18ca3 in session 3e59aede-5eac-46ca-88d4-ae3baf284f91: Program started.
 07.02.2017 12:31:52 user ce813f65453623831b1a4f1f93f18ca3 in session 3e59aede-5eac-46ca-88d4-ae3baf284f91: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 07.02.2017 12:36:37 user ce813f65453623831b1a4f1f93f18ca3 in session 3e59aede-5eac-46ca-88d4-ae3baf284f91: Document Exercise_Returns (1.0) opened.
@@ -3192,7 +3155,6 @@
 07.02.2017 14:33:23 user ce813f65453623831b1a4f1f93f18ca3 in session 3e59aede-5eac-46ca-88d4-ae3baf284f91: Document Kvazaar_sim_support (1.0_student) closed.
 07.02.2017 14:33:23 user ce813f65453623831b1a4f1f93f18ca3 in session 3e59aede-5eac-46ca-88d4-ae3baf284f91: Help page qthelp://com.tut.kactus2.2.0/doc/swsysdesign/swinstance.html opened.
 07.02.2017 14:35:01 user ce813f65453623831b1a4f1f93f18ca3 in session 3e59aede-5eac-46ca-88d4-ae3baf284f91: Document Kvazaar.Simulation-System.sysdesign (1.0_student) closed.
-07.02.2017 14:35:01 user ce813f65453623831b1a4f1f93f18ca3 in session 3e59aede-5eac-46ca-88d4-ae3baf284f91: Clicked on Exit
 31.01.2017 14:34:42 user 7361723e3ca22a606553f20de47a72bf in session 220962e7-87da-4de4-b178-e4ec0d2a6ea1: Program started.
 31.01.2017 14:34:42 user 7361723e3ca22a606553f20de47a72bf in session 220962e7-87da-4de4-b178-e4ec0d2a6ea1: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 31.01.2017 14:34:54 user 7361723e3ca22a606553f20de47a72bf in session 220962e7-87da-4de4-b178-e4ec0d2a6ea1: Document CrypterSim (1.0_student) opened.
@@ -3234,7 +3196,6 @@
 31.01.2017 14:43:18 user 7361723e3ca22a606553f20de47a72bf in session 220962e7-87da-4de4-b178-e4ec0d2a6ea1: Clicked on Unlocked
 31.01.2017 16:33:00 user 7361723e3ca22a606553f20de47a72bf in session 220962e7-87da-4de4-b178-e4ec0d2a6ea1: Document CrypterSim.SimSystem.sysdesign (1.0_student) closed.
 31.01.2017 16:33:06 user 7361723e3ca22a606553f20de47a72bf in session 220962e7-87da-4de4-b178-e4ec0d2a6ea1: Document CrypterSim (1.0_student) closed.
-31.01.2017 16:33:06 user 7361723e3ca22a606553f20de47a72bf in session 220962e7-87da-4de4-b178-e4ec0d2a6ea1: Clicked on Exit
 05.02.2017 17:45:22 user 309cd3800aacbd003ac36199fa537295 in session c4aa210f-9b76-460e-b7d1-1baa626e2aac: Program started.
 05.02.2017 17:45:22 user 309cd3800aacbd003ac36199fa537295 in session c4aa210f-9b76-460e-b7d1-1baa626e2aac: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 05.02.2017 17:50:57 user 309cd3800aacbd003ac36199fa537295 in session c4aa210f-9b76-460e-b7d1-1baa626e2aac: Clicked on Refresh Library
@@ -3274,7 +3235,6 @@
 05.02.2017 18:56:42 user 309cd3800aacbd003ac36199fa537295 in session c4aa210f-9b76-460e-b7d1-1baa626e2aac: Document Kvazaar.PC-System.sysdesign (1.0_student) unlocked.
 05.02.2017 18:56:42 user 309cd3800aacbd003ac36199fa537295 in session c4aa210f-9b76-460e-b7d1-1baa626e2aac: Clicked on Unlocked
 05.02.2017 18:56:44 user 309cd3800aacbd003ac36199fa537295 in session c4aa210f-9b76-460e-b7d1-1baa626e2aac: Clicked on Makefile Generator
-05.02.2017 18:56:44 user 309cd3800aacbd003ac36199fa537295 in session c4aa210f-9b76-460e-b7d1-1baa626e2aac: Clicked on Exit
 25.01.2017 08:54:02 user 309cd3800aacbd003ac36199fa537295 in session 8ecca04c-1e23-41bb-ae9a-af8ec9256103: Program started.
 25.01.2017 08:54:02 user 309cd3800aacbd003ac36199fa537295 in session 8ecca04c-1e23-41bb-ae9a-af8ec9256103: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 25.01.2017 08:54:57 user 309cd3800aacbd003ac36199fa537295 in session 8ecca04c-1e23-41bb-ae9a-af8ec9256103: Library path added.
@@ -3398,7 +3358,6 @@
 25.01.2017 09:47:35 user 309cd3800aacbd003ac36199fa537295 in session 8ecca04c-1e23-41bb-ae9a-af8ec9256103: Document Kvazaar.PC-System.sysdesign (1.0_student) closed.
 25.01.2017 09:47:35 user 309cd3800aacbd003ac36199fa537295 in session 8ecca04c-1e23-41bb-ae9a-af8ec9256103: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/filegeneral.html opened.
 25.01.2017 09:47:35 user 309cd3800aacbd003ac36199fa537295 in session 8ecca04c-1e23-41bb-ae9a-af8ec9256103: Document Kvazaar (1.0_student) closed.
-25.01.2017 09:47:35 user 309cd3800aacbd003ac36199fa537295 in session 8ecca04c-1e23-41bb-ae9a-af8ec9256103: Clicked on Exit
 25.01.2017 08:39:05 user 309cd3800aacbd003ac36199fa537295 in session afe79772-5dd3-4d43-a185-20f5c0402eea: Program started.
 25.01.2017 08:39:05 user 309cd3800aacbd003ac36199fa537295 in session afe79772-5dd3-4d43-a185-20f5c0402eea: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 25.01.2017 08:45:56 user 309cd3800aacbd003ac36199fa537295 in session afe79772-5dd3-4d43-a185-20f5c0402eea: Library path added.
@@ -3412,12 +3371,10 @@
 25.01.2017 08:51:40 user 309cd3800aacbd003ac36199fa537295 in session afe79772-5dd3-4d43-a185-20f5c0402eea: Clicked on Configure Library
 25.01.2017 08:51:47 user 309cd3800aacbd003ac36199fa537295 in session afe79772-5dd3-4d43-a185-20f5c0402eea: Library path added.
 25.01.2017 08:51:52 user 309cd3800aacbd003ac36199fa537295 in session afe79772-5dd3-4d43-a185-20f5c0402eea: Clicked on Configure Library
-25.01.2017 08:51:52 user 309cd3800aacbd003ac36199fa537295 in session afe79772-5dd3-4d43-a185-20f5c0402eea: Clicked on Exit
 25.01.2017 08:52:51 user 309cd3800aacbd003ac36199fa537295 in session 8726ca03-a644-48e4-8e65-7cd6cd3d56d2: Program started.
 25.01.2017 08:52:51 user 309cd3800aacbd003ac36199fa537295 in session 8726ca03-a644-48e4-8e65-7cd6cd3d56d2: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 25.01.2017 08:53:08 user 309cd3800aacbd003ac36199fa537295 in session 8726ca03-a644-48e4-8e65-7cd6cd3d56d2: Clicked on Configure Library
 25.01.2017 08:53:47 user 309cd3800aacbd003ac36199fa537295 in session 8726ca03-a644-48e4-8e65-7cd6cd3d56d2: Clicked on Configure Library
-25.01.2017 08:53:47 user 309cd3800aacbd003ac36199fa537295 in session 8726ca03-a644-48e4-8e65-7cd6cd3d56d2: Clicked on Exit
 25.01.2017 09:54:25 user 309cd3800aacbd003ac36199fa537295 in session 9e99d100-e8b9-4e35-a00d-a279012a74f6: Program started.
 25.01.2017 09:54:25 user 309cd3800aacbd003ac36199fa537295 in session 9e99d100-e8b9-4e35-a00d-a279012a74f6: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 25.01.2017 09:54:46 user 309cd3800aacbd003ac36199fa537295 in session 9e99d100-e8b9-4e35-a00d-a279012a74f6: Document Kvazaar (1.0_student) opened.
@@ -3431,10 +3388,8 @@
 25.01.2017 09:55:17 user 309cd3800aacbd003ac36199fa537295 in session 9e99d100-e8b9-4e35-a00d-a279012a74f6: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/fileset.html opened.
 25.01.2017 09:55:18 user 309cd3800aacbd003ac36199fa537295 in session 9e99d100-e8b9-4e35-a00d-a279012a74f6: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/fileset.html opened.
 25.01.2017 09:55:23 user 309cd3800aacbd003ac36199fa537295 in session 9e99d100-e8b9-4e35-a00d-a279012a74f6: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/instantiations.html opened.
-25.01.2017 09:55:23 user 309cd3800aacbd003ac36199fa537295 in session 9e99d100-e8b9-4e35-a00d-a279012a74f6: Clicked on Exit
 17.02.2017 14:03:11 user 2a147ea6e3f580f73ed5e2afcf294551 in session 95f65c9a-e6ee-4dcd-a082-a5a12b97adb0: Program started.
 17.02.2017 14:03:11 user 2a147ea6e3f580f73ed5e2afcf294551 in session 95f65c9a-e6ee-4dcd-a082-a5a12b97adb0: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
-17.02.2017 14:03:11 user 2a147ea6e3f580f73ed5e2afcf294551 in session 95f65c9a-e6ee-4dcd-a082-a5a12b97adb0: Clicked on Exit
 03.02.2017 14:05:28 user 2a147ea6e3f580f73ed5e2afcf294551 in session c28d74bd-e4be-4782-9bc3-6b7f089590d9: Program started.
 03.02.2017 14:05:28 user 2a147ea6e3f580f73ed5e2afcf294551 in session c28d74bd-e4be-4782-9bc3-6b7f089590d9: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 03.02.2017 14:05:43 user 2a147ea6e3f580f73ed5e2afcf294551 in session c28d74bd-e4be-4782-9bc3-6b7f089590d9: Document CrypterSim (1.0_student) opened.
@@ -3470,10 +3425,8 @@
 03.02.2017 14:40:53 user 2a147ea6e3f580f73ed5e2afcf294551 in session c28d74bd-e4be-4782-9bc3-6b7f089590d9: Document CrypterSimApp (1.0_student) closed.
 03.02.2017 14:40:53 user 2a147ea6e3f580f73ed5e2afcf294551 in session c28d74bd-e4be-4782-9bc3-6b7f089590d9: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/systemview.html opened.
 03.02.2017 14:40:53 user 2a147ea6e3f580f73ed5e2afcf294551 in session c28d74bd-e4be-4782-9bc3-6b7f089590d9: Document CrypterSim (1.0_student) closed.
-03.02.2017 14:40:53 user 2a147ea6e3f580f73ed5e2afcf294551 in session c28d74bd-e4be-4782-9bc3-6b7f089590d9: Clicked on Exit
 21.02.2017 13:28:35 user 2a147ea6e3f580f73ed5e2afcf294551 in session 7fe9e596-d8cd-4cfe-91a6-572dc9b657b7: Program started.
 21.02.2017 13:28:35 user 2a147ea6e3f580f73ed5e2afcf294551 in session 7fe9e596-d8cd-4cfe-91a6-572dc9b657b7: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
-21.02.2017 13:28:35 user 2a147ea6e3f580f73ed5e2afcf294551 in session 7fe9e596-d8cd-4cfe-91a6-572dc9b657b7: Clicked on Exit
 10.02.2017 13:25:13 user 2a147ea6e3f580f73ed5e2afcf294551 in session 0a853e04-fb45-41ce-9e2c-bce6769c2e24: Program started.
 10.02.2017 13:25:13 user 2a147ea6e3f580f73ed5e2afcf294551 in session 0a853e04-fb45-41ce-9e2c-bce6769c2e24: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 10.02.2017 13:25:29 user 2a147ea6e3f580f73ed5e2afcf294551 in session 0a853e04-fb45-41ce-9e2c-bce6769c2e24: Document CrypterSim (1.0_student) opened.
@@ -3505,7 +3458,6 @@
 10.02.2017 13:38:08 user 2a147ea6e3f580f73ed5e2afcf294551 in session 0a853e04-fb45-41ce-9e2c-bce6769c2e24: Document CrypterSim.SimSystem.sysdesign (1.0_student) closed.
 10.02.2017 13:38:08 user 2a147ea6e3f580f73ed5e2afcf294551 in session 0a853e04-fb45-41ce-9e2c-bce6769c2e24: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/systemview.html opened.
 10.02.2017 13:38:08 user 2a147ea6e3f580f73ed5e2afcf294551 in session 0a853e04-fb45-41ce-9e2c-bce6769c2e24: Document CrypterSim (1.0_student) closed.
-10.02.2017 13:38:08 user 2a147ea6e3f580f73ed5e2afcf294551 in session 0a853e04-fb45-41ce-9e2c-bce6769c2e24: Clicked on Exit
 21.02.2017 12:01:51 user 2a147ea6e3f580f73ed5e2afcf294551 in session 044e314d-ee4d-4f97-818b-523ab9d1786d: Program started.
 21.02.2017 12:01:52 user 2a147ea6e3f580f73ed5e2afcf294551 in session 044e314d-ee4d-4f97-818b-523ab9d1786d: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 21.02.2017 13:25:49 user 2a147ea6e3f580f73ed5e2afcf294551 in session 044e314d-ee4d-4f97-818b-523ab9d1786d: Document Kvazaar (0.7.2) opened.
@@ -3533,10 +3485,8 @@
 21.02.2017 13:26:20 user 2a147ea6e3f580f73ed5e2afcf294551 in session 044e314d-ee4d-4f97-818b-523ab9d1786d: Clicked on Unlocked
 21.02.2017 13:26:36 user 2a147ea6e3f580f73ed5e2afcf294551 in session 044e314d-ee4d-4f97-818b-523ab9d1786d: Clicked on Save
 21.02.2017 13:26:41 user 2a147ea6e3f580f73ed5e2afcf294551 in session 044e314d-ee4d-4f97-818b-523ab9d1786d: Clicked on Makefile Generator
-21.02.2017 13:26:41 user 2a147ea6e3f580f73ed5e2afcf294551 in session 044e314d-ee4d-4f97-818b-523ab9d1786d: Clicked on Exit
 13.02.2017 18:05:59 user 2a147ea6e3f580f73ed5e2afcf294551 in session 7000f3e8-81d2-4179-89d0-81a2de08ab69: Program started.
 13.02.2017 18:05:59 user 2a147ea6e3f580f73ed5e2afcf294551 in session 7000f3e8-81d2-4179-89d0-81a2de08ab69: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
-13.02.2017 18:05:59 user 2a147ea6e3f580f73ed5e2afcf294551 in session 7000f3e8-81d2-4179-89d0-81a2de08ab69: Clicked on Exit
 13.02.2017 13:48:21 user 2a147ea6e3f580f73ed5e2afcf294551 in session ffa354bb-4e52-4dce-80ee-c6ed53f33f2a: Program started.
 13.02.2017 13:48:21 user 2a147ea6e3f580f73ed5e2afcf294551 in session ffa354bb-4e52-4dce-80ee-c6ed53f33f2a: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 13.02.2017 14:06:44 user 2a147ea6e3f580f73ed5e2afcf294551 in session ffa354bb-4e52-4dce-80ee-c6ed53f33f2a: Clicked on Settings
@@ -3559,7 +3509,6 @@
 13.02.2017 14:08:00 user 2a147ea6e3f580f73ed5e2afcf294551 in session ffa354bb-4e52-4dce-80ee-c6ed53f33f2a: Clicked on Makefile Generator
 13.02.2017 14:08:13 user 2a147ea6e3f580f73ed5e2afcf294551 in session ffa354bb-4e52-4dce-80ee-c6ed53f33f2a: Clicked on Makefile Generator
 13.02.2017 14:09:55 user 2a147ea6e3f580f73ed5e2afcf294551 in session ffa354bb-4e52-4dce-80ee-c6ed53f33f2a: Clicked on Makefile Generator
-13.02.2017 14:09:55 user 2a147ea6e3f580f73ed5e2afcf294551 in session ffa354bb-4e52-4dce-80ee-c6ed53f33f2a: Clicked on Exit
 14.02.2017 12:01:47 user 2a147ea6e3f580f73ed5e2afcf294551 in session d47d1cfb-9298-417d-9852-55020c874dee: Program started.
 14.02.2017 12:01:47 user 2a147ea6e3f580f73ed5e2afcf294551 in session d47d1cfb-9298-417d-9852-55020c874dee: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 14.02.2017 12:05:01 user 2a147ea6e3f580f73ed5e2afcf294551 in session d47d1cfb-9298-417d-9852-55020c874dee: Document Terasic.Veek (1.2_student) opened.
@@ -3718,7 +3667,6 @@
 14.02.2017 14:51:17 user 2a147ea6e3f580f73ed5e2afcf294551 in session d47d1cfb-9298-417d-9852-55020c874dee: Document LED-Blinker.Veek-System.sysdesign (1.0) closed.
 14.02.2017 14:51:17 user 2a147ea6e3f580f73ed5e2afcf294551 in session d47d1cfb-9298-417d-9852-55020c874dee: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/systemview.html opened.
 14.02.2017 14:51:17 user 2a147ea6e3f580f73ed5e2afcf294551 in session d47d1cfb-9298-417d-9852-55020c874dee: Document LED-Blinker (1.0_student) closed.
-14.02.2017 14:51:17 user 2a147ea6e3f580f73ed5e2afcf294551 in session d47d1cfb-9298-417d-9852-55020c874dee: Clicked on Exit
 24.01.2017 14:27:25 user 233e2c638c93a093b16f096e962f2e63 in session 56279023-a1fa-4492-ad56-c9ef3f7d6dd4: Program started.
 24.01.2017 14:27:25 user 233e2c638c93a093b16f096e962f2e63 in session 56279023-a1fa-4492-ad56-c9ef3f7d6dd4: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 24.01.2017 14:27:34 user 233e2c638c93a093b16f096e962f2e63 in session 56279023-a1fa-4492-ad56-c9ef3f7d6dd4: Clicked on About
@@ -3733,7 +3681,6 @@
 24.01.2017 14:33:14 user 233e2c638c93a093b16f096e962f2e63 in session 56279023-a1fa-4492-ad56-c9ef3f7d6dd4: Library path added.
 24.01.2017 14:33:17 user 233e2c638c93a093b16f096e962f2e63 in session 56279023-a1fa-4492-ad56-c9ef3f7d6dd4: Clicked on Configure Library
 24.01.2017 14:35:10 user 233e2c638c93a093b16f096e962f2e63 in session 56279023-a1fa-4492-ad56-c9ef3f7d6dd4: Clicked on Configure Library
-24.01.2017 14:35:10 user 233e2c638c93a093b16f096e962f2e63 in session 56279023-a1fa-4492-ad56-c9ef3f7d6dd4: Clicked on Exit
 31.01.2017 12:25:49 user 233e2c638c93a093b16f096e962f2e63 in session 918b5e58-9e36-4007-a72d-a5d0f22c345e: Program started.
 31.01.2017 12:25:49 user 233e2c638c93a093b16f096e962f2e63 in session 918b5e58-9e36-4007-a72d-a5d0f22c345e: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 31.01.2017 12:26:28 user 233e2c638c93a093b16f096e962f2e63 in session 918b5e58-9e36-4007-a72d-a5d0f22c345e: Document CrypterApp (1.0_student) opened.
@@ -3741,7 +3688,6 @@
 31.01.2017 12:26:28 user 233e2c638c93a093b16f096e962f2e63 in session 918b5e58-9e36-4007-a72d-a5d0f22c345e: Document CrypterApp (1.0_student) locked.
 31.01.2017 12:26:28 user 233e2c638c93a093b16f096e962f2e63 in session 918b5e58-9e36-4007-a72d-a5d0f22c345e: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/general.html opened.
 31.01.2017 12:26:32 user 233e2c638c93a093b16f096e962f2e63 in session 918b5e58-9e36-4007-a72d-a5d0f22c345e: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/fileset.html opened.
-31.01.2017 12:26:32 user 233e2c638c93a093b16f096e962f2e63 in session 918b5e58-9e36-4007-a72d-a5d0f22c345e: Clicked on Exit
 24.01.2017 14:39:32 user 233e2c638c93a093b16f096e962f2e63 in session d9f36f80-dd5e-4bd1-9dde-39d27300b6ce: Program started.
 24.01.2017 14:39:32 user 233e2c638c93a093b16f096e962f2e63 in session d9f36f80-dd5e-4bd1-9dde-39d27300b6ce: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 24.01.2017 14:39:47 user 233e2c638c93a093b16f096e962f2e63 in session d9f36f80-dd5e-4bd1-9dde-39d27300b6ce: Library path added.
@@ -3799,7 +3745,6 @@
 24.01.2017 15:40:16 user 233e2c638c93a093b16f096e962f2e63 in session d9f36f80-dd5e-4bd1-9dde-39d27300b6ce: Clicked on Refresh Library
 24.01.2017 16:28:43 user 233e2c638c93a093b16f096e962f2e63 in session d9f36f80-dd5e-4bd1-9dde-39d27300b6ce: Document Kvazaar (1.0_student) closed.
 24.01.2017 16:28:43 user 233e2c638c93a093b16f096e962f2e63 in session d9f36f80-dd5e-4bd1-9dde-39d27300b6ce: Document Exercise_Returns (1.0) closed.
-24.01.2017 16:28:43 user 233e2c638c93a093b16f096e962f2e63 in session d9f36f80-dd5e-4bd1-9dde-39d27300b6ce: Clicked on Exit
 25.01.2017 08:29:58 user 4578ccde2f8bcf8d85fb042f1e4723ba in session 00a7477e-ce90-43b2-a785-43fa97c9bf68: Program started.
 25.01.2017 08:29:58 user 4578ccde2f8bcf8d85fb042f1e4723ba in session 00a7477e-ce90-43b2-a785-43fa97c9bf68: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 25.01.2017 08:31:46 user 4578ccde2f8bcf8d85fb042f1e4723ba in session 00a7477e-ce90-43b2-a785-43fa97c9bf68: Library path added.
@@ -3990,7 +3935,6 @@
 25.01.2017 09:20:24 user 4578ccde2f8bcf8d85fb042f1e4723ba in session 00a7477e-ce90-43b2-a785-43fa97c9bf68: Document Kvazaar.PC-System.sysdesign (1.0_student) closed.
 25.01.2017 09:20:24 user 4578ccde2f8bcf8d85fb042f1e4723ba in session 00a7477e-ce90-43b2-a785-43fa97c9bf68: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/systemviews.html opened.
 25.01.2017 09:20:28 user 4578ccde2f8bcf8d85fb042f1e4723ba in session 00a7477e-ce90-43b2-a785-43fa97c9bf68: Document Exercise_Returns (1.0) closed.
-25.01.2017 09:20:28 user 4578ccde2f8bcf8d85fb042f1e4723ba in session 00a7477e-ce90-43b2-a785-43fa97c9bf68: Clicked on Exit
 25.01.2017 09:26:02 user 4578ccde2f8bcf8d85fb042f1e4723ba in session d6e3f78f-6cbe-4813-b0ba-1086fc1ff5c7: Program started.
 25.01.2017 09:26:02 user 4578ccde2f8bcf8d85fb042f1e4723ba in session d6e3f78f-6cbe-4813-b0ba-1086fc1ff5c7: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 25.01.2017 09:26:24 user 4578ccde2f8bcf8d85fb042f1e4723ba in session d6e3f78f-6cbe-4813-b0ba-1086fc1ff5c7: Document Exercise_Returns (1.0) opened.
@@ -4010,7 +3954,6 @@
 25.01.2017 10:07:55 user 4578ccde2f8bcf8d85fb042f1e4723ba in session d6e3f78f-6cbe-4813-b0ba-1086fc1ff5c7: Clicked on Refresh Library
 25.01.2017 10:09:10 user 4578ccde2f8bcf8d85fb042f1e4723ba in session d6e3f78f-6cbe-4813-b0ba-1086fc1ff5c7: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/fileset.html opened.
 25.01.2017 10:09:16 user 4578ccde2f8bcf8d85fb042f1e4723ba in session d6e3f78f-6cbe-4813-b0ba-1086fc1ff5c7: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/filegeneral.html opened.
-25.01.2017 10:09:16 user 4578ccde2f8bcf8d85fb042f1e4723ba in session d6e3f78f-6cbe-4813-b0ba-1086fc1ff5c7: Clicked on Exit
 25.01.2017 08:07:48 user 775a429b617dce11d9a9b9b26992e9b8 in session 5573dbf9-ebec-40cc-96d3-5c67a0b40628: Program started.
 25.01.2017 08:07:48 user 775a429b617dce11d9a9b9b26992e9b8 in session 5573dbf9-ebec-40cc-96d3-5c67a0b40628: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 25.01.2017 08:08:03 user 775a429b617dce11d9a9b9b26992e9b8 in session 5573dbf9-ebec-40cc-96d3-5c67a0b40628: Library path added.
@@ -4156,7 +4099,6 @@
 14.02.2017 12:57:16 user f39cf00ca264ef59317940bee4616711 in session f6f859c7-91de-4000-8c7a-73ce6dbdfa28: Document CrypterSim (1.0_student) closed.
 14.02.2017 12:57:16 user f39cf00ca264ef59317940bee4616711 in session f6f859c7-91de-4000-8c7a-73ce6dbdfa28: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/designConfigurationInstantiations.html opened.
 14.02.2017 12:57:16 user f39cf00ca264ef59317940bee4616711 in session f6f859c7-91de-4000-8c7a-73ce6dbdfa28: Document CrypterSimApp_w_TLM (1.0_student) closed.
-14.02.2017 12:57:16 user f39cf00ca264ef59317940bee4616711 in session f6f859c7-91de-4000-8c7a-73ce6dbdfa28: Clicked on Exit
 22.02.2017 11:28:42 user f39cf00ca264ef59317940bee4616711 in session 8db94b2c-d0ea-45f6-8c33-bb7bb7102a2c: Program started.
 22.02.2017 11:28:42 user f39cf00ca264ef59317940bee4616711 in session 8db94b2c-d0ea-45f6-8c33-bb7bb7102a2c: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 22.02.2017 11:29:01 user f39cf00ca264ef59317940bee4616711 in session 8db94b2c-d0ea-45f6-8c33-bb7bb7102a2c: Document Kvazaar (1.0_student) opened.
@@ -4182,7 +4124,6 @@
 22.02.2017 12:16:00 user f39cf00ca264ef59317940bee4616711 in session 8db94b2c-d0ea-45f6-8c33-bb7bb7102a2c: Document Kvazaar.Simulation-System.sysdesign (1.0_student) closed.
 22.02.2017 12:16:00 user f39cf00ca264ef59317940bee4616711 in session 8db94b2c-d0ea-45f6-8c33-bb7bb7102a2c: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/systemview.html opened.
 22.02.2017 12:16:00 user f39cf00ca264ef59317940bee4616711 in session 8db94b2c-d0ea-45f6-8c33-bb7bb7102a2c: Document Kvazaar (1.0_student) closed.
-22.02.2017 12:16:00 user f39cf00ca264ef59317940bee4616711 in session 8db94b2c-d0ea-45f6-8c33-bb7bb7102a2c: Clicked on Exit
 14.02.2017 10:41:01 user f39cf00ca264ef59317940bee4616711 in session d5c7860f-1ef4-45a3-a534-a18282cfea7a: Program started.
 14.02.2017 10:41:01 user f39cf00ca264ef59317940bee4616711 in session d5c7860f-1ef4-45a3-a534-a18282cfea7a: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 14.02.2017 10:43:02 user f39cf00ca264ef59317940bee4616711 in session d5c7860f-1ef4-45a3-a534-a18282cfea7a: Document CrypterSimApp (1.0_student) opened.
@@ -4359,7 +4300,6 @@
 14.02.2017 11:01:48 user f39cf00ca264ef59317940bee4616711 in session d5c7860f-1ef4-45a3-a534-a18282cfea7a: Document CrypterSim.SimSystem.sysdesign (1.0_student) closed.
 14.02.2017 11:01:48 user f39cf00ca264ef59317940bee4616711 in session d5c7860f-1ef4-45a3-a534-a18282cfea7a: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/systemview.html opened.
 14.02.2017 11:01:48 user f39cf00ca264ef59317940bee4616711 in session d5c7860f-1ef4-45a3-a534-a18282cfea7a: Document CrypterSim (1.0_student) closed.
-14.02.2017 11:01:48 user f39cf00ca264ef59317940bee4616711 in session d5c7860f-1ef4-45a3-a534-a18282cfea7a: Clicked on Exit
 17.02.2017 10:24:07 user f39cf00ca264ef59317940bee4616711 in session f0f2ab4f-3f00-4af4-ad8a-681986b08f6c: Program started.
 17.02.2017 10:24:07 user f39cf00ca264ef59317940bee4616711 in session f0f2ab4f-3f00-4af4-ad8a-681986b08f6c: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 17.02.2017 10:26:05 user f39cf00ca264ef59317940bee4616711 in session f0f2ab4f-3f00-4af4-ad8a-681986b08f6c: Document CrypterSim (1.0_student) opened.
@@ -4457,7 +4397,6 @@
 17.02.2017 11:39:35 user f39cf00ca264ef59317940bee4616711 in session f0f2ab4f-3f00-4af4-ad8a-681986b08f6c: Document Kvazaar (1.0_student) closed.
 17.02.2017 11:39:35 user f39cf00ca264ef59317940bee4616711 in session f0f2ab4f-3f00-4af4-ad8a-681986b08f6c: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/fileset.html opened.
 17.02.2017 11:39:35 user f39cf00ca264ef59317940bee4616711 in session f0f2ab4f-3f00-4af4-ad8a-681986b08f6c: Document CrypterSim (1.0_student) closed.
-17.02.2017 11:39:35 user f39cf00ca264ef59317940bee4616711 in session f0f2ab4f-3f00-4af4-ad8a-681986b08f6c: Clicked on Exit
 07.02.2017 11:53:08 user f39cf00ca264ef59317940bee4616711 in session 024dea7f-4843-40e6-8e93-5b2ad079e30a: Program started.
 07.02.2017 11:53:08 user f39cf00ca264ef59317940bee4616711 in session 024dea7f-4843-40e6-8e93-5b2ad079e30a: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 07.02.2017 11:56:02 user f39cf00ca264ef59317940bee4616711 in session 024dea7f-4843-40e6-8e93-5b2ad079e30a: Clicked on Configure Library
@@ -4623,4 +4562,3 @@
 07.02.2017 15:06:03 user f39cf00ca264ef59317940bee4616711 in session 024dea7f-4843-40e6-8e93-5b2ad079e30a: Document CrypterSimApp (1.0_student) closed.
 07.02.2017 15:06:03 user f39cf00ca264ef59317940bee4616711 in session 024dea7f-4843-40e6-8e93-5b2ad079e30a: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/general.html opened.
 07.02.2017 15:06:06 user f39cf00ca264ef59317940bee4616711 in session 024dea7f-4843-40e6-8e93-5b2ad079e30a: Document CrypterApp (1.0_student) closed.
-07.02.2017 15:06:06 user f39cf00ca264ef59317940bee4616711 in session 024dea7f-4843-40e6-8e93-5b2ad079e30a: Clicked on Exit

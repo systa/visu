@@ -235,7 +235,7 @@ function getData( source, callback ) {
                //Add event
                entry = entries[j-1]; //No real way to know how long the session has lasted before ending, hence copy previous time
                
-               if (entry.action != "Clicked on Exit."){
+               if (! entry.action.includes("Exit")){
                   console.log("Last entry is not Exit: ", entry.action);
                   
                   var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Exit", hash: entry.hash, document: null, page: null, first_time: first_event_time, collide: entry.collide};
@@ -339,7 +339,7 @@ function getData( source, callback ) {
                     case "Locked.":
                         event.document = previous_document;
                         break;
-                    case "Exit.":
+                    case "Exit": case "Exit.":
                         //Create state change
                         stateChange = {event: entry.hash, from: "(session) open", to: "(session) closed"}; 
                         stateChanges.push(stateChange);

@@ -1,2 +1,0 @@
-25.01.2017 08:31:48 user 2ac246473b284b67c533c80e99a84749 in session 67761b6d-c1ef-4bdc-b6a4-dee0b638e1b3: Document Exercise_Returns (1.0) opened.
-###End of file (required)

@@ -40,4 +40,3 @@
 25.01.2017 10:19:51 user 2ac246473b284b67c533c80e99a84749 in session 3175409c-fb4a-488d-a595-c68161d59043: Document Kvazaar.PC-System.sysdesign (1.0_student) closed.
 25.01.2017 10:19:51 user 2ac246473b284b67c533c80e99a84749 in session 3175409c-fb4a-488d-a595-c68161d59043: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/systemview.html opened.
 25.01.2017 10:19:51 user 2ac246473b284b67c533c80e99a84749 in session 3175409c-fb4a-488d-a595-c68161d59043: Document Kvazaar (1.0_student) closed.
-25.01.2017 10:19:51 user 2ac246473b284b67c533c80e99a84749 in session 3175409c-fb4a-488d-a595-c68161d59043: Clicked on Exit
