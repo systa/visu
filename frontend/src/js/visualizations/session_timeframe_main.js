@@ -36,7 +36,6 @@ var SESSION_TIMEFRAME_MAIN = function(par){
     
     //Function for resize event
     var onResize = function(){
-        console.log("[session_timeframe_main]onResize");
         var container = _layout.getContainer();
 
         _containerWidth = window.innerWidth-_containerMargins.left-_containerMargins.right;
@@ -68,9 +67,7 @@ var SESSION_TIMEFRAME_MAIN = function(par){
         }
     };
     
-    
     var createLegend = function(types){
-       console.log("[session_timeframe_main]createLegend");
         var scale = _issueChart.getColorScale();
         for(var i = 0; i < types.length; ++i){
             var color = scale(types[i]);
@@ -80,13 +77,10 @@ var SESSION_TIMEFRAME_MAIN = function(par){
     
     //Initializes the chart template and draws the visualization.
     var initCharts = function(data, timeframe){
-      console.log("[session_timeframe_main]initCharts");
-        
         var elements = _layout.createLayout();
         
         if(!timeframe){
             timeframe = data.timeframe;
-            console.log("[session_timeframe_main]data.timeframe: [", +timeframe[0], +timeframe[1],"] in miliseconds.");
         }
         
         _issueChartMargins.left = _layout.getSVGTextWidth(data.longestId)+12;
@@ -173,6 +167,8 @@ var SESSION_TIMEFRAME_MAIN = function(par){
 
     //parsing the parameters from user to query data and select timeframe
     var p = par || {};
+    
+    console.log("[session_timeframe_main]p: ", par);
     
     var _mapping = p.mapping !== undefined ? p.mapping : false;
     

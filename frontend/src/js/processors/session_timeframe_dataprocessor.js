@@ -24,7 +24,6 @@ var SESSION_TIMEFRAME_PROCESSOR = function(par){
     var _states = p.states !== undefined ? p.states : {};
 
     var _resolution = _states.resolution !== undefined ? _states.resolution : [];
-    console.log("[session_timeframe_dataprocessor]Resolution:",_resolution);
     
     //Splitting the Y-index mapping from . so we can do the mapping properly
     //even if it is a field of nested object.
@@ -64,8 +63,6 @@ var SESSION_TIMEFRAME_PROCESSOR = function(par){
     };
     
     var parseLifespans = function(statelist){
-        console.log("[session_timeframe_dataprocessor]Parsing lifespans of states:", statelist);
-        
         var lifespans = [];
         //Looping through all constructs
         for(var rid in statelist){            
@@ -347,74 +344,45 @@ var SESSION_TIMEFRAME_PROCESSOR = function(par){
         };
     };
 
-    var sortRows = function(lifespans){
-        var idHelper = {};
-        var lptmp = [];
+    var sortRows = function(constructs){
+        var tmp = [];
         var ids = [];
-        lifespans.forEach(function(lp){
-            if(idHelper[lp.rowId] === undefined){
-                idHelper[lp.rowId] = {
-                    start: lp.start,
-                    end : lp.end
-                };
-            }
-            else{
-                var endtmp = idHelper[lp.rowId].end;
-                if(endtmp !== false && lp.end !== false){
-                    var e1 = new Date(endtmp).getTime();
-                    var e2 = new Date(lp.end).getTime();
-                    if(e2 > e1){
-                        idHelper[lp.rowId].end = lp.end;
-                    }
-                }
-                else{
-                    idHelper[lp.rowId].end = false;
-                }
-                
-                var s1 = new Date(idHelper[lp.rowId].start).getTime();
-                var s2 = new Date(lp.start).getTime();
-                if(s2 < s1){
-                    idHelper[lp.rowId].start = lp.start;
-                }
-            }
-        });
-        for(var obj in idHelper){
-            if(idHelper.hasOwnProperty(obj)){
-                lptmp.push({start : idHelper[obj].start, end : idHelper[obj].end, rowId : obj});
-            }
+
+        console.log("[dataprocessor]Contructs: ", constructs);
+
+        for(var i in constructs){
+            var obj = constructs[i];
+            tmp.push({name : obj.name, rowId : obj.rowId, user : obj.related_constructs[0]});
         }
-        lptmp.sort(function(lp1, lp2){
-            var s1 = new Date(lp1.start).getTime();
-            var s2 = new Date(lp2.start).getTime();
-            
-            if(lp1.end === false && lp2.end === false){
-                return s1-s2;
-            }
-            else if(lp1.end === false){
-                return 1;
-            }
-            else if(lp2.end === false){
-                return -1;
-            }
-            else{
-                var t1 = new Date(lp1.end);
-                var t2 = new Date(lp2.end);
+        console.log(tmp);
+        try{
+            //Sort constructs -> will define the row of each construct (not rowID!)
+            tmp.sort(function(c1, c2){
+                //console.log(c1);
+                //console.log(c2);
                 
-                t1 = new Date(t1.getFullYear(), t1.getMonth(), t1.getDate()).getTime();
-                t2 = new Date(t2.getFullYear(), t2.getMonth(), t2.getDate()).getTime();
+                var u1 = c1.user;
+                var u2 = c2.user;
                 
-                var e = t1-t2;
-                if(e === 0){
-                    return s1-s2;
+                var tmp = u1.localeCompare(u2);
+                
+                if(tmp !== 0){
+                    return tmp; //Sort by user name
+                }else {
+                    var n1 = c1.name;
+                    var n2 = c2.name;
+                    return n1.localeCompare(n2); //Then by session name
                 }
-                else{
-                    return e;
-                }
-            }
-        });
-        for(var i = 0; i < lptmp.length; ++i){
-            ids.push(lptmp[i].rowId);
+            });
+        
+        }catch(e){
+            console.log(e);
         }
+        
+        for(var i = 0; i < tmp.length; ++i){
+            ids.push(tmp[i].rowId);
+        }
+        
         return ids;
     };
 
@@ -431,6 +399,8 @@ var SESSION_TIMEFRAME_PROCESSOR = function(par){
         //object for the processed data
         var data = {};
         
+        console.log("[dataprocessor]Initial Contructs: ", constructs);
+        
         //from constructs we parse ids and constructs that are used
         //it also adds property rowID to constructs in _constructs list!
         var constructData = parseConstructs(constructs);
@@ -445,7 +415,9 @@ var SESSION_TIMEFRAME_PROCESSOR = function(par){
         data.types = eventData.types.concat(stateData.types);
         data.types.sort();
 
-        var scId = sortRows(stateData.lifespans);
+        //var scId = sortRows(stateData.lifespans);
+        var scId = sortRows(data.constructs);
+
         data.ids = mergeIdLists(scId, constructData.ids);
 
         var start = eventData.timeframe[0];
@@ -467,8 +439,6 @@ var SESSION_TIMEFRAME_PROCESSOR = function(par){
         var t_start = +(new Date(start.getFullYear(), start.getMonth(), start.getDate(), start.getHours(), start.getMinutes(), start.getSeconds()));
         var t_end = +(new Date(end.getFullYear(), end.getMonth(), end.getDate(), end.getHours(), end.getMinutes()+1, end.getSeconds()));
         data.timeframe = [0, t_end - t_start];
-        
-        console.log("[session_timeframe_dataprocessor]timeframe: ", data.timeframe, ", from: [", t_start, ",", t_end,"]");
         
         //giving the data to who needs it
         return data;
