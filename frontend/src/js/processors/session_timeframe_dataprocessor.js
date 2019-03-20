@@ -399,8 +399,6 @@ var SESSION_TIMEFRAME_PROCESSOR = function(par){
         //object for the processed data
         var data = {};
         
-        console.log("[dataprocessor]Initial Contructs: ", constructs);
-        
         //from constructs we parse ids and constructs that are used
         //it also adds property rowID to constructs in _constructs list!
         var constructData = parseConstructs(constructs);
@@ -409,10 +407,10 @@ var SESSION_TIMEFRAME_PROCESSOR = function(par){
 
         data.constructs = constructData.processedConstructs;
         data.longestId = constructData.longestId;
-        data.longestType = constructData.longestType;
+        data.longestType = constructData.longestType; //construct type 
         data.events = eventData.events;
         data.lifespans = stateData.lifespans;
-        data.types = eventData.types.concat(stateData.types);
+        data.types = eventData.types.concat(stateData.types); //state/event types for legend
         data.types.sort();
 
         //var scId = sortRows(stateData.lifespans);

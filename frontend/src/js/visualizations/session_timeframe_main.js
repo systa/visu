@@ -67,6 +67,7 @@ var SESSION_TIMEFRAME_MAIN = function(par){
         }
     };
     
+    //Legend on top of visu
     var createLegend = function(types){
         var scale = _issueChart.getColorScale();
         for(var i = 0; i < types.length; ++i){
@@ -101,7 +102,6 @@ var SESSION_TIMEFRAME_MAIN = function(par){
         });
 
         var onBrush= function(timeRange){
-            console.log("[session_timeframe_main]OnBrush.");
             _issueChart.onBrush(timeRange);
         };
 
@@ -194,16 +194,9 @@ var SESSION_TIMEFRAME_MAIN = function(par){
         if(_events && _constructs && _states){
             var parsed_data = _parser(_constructs, _events, _states);
            
-           console.log("[session_timeframe_main]Timeframe: ", _timeframe);
-           console.log("[session_timeframe_main]Parsed Timeframe: ", parsed_data.timeframe);
-                      
-           initCharts(parsed_data, _timeframe); //timeframe of the filters !
-           
-           console.log("[session_timeframe_main]Events: ", _events);
-           console.log("[session_timeframe_main]Statechanges: ", _states);
-           console.log("[session_timeframe_main]Constructs: ", _constructs);
            console.log("[session_timeframe_main]Parsed Data: ", parsed_data);
-           
+                      
+           initCharts(parsed_data, _timeframe); //timeframe of the filters
         }
         return false;
     };

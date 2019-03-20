@@ -240,13 +240,18 @@ var SessionTimeframe = function(par){
         return _colorScale(data.type);
     };
     
+    pub.getColor2 = function(data){
+        return _colorScale(data.related_constructs[0]);
+    };
+    
     pub.getStateColor = function(data){
         return _colorScale(data.state);
     };
     
     //Returns the state text from data
     pub.getLabel = function(data){
-        return data.type;
+        return data.related_constructs[0];
+        //return data.type;
     };
     
     pub.draw = function(){
@@ -284,7 +289,7 @@ var SessionTimeframe = function(par){
 
         //state data
         if(_displayTypes){
-            _states.attr('fill', pub.getColor)
+            _states.attr('fill', pub.getColor2)
                 .attr('x', _width-_margins.right)
                 .attr('width', _margins.right)
                 .attr('y', getY)
