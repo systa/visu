@@ -48,7 +48,9 @@ body{
 .tooltip{
     padding : 0.1%;
     z-index : 10;
-    position : absolute;
+    position : fixed;
+    bottom : 0;
+    right : 0;
     visibility : hidden;
     font-size : 0.65em;
     background-color : #F0F0F0;
