@@ -8,13 +8,9 @@
 */
 
 var DEMO_TEMPLATE = function(mpar){
-   
-    console.log("HUGO TESTING SHIT in demo_template.js");
     
     //The main container parameters
     var _mainParameters = mpar || {};
-   
-    console.log("[demo_template.js]Parameters:", mpar);
     
     var _mclassName = _mainParameters.className !== undefined ? _mainParameters.className : "container";
     var _containerId = _mainParameters.id !== undefined ? _mainParameters.id : "container";
