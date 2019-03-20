@@ -85,7 +85,7 @@ var SESSION_TIMEFRAME_MAIN = function(par){
         }
         
         _issueChartMargins.left = _layout.getSVGTextWidth(data.longestId)+12;
-        _issueChartMargins.right = _layout.getSVGTextWidth(data.longestType)+12;
+        _issueChartMargins.right = 60; //_layout.getSVGTextWidth(data.longestUser)+12;
         _timeSelectorMargins.left =  _issueChartMargins.left;
         _timeSelectorMargins.right = _issueChartMargins.right;
         

@@ -268,8 +268,8 @@ var SESSION_TIMEFRAME_PROCESSOR = function(par){
         var lenId = 0;
         var longestId = "";
 
-        var lenType = 0;
-        var longestType = "";
+        var lenUser = 0;
+        var longestUser = "";
         
         var identity_helper = [];
         
@@ -319,9 +319,9 @@ var SESSION_TIMEFRAME_PROCESSOR = function(par){
                 }
                 constructHelpper[construct._id.toString()] = construct;
                 processedConstructs.push(construct);
-                if(construct.type.length > lenType){
-                    lenType = construct.type.length;
-                    longestType = construct.type;
+                if(construct.related_constructs[0].length > lenUser){
+                    lenUser = construct.related_constructs[0].length;
+                    longestUser = construct.related_constructs[0];
                 }
 
                 if(ids.indexOf(construct.rowId) === -1){
@@ -340,7 +340,7 @@ var SESSION_TIMEFRAME_PROCESSOR = function(par){
             processedConstructs : processedConstructs,
             ids : ids,
             longestId : longestId,
-            longestType: longestType
+            longestUser: longestUser
         };
     };
 
@@ -407,7 +407,7 @@ var SESSION_TIMEFRAME_PROCESSOR = function(par){
 
         data.constructs = constructData.processedConstructs;
         data.longestId = constructData.longestId;
-        data.longestType = constructData.longestType; //construct type 
+        data.longestUser = constructData.longestUser; //construct user 
         data.events = eventData.events;
         data.lifespans = stateData.lifespans;
         data.types = eventData.types.concat(stateData.types); //state/event types for legend

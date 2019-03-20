@@ -250,7 +250,7 @@ var SessionTimeframe = function(par){
     
     //Returns the state text from data
     pub.getLabel = function(data){
-        return data.related_constructs[0];
+        return ".." + data.related_constructs[0].substring(20);
         //return data.type;
     };
     
