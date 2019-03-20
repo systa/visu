@@ -36,5 +36,8 @@ router.get('/custom-timeline', function(req, res) {
   res.sendfile('./frontend/views/custom-timeline.html');
 });
 
+router.get('/session-timeframe', function(req, res) {
+  res.sendfile('./frontend/views/session-timeframe.html');
+});
 
 module.exports = router;

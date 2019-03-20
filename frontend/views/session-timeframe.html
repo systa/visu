@@ -11,13 +11,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>IssueTimeline</title>
+    <title>Session Timeframe</title>
     <link rel ="stylesheet" href="src/css/generic-vis.css">
     <script type="text/javascript" src="dist/js/_bower.js"></script>
     <script type="text/javascript" src="dist/js/app.min.js"></script>
     
   </head>
-  <body onload="DEMO_QUERY_UI(true, ISSUE_TIMELINE_MAIN)">
+  <body onload="DEMO_QUERY_UI(true, SESSION_TIMEFRAME_MAIN)">
         <div id = "queryui" class = "ui">
             <form id ="queryform">
                 <H1>Data Filtering</H1>
@@ -49,7 +49,7 @@
                     <H3>Construct filters</H3>
                     <p>
                         Name: <input type = "text" name = "cn" id = "constructName"></input></br>
-                        Type: <input type = "text" name = "ct" id = "constructType"></input></br>
+                        Type: <input type = "text" name = "ct" id = "constructType" value="session"></input></br>
                         Description: <input type = "text" name = "cd" id = "constructDescription"></input></br>
                     </p>    
                 </p>
@@ -69,11 +69,11 @@
                     
                     <H2>States</H2>
                     <p>
-                        Define the resolution states of your tickets for the visualization.
+                        Define the resolution states of the sessions for the visualization.
                     </p>
                     <p>
                         Resolution states separated by comma:</br>
-                        <input type = "text" name = "resolution" id = "resolution" value = "closed, resolved, resolution, done, fixed, cancelled, duplicate, won't fix, won't do, cannot reproduce"></input>
+                        <input type = "text" name = "resolution" id = "resolution" value = "(session) closed"></input>
                     </p>
                 </p>
             </form>
