@@ -119,7 +119,6 @@ var SessionTimeframe = function(par){
     //The event times
     var _eventGroup = _svg.append("g");
     
-    //var _events = _eventGroup.selectAll("rect").data(_eventData).enter().append("rect");
     var _events = _eventGroup.selectAll("circle").data(_eventData).enter().append("circle");
     
     var _xAxisGraphic = _svg.append("g").attr("class", "x axis");

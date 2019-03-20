@@ -89,8 +89,8 @@ var SESSION_TIMEFRAME_MAIN = function(par){
             console.log("[session_timeframe_main]data.timeframe: [", +timeframe[0], +timeframe[1],"] in miliseconds.");
         }
         
-        _issueChartMargins.left = _layout.getSVGTextWidth(data.longestId)+2;
-        _issueChartMargins.right = _layout.getSVGTextWidth(data.longestType)+2;
+        _issueChartMargins.left = _layout.getSVGTextWidth(data.longestId)+12;
+        _issueChartMargins.right = _layout.getSVGTextWidth(data.longestType)+12;
         _timeSelectorMargins.left =  _issueChartMargins.left;
         _timeSelectorMargins.right = _issueChartMargins.right;
         
