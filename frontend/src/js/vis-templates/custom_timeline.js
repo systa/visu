@@ -161,7 +161,7 @@ var CustomTimeline = function(par){
     var getLpEnd = function(data){
         var domain = _timeScale.domain();
         
-        console.log("Data: ", data, ", domain:", domain);
+        //console.log("Data: ", data, ", domain:", domain);
         
         //if end is false...
         //data endpoint is mapped to the domain end point
@@ -174,7 +174,7 @@ var CustomTimeline = function(par){
             var n_first = new Date(data.first_time).getTime();
             var y = n_end - n_first;
             
-            console.log("y:", y, "+dom_end: ", + domain[domain.length-1]);
+            //console.log("y:", y, "+dom_end: ", + domain[domain.length-1]);
 
             if (y >= + domain[domain.length-1]) {
                 return _timeScale(domain[domain.length-1]);

@@ -17,8 +17,8 @@ var CUSTOM_TIMELINE_MAIN = function(par){
     
     //The left and right margin as well as width should be the same
     //for all the charts if we want to align the draw areas vertically
-    var _issueChartMargins = {top: 20, bottom: 4, left: 0, right: 0};
-    var _timeSelectorMargins = {top: 20, bottom: 10, left: 0, right: 0};
+    var _issueChartMargins = {top: 20, bottom: 4, left: 50, right: 50};
+    var _timeSelectorMargins = {top: 20, bottom: 10, left: 50, right: 50};
     
     var _width = 0;
     var _height = 0;

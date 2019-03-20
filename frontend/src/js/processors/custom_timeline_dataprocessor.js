@@ -87,7 +87,7 @@ var CUSTOM_TIMELINE_PROCESSOR = function(par){
                 //Looping through state changes of one construct
                 
                 var first_time = statechanges[0].time;
-                console.log("[custom_timeline_dataprocessor]first time:", first_time);
+                //console.log("[custom_timeline_dataprocessor]first time:", first_time);
                 
                 for(var i = 0; i < statechanges.length; ++i){
                     var sc = statechanges[i];
@@ -157,7 +157,8 @@ var CUSTOM_TIMELINE_PROCESSOR = function(par){
             if(identity_helper.indexOf(ev._id) === -1){
                 identity_helper.push(ev._id);
                 
-                var time = new Date(ev.time).getTime();
+                var first_time = new Date(ev.data.first_time).getTime();
+                var time = new Date(ev.time).getTime() - first_time;
                 
                 //detecting the timeframe
                 if(time < start || start === false){
@@ -198,6 +199,7 @@ var CUSTOM_TIMELINE_PROCESSOR = function(par){
         });//For each statechange ends
         //getting the lifespans from state data
         var lifespans = parseLifespans(states);
+        console.log("final times (states): ",start,",",end);
         return {
             lifespans : lifespans,
             timeframe:[new Date(start), new Date(end)],
@@ -219,14 +221,17 @@ var CUSTOM_TIMELINE_PROCESSOR = function(par){
             if(identity_helper.indexOf(ev._id) === -1){
                 identity_helper.push(ev._id);
                 
-                var time = new Date(ev.time).getTime();
+                var first_time = new Date(ev.data.first_time).getTime();
+                var time = new Date(ev.time).getTime() - first_time;
                 
                 //detecting the timeframe
                 if(time < start || start === false){
                     start = time;
+                    //console.log("new end time: ",start,"=",new Date(ev.time).getTime(),"-",first_time);
                 }
                 if(time > end || end === false){
                     end = time;
+                    //console.log("new end time: ",end,"=",new Date(ev.time).getTime(),"-",first_time);
                 }
 
                 if(types.indexOf(ev.type) === -1){
@@ -254,6 +259,7 @@ var CUSTOM_TIMELINE_PROCESSOR = function(par){
             }
             
         });
+        console.log("final times (events): ",start,",",end);
         return {events: evs, timeframe:[new Date(start), new Date(end)], types : types};
     };
     
@@ -451,21 +457,22 @@ var CUSTOM_TIMELINE_PROCESSOR = function(par){
         var s2 = stateData.timeframe[0].getTime();
         if(s2 < s1){
             start = stateData.timeframe[0];
-        }
+        } //Gets start from min(stateData, eventData)
 
         var end = eventData.timeframe[1];
         var e1 = eventData.timeframe[1].getTime();
         var e2 = stateData.timeframe[1].getTime();
         if(e2 > e1){
             end = stateData.timeframe[1];
-        }
+        } //Gets end from max(stateData, eventData)
+        console.log("[custom_timeline_dataprocessor.js]end time: max(", e1, ",", e2, ")");
 
         //Define the actual timeframe ???
         var t_start = +(new Date(start.getFullYear(), start.getMonth(), start.getDate(), start.getHours(), start.getMinutes(), start.getSeconds()));
         var t_end = +(new Date(end.getFullYear(), end.getMonth(), end.getDate(), end.getHours(), end.getMinutes()+1, end.getSeconds()));
         data.timeframe = [0, t_end - t_start];
         
-        console.log("[custom_timeline_dataprocessor.js]timeframe: ", data.timeframe);
+        console.log("[custom_timeline_dataprocessor.js]timeframe: ", data.timeframe, ", from: [", t_start, ",", t_end);
         
         //giving the data to who needs it
         return data;
