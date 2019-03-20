@@ -167,7 +167,6 @@ function parseMyTime(myTime, myDate){
                       myTime.substr(3,2),  //min
                       myTime.substr(6,2),  //sec
                       "000"); //millisec
-   console.log("Time:", myTime, " = ", time.toTimeString());
    return time;
 }
 

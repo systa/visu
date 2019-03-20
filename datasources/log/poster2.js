@@ -138,7 +138,7 @@ function sendToDb( logData, source ) {
 
          // If the item is an event, create the event 
          else if ( type === "event" ) {
-            event.type = type;
+            //event.type = type;
             event.time = parseMyTime(item.time, item.date);
             event.duration = 0;
             event.creator = item.session_id;
@@ -153,8 +153,23 @@ function sendToDb( logData, source ) {
                event.isStatechange = true;
                event.statechange = {from: item.statechange.from, to: item.statechange.to};
             }
-
-            pending.push({body: event, url: eventApi, type: type, sent: false, item : item});
+             
+            //Seperate event types in categories
+            var action = String(item.action);
+            var event_type;
+            if (action.includes("Document")){
+                event_type = "doc";
+            }else if (action.includes("Help")){
+                event_type = "help";
+            }else if (action.includes("Clicked on")){
+                event_type = "feature";
+            }else {
+                event_type = "other";
+            }
+             
+            event.type = event_type;
+            
+            pending.push({body: event, url: eventApi, type: event_type, sent: false, item : item});
          }
 
          else {
