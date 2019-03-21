@@ -68,6 +68,7 @@ var SESSION_TIMEFRAME_PROCESSOR = function(par){
         for(var rid in statelist){            
             if(statelist.hasOwnProperty(rid)){
                 var statechanges = statelist[rid];
+                console.log(rid, statechanges);
                 statechanges.sort(stSortFunction);
 
                 //The first state in the array is the first statechange taken into account
@@ -80,14 +81,31 @@ var SESSION_TIMEFRAME_PROCESSOR = function(par){
                 var skip = false;
 
                 //Looping through state changes of one construct
-                
                 var first_time = statechanges[0].time;
-                //console.log("[custom_timeline_dataprocessor]first time:", first_time);
+                var sc;
+                for(var i = 0; i < statechanges.length; ++i){
+                    //Only consider states linked to session
+                    sc = statechanges[i];
+                    if (sc.statechange && sc.statechange.to.includes("session")) {
+                        
+                        if (sc.statechange.to.includes("close")){
+                            rt = sc.time;
+                        }
+                        
+                        lifespans.push({
+                            rowId : rid,
+                            start : st.time,
+                            state : sc.statechange.to,
+                            end : rt,
+                            first_time : first_time
+                        });
+                    }
+                }
                 
+                /*
                 for(var i = 0; i < statechanges.length; ++i){
                     var sc = statechanges[i];
-                    var trimmedState = sc.statechange.to.replace(/\s/g,'');
-
+                    var trimmedState = sc.statechange.to.replace(/\s/g,''); //removes ' ' character in string
                     if(!skip){
                         var tmp = {
                             rowId : rid,
@@ -127,6 +145,7 @@ var SESSION_TIMEFRAME_PROCESSOR = function(par){
                         first_time : first_time
                     });
                 }
+                */
             }
         }
         return lifespans;
@@ -163,8 +182,18 @@ var SESSION_TIMEFRAME_PROCESSOR = function(par){
                     end = time;
                 }
 
+                //Include session-related state types only
                 if(types.indexOf(ev.statechange.to) === -1){
-                    types.push(ev.statechange.to);
+                    //Only push state types of sessions
+                    if (ev.statechange.to.includes("session")){
+                        types.push(ev.statechange.to);
+                    }
+                }
+                if(types.indexOf(ev.statechange.from) === -1){
+                    //Only push state types of sessions
+                    if (ev.statechange.from.includes("session")){
+                        types.push(ev.statechange.from);
+                    }
                 }
                 
                 for(var i = 0; i < ev.related_constructs.length; ++i){
@@ -409,7 +438,10 @@ var SESSION_TIMEFRAME_PROCESSOR = function(par){
         data.longestId = constructData.longestId;
         data.longestUser = constructData.longestUser; //construct user 
         data.events = eventData.events;
+
+        //HERE
         data.lifespans = stateData.lifespans;
+        
         data.types = eventData.types.concat(stateData.types); //state/event types for legend
         data.types.sort();
 

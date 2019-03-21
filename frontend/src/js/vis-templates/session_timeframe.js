@@ -100,7 +100,7 @@ var SessionTimeframe = function(par){
     var _bg = _bgGroup.selectAll("rect").data(_constructData).enter().append("rect");
     var _names = _bgGroup.selectAll("text").data(_yDomain).enter().append("text");
     
-    //Status group is related to the "Y-axis". It shows the status of the test if it failed or passed.
+    //Status group is related to the "Y-axis". It shows the status of the session
     if(_displayTypes){
         var _stateGroup = _svg.append("g");
         var _states = _stateGroup.selectAll("rect").data(_constructData).enter().append("rect");
@@ -112,9 +112,6 @@ var SessionTimeframe = function(par){
     //Lifespan data
     var _lifespanGroup = _svg.append("g");
     var _lifespans = _lifespanGroup.selectAll("line").data(_lifespanData).enter().append("line");
-    
-    console.log("[session_timeframe]Lifespans:", _lifespans);
-    console.log("[session_timeframe]Lifespan Data:", _lifespanData);
     
     //The event times
     var _eventGroup = _svg.append("g");
@@ -234,12 +231,12 @@ var SessionTimeframe = function(par){
         _svg.selectAll("*").remove();
     };
     
-    //Helper function for data mapping
-    //maps data.state to color scale used.
+    //Color for lifespans and events
     pub.getColor = function(data){
         return _colorScale(data.type);
     };
     
+    //Color for labels (user name)
     pub.getColor2 = function(data){
         return _colorScale(data.related_constructs[0]);
     };
@@ -287,17 +284,19 @@ var SessionTimeframe = function(par){
             .on("mousemove", onMouseMove)
             .on("mouseout", onMouseOut);
 
-        //state data
+        //Text and color for labels
         if(_displayTypes){
             _states.attr('fill', pub.getColor2)
                 .attr('x', _width-_margins.right)
                 .attr('width', _margins.right)
                 .attr('y', getY)
                 .attr('height', _rowHeight);
+            
             _labels.attr('x', _width-_margins.right)
                 .attr('y', function(d){return getY(d)+_rowHeight*0.75;})
                 .text(pub.getLabel);
         }
+        
         //x-axis
         _xAxisGraphic.attr("transform", "translate(0,"+(_margins.top)+")")
             .call(_timeAxis)
@@ -306,7 +305,6 @@ var SessionTimeframe = function(par){
     };
     
     pub.onBrush = function(timeRange){
-         console.log("[session_timeframe]Onbrush: changing the domaine to new timerange: ", timeRange);
         _timeScale.domain(timeRange);        
         pub.draw();
     };

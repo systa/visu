@@ -202,6 +202,9 @@ function getData( source, callback ) {
             sessions.push(toPush);
         }
         
+        var event = null;
+        var stateChange = null;
+        
         //For each entry in the session
         var entries = session.entries;
         var first_event_time = parseMyTime(entries[0].time, entries[0].date); //Session starting time
@@ -238,11 +241,11 @@ function getData( source, callback ) {
                
                if (! entry.action.includes("Exit")){
                   //TODO: create new hash for this entry
-                  var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Exit", hash: entry.hash, document: null, page: null, first_time: first_event_time, collide: entry.collide};
+                  event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Exit", hash: entry.hash, document: null, page: null, first_time: first_event_time, collide: entry.collide};
                   events.push(event);
 
                   //Add statechange
-                  var stateChange = {event: entry.hash, from: "(session) open", to: "(session) closed"}; 
+                  stateChange = {event: entry.hash, from: "(session) open", to: "(session) closed"}; 
                   stateChanges.push(stateChange);
                   event.statechange = stateChange;
                }
@@ -267,29 +270,29 @@ function getData( source, callback ) {
                 
                 //Create state change
                 var detail = words[words.length-1]; //Opened, closed, locked, unlocked
-                var stateChange = {event: entry.hash}; //Link to related event
+                stateChange = {event: entry.hash}; //Link to related event
                 var push = true;
                 switch(detail){
                     case "locked.": 
-                        var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Locked", hash: entry.hash, document: document.hash, page: null, statechange:stateChange, first_time: first_event_time, collide: entry.collide};
+                        event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Locked", hash: entry.hash, document: document.hash, page: null, statechange:stateChange, first_time: first_event_time, collide: entry.collide};
                         
                         stateChange.from = "(doc) unlocked"; stateChange.to = "(doc) locked";
                         break;
                         
                     case "unlocked.": 
-                        var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Unlocked", hash: entry.hash, document: document.hash, page: null, statechange:stateChange, first_time: first_event_time, collide: entry.collide};
+                        event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Unlocked", hash: entry.hash, document: document.hash, page: null, statechange:stateChange, first_time: first_event_time, collide: entry.collide};
                         
                         stateChange.from = "(doc) locked"; stateChange.to = "(doc) unlocked";
                         break;
                         
                     case "opened.":
-                        var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Open Document", hash: entry.hash, document: document.hash, page: null, statechange:stateChange, first_time: first_event_time, collide: entry.collide};
+                        event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Open Document", hash: entry.hash, document: document.hash, page: null, statechange:stateChange, first_time: first_event_time, collide: entry.collide};
                         
                         stateChange.from = "(doc) closed"; stateChange.to = "(doc) opened"; 
                         break;
                         
                     case "closed.":
-                        var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Close Document", hash: entry.hash, document: document.hash, page: null, statechange:stateChange, first_time: first_event_time, collide: entry.collide};
+                        event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Close Document", hash: entry.hash, document: document.hash, page: null, statechange:stateChange, first_time: first_event_time, collide: entry.collide};
                         
                         stateChange.from = "(doc) opened"; stateChange.to = "(doc) closed";  
                         break;
@@ -311,8 +314,9 @@ function getData( source, callback ) {
                 //Isolate page name
                 words = str.split(' ');
                 var page = {name: words[2]};
-                var stateChange;
-                var event;
+                                
+                //Create event
+                event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Help", hash: entry.hash, document: null, first_time: first_event_time, collide: entry.collide};
                
                 if (words.length > 2) {
                     //Create construct page
@@ -329,8 +333,8 @@ function getData( source, callback ) {
                     //TODO: close previous help when a new one is opened
                 }
                 
-                //Create event
-                event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Help", hash: entry.hash, document: null, statechange: stateChange, first_time: first_event_time, collide: entry.collide};
+                event.statechange = stateChange;
+                
                 if (str.includes("Clicked"))
                     event.page = "Help";
                 else
@@ -341,8 +345,7 @@ function getData( source, callback ) {
             
             //Entries linked to features
             else if (str.includes("Clicked on")) {
-                var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: entry.action, hash: entry.hash, document: null, page: null, first_time: first_event_time, collide: entry.collide};
-                var stateChange;
+                event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: entry.action, hash: entry.hash, document: null, page: null, first_time: first_event_time, collide: entry.collide};
                                         
                 words = str.split(' ');
                 switch(words[2]){
@@ -371,10 +374,10 @@ function getData( source, callback ) {
             //Program started entry
             else if (str.includes("Program started.")) {
                 //Create state change
-                var stateChange = {event: entry.hash, from: "(session) closed", to: "(session) open"}; 
+                stateChange = {event: entry.hash, from: "(session) closed", to: "(session) open"}; 
                
                 //Create event
-                var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: entry.action, hash: entry.hash, document: null, page: null, statechange: stateChange, first_time: first_event_time, collide: entry.collide};
+                event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: entry.action, hash: entry.hash, document: null, page: null, statechange: stateChange, first_time: first_event_time, collide: entry.collide};
                 
                 events.push(event);
                 stateChanges.push(stateChange);
@@ -383,7 +386,7 @@ function getData( source, callback ) {
             //Other feature entries
             else if (str.includes("Library path added")) {
                 //Create event
-                var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: entry.action, hash: entry.hash, document: null, page: null, first_time: first_event_time, collide: entry.collide};
+                event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: entry.action, hash: entry.hash, document: null, page: null, first_time: first_event_time, collide: entry.collide};
                 events.push(event);
             }
           
