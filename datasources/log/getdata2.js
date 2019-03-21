@@ -185,30 +185,31 @@ function getData( source, callback ) {
     var pages = []; //List of help pages 
     var stateChanges = []; //List of state changes
 
+    //For each session
     for (var i = 0; i < data.length; i++) {
         var session = data[i];
         var previous_document;
         
-        //User list
+        //User list: push user ids
         if (notIn2(users, session.user_id)) {
             var toPush = {id: session.user_id};
             users.push(toPush);
         }
         
-        //Session list
+        //Session list: push session ids + user ids
         if (notIn4(sessions, session.id)) {
             var toPush = {id: session.id, user_id: session.user_id};
             sessions.push(toPush);
         }
         
-        //The rest
+        //For each entry in the session
         var entries = session.entries;
-        var first_event_time = parseMyTime(entries[0].time, entries[0].date);
-        //var collide = 0; 
+        var first_event_time = parseMyTime(entries[0].time, entries[0].date); //Session starting time
         for (var j = 0; j <= entries.length; j++) {
            var str;
            var double = false;
            
+            //Ignore duplicates
             if (j < entries.length){
                entry = entries[j];
                str = new String(entry.action);
@@ -222,6 +223,7 @@ function getData( source, callback ) {
                }
             }
             
+            //Detect collision (entries that happen at the same time)
             entry.collide = 0; //Number of other entries that happen at the same time
             if (j > 0){
                 if (entry.time == entries[j-1].time){
@@ -231,13 +233,11 @@ function getData( source, callback ) {
             
             //Force last entry to be Exit
             if(j == entries.length) {
-               console.log("All entries processed...");
-               //Add event
-               entry = entries[j-1]; //No real way to know how long the session has lasted before ending, hence copy previous time
+               //No real way to know how long the session has lasted before ending, hence copy previous time
+               entry = entries[j-1]; 
                
                if (! entry.action.includes("Exit")){
-                  console.log("Last entry is not Exit: ", entry.action);
-                  
+                  //TODO: create new hash for this entry
                   var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Exit", hash: entry.hash, document: null, page: null, first_time: first_event_time, collide: entry.collide};
                   events.push(event);
 
@@ -245,11 +245,12 @@ function getData( source, callback ) {
                   var stateChange = {event: entry.hash, from: "(session) open", to: "(session) closed"}; 
                   stateChanges.push(stateChange);
                   event.statechange = stateChange;
-                  
-                  console.log("Forced Exit Action !");
                }
-            }else if (double) { //ignore duplicate entries
-               //console.log("DOUBLE ENTRY: " + entry.action);
+               
+            //Ignore duplicate entries
+            }else if (double) { 
+               
+            //Entries linked to documents    
             }else if (str.includes("Document")) {
                 //Isolate document name
                 words = str.split(' ');
@@ -267,39 +268,51 @@ function getData( source, callback ) {
                 //Create state change
                 var detail = words[words.length-1]; //Opened, closed, locked, unlocked
                 var stateChange = {event: entry.hash}; //Link to related event
+                var push = true;
                 switch(detail){
                     case "locked.": 
+                        var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Locked", hash: entry.hash, document: document.hash, page: null, statechange:stateChange, first_time: first_event_time, collide: entry.collide};
+                        
                         stateChange.from = "(doc) unlocked"; stateChange.to = "(doc) locked";
                         break;
+                        
                     case "unlocked.": 
+                        var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Unlocked", hash: entry.hash, document: document.hash, page: null, statechange:stateChange, first_time: first_event_time, collide: entry.collide};
+                        
                         stateChange.from = "(doc) locked"; stateChange.to = "(doc) unlocked";
                         break;
+                        
                     case "opened.":
                         var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Open Document", hash: entry.hash, document: document.hash, page: null, statechange:stateChange, first_time: first_event_time, collide: entry.collide};
-                        events.push(event);
                         
-                        stateChange.from = "(doc) closed"; stateChange.to = "(doc) opened";  
+                        stateChange.from = "(doc) closed"; stateChange.to = "(doc) opened"; 
                         break;
+                        
                     case "closed.":
                         var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Close Document", hash: entry.hash, document: document.hash, page: null, statechange:stateChange, first_time: first_event_time, collide: entry.collide};
-                        events.push(event);
                         
                         stateChange.from = "(doc) opened"; stateChange.to = "(doc) closed";  
                         break;
+                        
                     default:
-                        console.log("/!\ Unknown action: "+detail);
+                        console.log("/!\ Unknown action: ", detail);
+                        push = false;
                         break;
                 }
                 
-                stateChanges.push(stateChange);
+                if(push){
+                    events.push(event);
+                    stateChanges.push(stateChange);
+                }
             }
             
-            //Page list
+            //Entries linked to help pages
             else if (str.includes("Help")) {
                 //Isolate page name
                 words = str.split(' ');
                 var page = {name: words[2]};
                 var stateChange;
+                var event;
                
                 if (words.length > 2) {
                     //Create construct page
@@ -312,13 +325,12 @@ function getData( source, callback ) {
                     var detail = words[words.length-1]; //Opened, closed, locked, unlocked
                     stateChange = {event: entry.hash, from: "(help) closed", to:"(help) opened"}; //Link to related event
                     stateChanges.push(stateChange);
-                    event.statechange = stateChange;
                     
                     //TODO: close previous help when a new one is opened
                 }
                 
                 //Create event
-                var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Help", hash: entry.hash, document: null, statechange:stateChange, first_time: first_event_time, collide: entry.collide};
+                event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Help", hash: entry.hash, document: null, statechange: stateChange, first_time: first_event_time, collide: entry.collide};
                 if (str.includes("Clicked"))
                     event.page = "Help";
                 else
@@ -327,43 +339,48 @@ function getData( source, callback ) {
                 events.push(event);    
             }
             
+            //Entries linked to features
             else if (str.includes("Clicked on")) {
                 var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: entry.action, hash: entry.hash, document: null, page: null, first_time: first_event_time, collide: entry.collide};
                 var stateChange;
                                         
                 words = str.split(' ');
                 switch(words[2]){
-                    case "Unlocked.":
-                        event.document = previous_document;
+                    case "Unlocked.": case "Locked.":
+                        //event.document = previous_document;
+                        //Action has already been recorded
                         break;
-                    case "Locked.":
-                        event.document = previous_document;
-                        break;
+                        
+                    //End of session
                     case "Exit": case "Exit.":
                         //Create state change
                         stateChange = {event: entry.hash, from: "(session) open", to: "(session) closed"}; 
                         stateChanges.push(stateChange);
                         
                         event.statechange = stateChange;
+                        events.push(event);
                         break;
+                        
+                    //All other features
                     default:
+                        events.push(event);
                         break;     
                 }
-                
-                events.push(event);
             }
           
+            //Program started entry
             else if (str.includes("Program started.")) {
                 //Create state change
                 var stateChange = {event: entry.hash, from: "(session) closed", to: "(session) open"}; 
-                stateChanges.push(stateChange);
                
                 //Create event
-                var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: entry.action, hash: entry.hash, document: null, page: null, statechange:stateChange, first_time: first_event_time, collide: entry.collide};
-                events.push(event);
+                var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: entry.action, hash: entry.hash, document: null, page: null, statechange: stateChange, first_time: first_event_time, collide: entry.collide};
                 
+                events.push(event);
+                stateChanges.push(stateChange);
             }
             
+            //Other feature entries
             else if (str.includes("Library path added")) {
                 //Create event
                 var event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: entry.action, hash: entry.hash, document: null, page: null, first_time: first_event_time, collide: entry.collide};
