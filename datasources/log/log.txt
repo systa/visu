@@ -4018,7 +4018,7 @@
 25.01.2017 08:16:07 user 775a429b617dce11d9a9b9b26992e9b8 in session 5573dbf9-ebec-40cc-96d3-5c67a0b40628: Document Exercise_Returns (1.0) opened.
 25.01.2017 08:16:07 user 775a429b617dce11d9a9b9b26992e9b8 in session 5573dbf9-ebec-40cc-96d3-5c67a0b40628: Document Exercise_Returns (1.0) locked.
 25.01.2017 08:16:07 user 775a429b617dce11d9a9b9b26992e9b8 in session 5573dbf9-ebec-40cc-96d3-5c67a0b40628: Document Exercise_Returns (1.0) locked.
-25.01.2017 08:16:07 user 775a429b617dce11d9a9b9b26992e9b8 in session 5573dbf9-ebec-40cc-96d3-5c67a0b40628: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/general.html opened.
+25.01.2017 08:16:07 user 775a429b617dce11d9a9b9b26992e9b8 in session 5573dbf9-ebec-40cc-96d3-5c67a0b40628: Help page Exitqthelp://com.tut.kactus2.2.0/doc/componenteditor/general.html opened.
 25.01.2017 08:16:09 user 775a429b617dce11d9a9b9b26992e9b8 in session 5573dbf9-ebec-40cc-96d3-5c67a0b40628: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/filesets.html opened.
 25.01.2017 08:16:22 user 775a429b617dce11d9a9b9b26992e9b8 in session 5573dbf9-ebec-40cc-96d3-5c67a0b40628: Document Exercise_Returns (1.0) unlocked.
 25.01.2017 08:16:22 user 775a429b617dce11d9a9b9b26992e9b8 in session 5573dbf9-ebec-40cc-96d3-5c67a0b40628: Document Exercise_Returns (1.0) unlocked.
@@ -4081,6 +4081,7 @@
 25.01.2017 08:53:14 user 775a429b617dce11d9a9b9b26992e9b8 in session 5573dbf9-ebec-40cc-96d3-5c67a0b40628: Document Exercise_Returns (1.0) unlocked.
 25.01.2017 08:53:14 user 775a429b617dce11d9a9b9b26992e9b8 in session 5573dbf9-ebec-40cc-96d3-5c67a0b40628: Clicked on Refresh
 25.01.2017 08:53:37 user 775a429b617dce11d9a9b9b26992e9b8 in session 5573dbf9-ebec-40cc-96d3-5c67a0b40628: Clicked on Refresh Library
+25.01.2017 08:53:37 user 775a429b617dce11d9a9b9b26992e9b8 in session 5573dbf9-ebec-40cc-96d3-5c67a0b40628: Clicked on Exit
 14.02.2017 11:02:10 user f39cf00ca264ef59317940bee4616711 in session f6f859c7-91de-4000-8c7a-73ce6dbdfa28: Program started.
 14.02.2017 11:02:10 user f39cf00ca264ef59317940bee4616711 in session f6f859c7-91de-4000-8c7a-73ce6dbdfa28: Help page qthelp://com.tut.kactus2.2.0/doc/welcome.html opened.
 14.02.2017 11:02:18 user f39cf00ca264ef59317940bee4616711 in session f6f859c7-91de-4000-8c7a-73ce6dbdfa28: Clicked on Configure Library
