@@ -17,7 +17,7 @@
     <script type="text/javascript" src="dist/js/app.min.js"></script>
     
   </head>
-  <body onload="CUSTOM_QUERY_UI(true, SESSION_TIMEFRAME_MAIN)">
+  <body onload="CUSTOM_QUERY_UI(SESSION_TIMEFRAME_MAIN)">
         <div id = "queryui" class = "ui">
             <form id ="queryform">
                 <H1>Data Filtering</H1>
@@ -48,16 +48,6 @@
                     <p>
                         Session name: <input type = "text" name = "cn" id = "constructName"></input></br>
                     </p>    
-                </p>
-                <p>
-                    <H3>States</H3>
-                    <p>
-                        Define the resolution states of the sessions for the visualization.
-                    </p>
-                    <p>
-                        Resolution states separated by comma:</br>
-                        <input type = "text" name = "resolution" id = "resolution" value = "(session) closed"></input>
-                    </p>
                 </p>
             </form>
         </div>

@@ -7,21 +7,8 @@
 * Main authors: Antti Luoto, Anna-Liisa Mattila, Henri Terho
 */
 
-var CUSTOM_QUERY_UI = function(states, callback){
+var CUSTOM_QUERY_UI = function(callback){
    
-    var _states = states;
-    
-    var parseStates = function(states){
-        states = states.replace(/\s/g,'');
-        if(states.length === 0){
-            states = false;
-        }
-        else{
-            states = states.split(",");
-        }
-        return states;
-    };
-    
     var parseTextValue = function(val){
         val = val.replace(/\s/g,'');
         if(val.length === 0){
@@ -60,13 +47,7 @@ var CUSTOM_QUERY_UI = function(states, callback){
         
         eventFilters.creator = parseTextValue(document.getElementById("eventCreator").value);
         eventFilters.type = parseTextValue(document.getElementById("eventType").value);
-        //eventFilters.state = parseTextValue(document.getElementById("eventState").value);
-        
-        /*var evDuration = false; parseFloat(document.getElementById("eventDuration").value);
-        if(isNaN(evDuration)){
-            evDuration = false;
-        }*/
-        eventFilters.duration = false; //evDuration;
+        eventFilters.duration = false; 
 
         var evDate = parseTextValue(document.getElementById("eventDate").value);
         var evTime = parseTextValue(document.getElementById("eventTime").value);
@@ -81,38 +62,16 @@ var CUSTOM_QUERY_UI = function(states, callback){
         var constructFilters = {};
         
         constructFilters.name = parseTextValue(document.getElementById("constructName").value);
-        constructFilters.type = "session"; //parseTextValue(document.getElementById("constructType").value);
-        //constructFilters.state = parseTextValue(document.getElementById("constructState").value);
-        /*var conDescription = document.getElementById("constructDescription").value;
-        conDescription = conDescription.trim();
-        if(conDescription.length === 0){
-            conDescription = false;
-        }*/
-        constructFilters.description = false; //conDescription;
+        constructFilters.type = "session"; 
+        constructFilters.description = false; 
         
         filters.constructs = constructFilters;
 
         var mapping = {};
         
-        /*var rowId = document.getElementById("rowId").value;
-        rowId = rowId.replace(/\s/g,'');
-        if(rowId.length === 0){
-            rowId = false;
-        }*/
-        mapping.rowId = "source_id"; //rowId;
-        
-        /*var rowIdIsFromOrigin = document.getElementById("rowIdIsFromOrigin").checked;
-        if(!rowId){
-            rowIdIsFromOrigin = false;
-        }*/
-        mapping.rowIdIsFromOrigin = true; //rowIdIsFromOrigin;
-        
-        if(_states){
-            /*var initial = parseStates(document.getElementById("initial").value);
-            var intermediate = parseStates(document.getElementById("intermediate").value);*/
-            var resolution = parseStates(document.getElementById("resolution").value);
-            mapping.states = {resolution : resolution};
-        }
+        mapping.rowId = "source_id"; 
+        mapping.rowIdIsFromOrigin = true; 
+        mapping.states = {resolution : ["(session)closed"]};
         
         document.getElementById("queryui").style.display = "none";
         var loading = document.createTextNode("LOADING");
