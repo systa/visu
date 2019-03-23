@@ -119,13 +119,28 @@ var SESSION_TIMEFRAME_MAIN = function(par){
         
         //Search button used to filter by user ID
         _layout.getSearchButton().addEventListener('click', function(){
-            var input = _layout.getSearchTextField().value;
+            var result = _layout.getSearchTextField();
+            var input = result.userid.value;
+            var input2 = result.type.value;
             
-            if(input.length !== 0){
-                input = input.trim();
-                input = input.split(',');
-                var res = _search.filterUserID(input, _constructs, _states, _events);
-        
+            console.log("[processor_utilities]inputs:", input, input2);
+            
+            if(input.length !== 0 || input2.length !== 0){
+                input = input.length !== 0 ? input.trim().split(',') : false;
+                input2 = input2.length !== 0 ? input2.trim().split(',') : false;
+                
+                //Force display of start/end
+                if(input2){
+                    input2[input2.length] = "start/end";
+                }
+                
+                var res; 
+                if(input){
+                    var filters = {ids: input, types: input2};
+                    res = _search.filterUserID(filters, _constructs, _states, _events);
+                }else{
+                    res = _search.filterNoID(input2, _constructs, _states, _events);
+                }
                 var parsed_data = _parser(res.constructs, res.events, res.states);
                 console.log("[processor_utilities]Parsed & Filtered:", parsed_data);
                 
@@ -147,13 +162,6 @@ var SESSION_TIMEFRAME_MAIN = function(par){
                     lifespans : parsed_data.lifespans,
                     constructs : parsed_data.constructs
                 });
-                
-                /*_issueChart.updateData({
-                    ids : data.ids,
-                    events : data.events,
-                    lifespans : data.lifespans,
-                    constructs : data.constructs
-                });*/
             }
             //The chart should be resized as it has different amount of data
             onResize();
@@ -204,7 +212,11 @@ var SESSION_TIMEFRAME_MAIN = function(par){
            
            console.log("[session_timeframe_main]Parsed Data: ", parsed_data);
                       
-           initCharts(parsed_data, _timeframe); //timeframe of the filters
+            try{
+                initCharts(parsed_data, _timeframe); //timeframe of the filters
+            }catch(e){
+                console.log(e);
+            }
         }
         return false;
     };

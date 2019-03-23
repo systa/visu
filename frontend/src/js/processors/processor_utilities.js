@@ -127,11 +127,14 @@ var PROCESSOR_UTILITES = function(){
         return related;
     };
     
-    //data = user name (trimmed to last 4 digits)
+    //data = ids, types
     pub.filterUserID = function(data, allconstructs, allstates, allevents){
         var related = {constructs: [], events: [], states: []};
         
-        data.forEach(function(userId){
+        var ids = data.ids;
+        var types = data.types;
+        
+        ids.forEach(function(userId){
             userId = userId.trim();
             //Find the constructs with correct user
             for(var k = 0; k < allconstructs.length ; ++k){
@@ -148,10 +151,24 @@ var PROCESSOR_UTILITES = function(){
                     for(var i = 0; i < c.related_events.length; ++i){
                         for(var j = 0; j < allevents.length; ++j){
                             if(c.related_events[i] === allevents[j]._id){
-                                related.events.push(allevents[j]);
+                                console.log(types);
+                                //Filter event types
+                                if(types === false){
+                                    related.events.push(allevents[j]);
                                 
-                                if(allevents[j].isStatechange === true){
-                                    related.states.push(allevents[j]);
+                                    if(allevents[j].isStatechange === true){
+                                        related.states.push(allevents[j]);
+                                    }
+                                }else{
+                                    types.forEach(function(type){
+                                        if (allevents[j].type === type){
+                                            related.events.push(allevents[j]);
+                                
+                                            if(allevents[j].isStatechange === true){
+                                                related.states.push(allevents[j]);
+                                            }
+                                        }
+                                    });
                                 }
                             }
                         }
@@ -159,6 +176,35 @@ var PROCESSOR_UTILITES = function(){
                 }
             }
         });
+        
+        return related;
+    };
+    
+    //data = types
+    pub.filterNoID = function(types, allconstructs, allstates, allevents){
+        var related = {constructs: [], events: [], states: []};
+        
+        for(var k = 0; k < allconstructs.length ; ++k){
+            var c = allconstructs[k];
+            related.constructs.push(c);
+                                        
+            //Get events & state changes
+            for(var i = 0; i < c.related_events.length; ++i){
+                for(var j = 0; j < allevents.length; ++j){
+                    if(c.related_events[i] === allevents[j]._id){
+                        types.forEach(function(type){
+                            if (allevents[j].type === type){
+                                related.events.push(allevents[j]);
+
+                                if(allevents[j].isStatechange === true){
+                                    related.states.push(allevents[j]);
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        }
         
         return related;
     };
