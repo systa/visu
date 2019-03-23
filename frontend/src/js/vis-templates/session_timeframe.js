@@ -201,12 +201,16 @@ var SessionTimeframe = function(par){
                 }else if ($.isArray(data[atr])) {
                    for(var atr2 in data[atr]){
                        if(!$.isPlainObject(data[atr]) && !$.isArray(data[atr])){
-                           dispstring += "tab("+atr2+"): "+data[atr][atr2].toString()+"</br>";
+                           if(data[atr].hasOwnProperty(atr2)){
+                                dispstring += "tab("+atr2+"): "+data[atr][atr2].toString()+"</br>";
+                           }
                        }
                    }
                 }else if ($.isPlainObject(data[atr])) {
                    for(var atr2 in data[atr]){
-                      dispstring += "object("+atr2+"): "+data[atr][atr2].toString()+"</br>";
+                       if(data[atr].hasOwnProperty(atr2)){
+                            dispstring += "object("+atr2+"): "+data[atr][atr2].toString()+"</br>";
+                       }
                    }
                 }
             }
@@ -260,7 +264,7 @@ var SessionTimeframe = function(par){
             .attr('y', getY)
             .attr('height', _rowHeight)
             .on("mouseover", onMouseOver)
-            .on("mousemove", onMouseMove)
+            //.on("mousemove", onMouseMove)
             .on("mouseout", onMouseOut);
 
         _names.attr('x', 2)
@@ -273,7 +277,7 @@ var SessionTimeframe = function(par){
             .attr('y2', getLineY)
             .attr('stroke', pub.getStateColor)
             .on("mouseover", onMouseOver)
-            .on("mousemove", onMouseMove)
+            //.on("mousemove", onMouseMove)
             .on("mouseout", onMouseOut);
 
         _events.attr('fill', pub.getColor)
@@ -281,7 +285,7 @@ var SessionTimeframe = function(par){
             .attr('cy', getLineY) //Y coordinate
             .attr('r', _rowHeight*0.33*0.5) //Ray of event circle
             .on("mouseover", onMouseOver)
-            .on("mousemove", onMouseMove)
+            //.on("mousemove", onMouseMove)
             .on("mouseout", onMouseOut);
 
         //Text and color for labels

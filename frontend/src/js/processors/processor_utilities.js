@@ -132,6 +132,7 @@ var PROCESSOR_UTILITES = function(){
         var related = {constructs: [], events: [], states: []};
         
         data.forEach(function(userId){
+            userId = userId.trim();
             //Find the constructs with correct user
             for(var k = 0; k < allconstructs.length ; ++k){
                 var c;
@@ -142,21 +143,16 @@ var PROCESSOR_UTILITES = function(){
                 if (tmpID === userId){
                     c = allconstructs[k];
                     related.constructs.push(c);
-                    
-                    //Get state changes
-                    for(var i = 0; i < c.related_statechanges.length ; ++i){
-                        for(var j = 0; j < allstatechanges.length; ++j){
-                            if(c.related_statechanges[i] === allstatechanges[j]._id){
-                                related.states.push(allstatechanges[j]);
-                            }
-                        }
-                    }
-                    
-                    //Get events
+                                        
+                    //Get events & state changes
                     for(var i = 0; i < c.related_events.length; ++i){
                         for(var j = 0; j < allevents.length; ++j){
                             if(c.related_events[i] === allevents[j]._id){
                                 related.events.push(allevents[j]);
+                                
+                                if(allevents[j].isStatechange === true){
+                                    related.states.push(allevents[j]);
+                                }
                             }
                         }
                     }

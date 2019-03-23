@@ -120,14 +120,14 @@ var SESSION_TIMEFRAME_MAIN = function(par){
         //Search button used to filter by user ID
         _layout.getSearchButton().addEventListener('click', function(){
             var input = _layout.getSearchTextField().value;
-            input = input.trim();
-            input = input.split(',');
+            
             if(input.length !== 0){
+                input = input.trim();
+                input = input.split(',');
                 var res = _search.filterUserID(input, _constructs, _states, _events);
-                console.log("[processor_utilities]Filtered:", res);
         
                 var parsed_data = _parser(res.constructs, res.events, res.states);
-                console.log("[processor_utilities]Parsed:", parsed_data);
+                console.log("[processor_utilities]Parsed & Filtered:", parsed_data);
                 
                 _issueChart.updateData({
                     ids : parsed_data.ids,
@@ -138,13 +138,22 @@ var SESSION_TIMEFRAME_MAIN = function(par){
                 
             }//empty string clear filtering
             else{
-                console.log("[processor_utilities]No filtering:", data);
+                var parsed_data = _parser(_constructs, _events, _states);
+                console.log("[processor_utilities]Parsed:", parsed_data);
+                
                 _issueChart.updateData({
+                    ids : parsed_data.ids,
+                    events : parsed_data.events,
+                    lifespans : parsed_data.lifespans,
+                    constructs : parsed_data.constructs
+                });
+                
+                /*_issueChart.updateData({
                     ids : data.ids,
                     events : data.events,
                     lifespans : data.lifespans,
                     constructs : data.constructs
-                });
+                });*/
             }
             //The chart should be resized as it has different amount of data
             onResize();
