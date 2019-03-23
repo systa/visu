@@ -17,7 +17,7 @@
     <script type="text/javascript" src="dist/js/app.min.js"></script>
     
   </head>
-  <body onload="DEMO_QUERY_UI(true, SESSION_TIMEFRAME_MAIN)">
+  <body onload="CUSTOM_QUERY_UI(true, SESSION_TIMEFRAME_MAIN)">
         <div id = "queryui" class = "ui">
             <form id ="queryform">
                 <H1>Data Filtering</H1>
@@ -32,8 +32,7 @@
                 <p>
                     <H2>Data origin filtering</H2>
                     Leave the fields empty if you don't want to filter data based on origin id.</br>
-                    Data context: <input type = "text" name = "context" id ="context"></input></br>
-                    Data source: <input type = "text" name = "source" id ="source" value="log.txt"></input></br>
+                    Source file: <input type = "text" name = "source" id ="source" value="log.txt"></input></br>
                     Data id in source system: <input type = "text" name = "source_id" id ="source_id"></input></br>
                 </p>
                 <p>
@@ -42,32 +41,16 @@
                     <p>
                         Creator: <input type = "text" name = "ec" id = "eventCreator"></input></br>
                         Type: <input type = "text" name = "et" id = "eventType"></input></br>
-                        Duration: <input type = "number" name = "ed" id = "eventDuration"></input></br>
                         Date: <input type ="date" name = "edate" id = "eventDate"></input>
                         Time: (hh:mm AM/PM)<input type = "etime" name = "time" id = "eventTime"></input></br>
                     </p>
-                    <H3>Construct filters</H3>
+                    <H3>Session filter</H3>
                     <p>
-                        Name: <input type = "text" name = "cn" id = "constructName"></input></br>
-                        Type: <input type = "text" name = "ct" id = "constructType" value="session"></input></br>
-                        Description: <input type = "text" name = "cd" id = "constructDescription"></input></br>
+                        Session name: <input type = "text" name = "cn" id = "constructName"></input></br>
                     </p>    
                 </p>
-                <H1>Data Mapping</H1>
                 <p>
-                    <H2>Y-axis</H2>
-                    <p>
-                        Choose the attribute to be mapped to Y-axis from the data.</br>
-                        If the attribute is part of origin id, write just the attribute name</br>
-                        (eg. soure_id not origin_id.source_id) and check the checkbox below.</br>
-                        However if you want to group data to y-axis based on metada, then you</br>
-                        need to write "metada.attributename".
-                    </p>
-                    Attribute name: <input type = "text" name = "rowId" id = "rowId" value = "source_id"></input></br>
-                    Y-axis attribute is an attribute of origin id:
-                    <input type ="checkbox" name = "fromOrigin" id = "rowIdIsFromOrigin" value = "rowIdIsFromOrigin" checked></input></br>
-                    
-                    <H2>States</H2>
+                    <H3>States</H3>
                     <p>
                         Define the resolution states of the sessions for the visualization.
                     </p>

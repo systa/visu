@@ -16,14 +16,13 @@ var SESSION_TIMEFRAME_PROCESSOR = function(par){
    
     var p = par || {};
     
-    var _rowId = p.rowId !== undefined ? p.rowId : "_id";
-    var _fromOrigin = p.rowIdIsFromOrigin !== undefined ? p.rowIdIsFromOrigin : false;
-    var _anonymize = p.anonymize !== undefined ? p.anonymize : false;
-    //var _anonymize = p.anonymize !== undefined ? p.anonymize : false;
+    var _rowId = p.rowId !== undefined ? p.rowId : "source_id";
+    var _fromOrigin = p.rowIdIsFromOrigin !== undefined ? p.rowIdIsFromOrigin : true;
+    var _anonymize = p.anonymize !== undefined ? p.anonymize : true;
     var _astring = p.astring !== undefined ? p.astring : "";
     var _states = p.states !== undefined ? p.states : {};
 
-    var _resolution = _states.resolution !== undefined ? _states.resolution : [];
+    var _resolution = _states.resolution !== undefined ? _states.resolution : ["(session)closed"];
     
     //Splitting the Y-index mapping from . so we can do the mapping properly
     //even if it is a field of nested object.
@@ -41,7 +40,7 @@ var SESSION_TIMEFRAME_PROCESSOR = function(par){
         if(t1 === t2){
 
             if(e1.statechange === undefined || e2.statechange === undefined){
-                console.log("o1: ", e1, " o2: ", e2);
+                //console.log("o1: ", e1, " o2: ", e2);
                 return 0;
             }
 
@@ -68,7 +67,7 @@ var SESSION_TIMEFRAME_PROCESSOR = function(par){
         for(var rid in statelist){            
             if(statelist.hasOwnProperty(rid)){
                 var statechanges = statelist[rid];
-                console.log(rid, statechanges);
+                //console.log(rid, statechanges);
                 statechanges.sort(stSortFunction);
 
                 //The first state in the array is the first statechange taken into account
@@ -377,13 +376,13 @@ var SESSION_TIMEFRAME_PROCESSOR = function(par){
         var tmp = [];
         var ids = [];
 
-        console.log("[dataprocessor]Contructs: ", constructs);
+        //console.log("[dataprocessor]Contructs: ", constructs);
 
         for(var i in constructs){
             var obj = constructs[i];
             tmp.push({name : obj.name, rowId : obj.rowId, user : obj.related_constructs[0]});
         }
-        console.log(tmp);
+        //console.log(tmp);
         try{
             //Sort constructs -> will define the row of each construct (not rowID!)
             tmp.sort(function(c1, c2){

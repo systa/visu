@@ -117,21 +117,17 @@ var SESSION_TIMEFRAME_MAIN = function(par){
         createLegend(data.types);
         onResize();
         
+        //Search button used to filter by user ID
         _layout.getSearchButton().addEventListener('click', function(){
             var input = _layout.getSearchTextField().value;
             input = input.trim();
+            input = input.split(',');
             if(input.length !== 0){
-                var events = _search.searchFromData(input, _events);
-                var states = _search.searchFromData(input, _states);
-                var constructs = _search.searchFromData(input, _constructs);
-                
-                constructs = constructs.concat(_search.findRelatedConstructs(constructs, _constructs));
-                constructs = constructs.concat(_search.findRelatedConstructs(events, _constructs));
-                constructs = constructs.concat(_search.findRelatedConstructs(states, _constructs));
-                events = events.concat(_search.findRelatedEvents(constructs, _events));
-                states = states.concat(_search.findRelatedStatechanges(constructs, _states));
-                
-                var parsed_data = _parser(constructs, events, states);
+                var res = _search.filterUserID(input, _constructs, _states, _events);
+                console.log("[processor_utilities]Filtered:", res);
+        
+                var parsed_data = _parser(res.constructs, res.events, res.states);
+                console.log("[processor_utilities]Parsed:", parsed_data);
                 
                 _issueChart.updateData({
                     ids : parsed_data.ids,
@@ -139,8 +135,10 @@ var SESSION_TIMEFRAME_MAIN = function(par){
                     lifespans : parsed_data.lifespans,
                     constructs : parsed_data.constructs
                 });
+                
             }//empty string clear filtering
             else{
+                console.log("[processor_utilities]No filtering:", data);
                 _issueChart.updateData({
                     ids : data.ids,
                     events : data.events,
@@ -168,11 +166,12 @@ var SESSION_TIMEFRAME_MAIN = function(par){
     //parsing the parameters from user to query data and select timeframe
     var p = par || {};
     
-    console.log("[session_timeframe_main]p: ", par);
-    
     var _mapping = p.mapping !== undefined ? p.mapping : false;
-    
     var _filters = p.filters !== undefined ? p.filters : false;
+    
+    console.log("[session_timeframe_main]mappings: ", _mapping);
+    console.log("[session_timeframe_main]filters: ", _filters);
+    
     var _timeframe = false;
     if(_filters.startTime && _filters.endTime){
          //Filters based on time

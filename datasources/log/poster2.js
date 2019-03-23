@@ -14,9 +14,9 @@ var _ = require( 'underscore' );
 
 var crypto = require('crypto');
 
-var debugLink = true;
-var debugSend = true;
-var debugParse = true;
+var debugLink = false;
+var debugSend = false;
+var debugParse = false;
 
 function hashCode(string) {
    var shasum = crypto.createHash('sha1');
@@ -169,7 +169,7 @@ function sendToDb( logData, source ) {
                 event_type = "other";
             }
              
-            console.log("Event ", t++, ": ", action);
+            //console.log("Event ", t++, ": ", action);
              
             event.type = event_type;
             
@@ -321,7 +321,7 @@ function sendToDb( logData, source ) {
       _.each(events, function (event){
          links.push( { construct: idToID[event.session_id], target: idToID[event.id], type: 'event' } );
          if(event.action.includes("Exit")){
-             console.log("Linked Exit action to: ", event.session_id);
+             //console.log("Linked Exit action to: ", event.session_id);
          }
           
          if(event.document) {

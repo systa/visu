@@ -112,6 +112,7 @@ var PROCESSOR_UTILITES = function(){
         return related;
     };
     
+    //data = input
     pub.findRelatedConstructs = function(data, allconstructs){
         var related = [];
         data.forEach(function(item){
@@ -123,6 +124,46 @@ var PROCESSOR_UTILITES = function(){
                 }
             }
         });
+        return related;
+    };
+    
+    //data = user name (trimmed to last 4 digits)
+    pub.filterUserID = function(data, allconstructs, allstates, allevents){
+        var related = {constructs: [], events: [], states: []};
+        
+        data.forEach(function(userId){
+            //Find the constructs with correct user
+            for(var k = 0; k < allconstructs.length ; ++k){
+                var c;
+                
+                var tmpID = allconstructs[k].related_constructs[0]; //first related construct is user
+                tmpID = tmpID.substring(20); //trim to last 4 digits
+                
+                if (tmpID === userId){
+                    c = allconstructs[k];
+                    related.constructs.push(c);
+                    
+                    //Get state changes
+                    for(var i = 0; i < c.related_statechanges.length ; ++i){
+                        for(var j = 0; j < allstatechanges.length; ++j){
+                            if(c.related_statechanges[i] === allstatechanges[j]._id){
+                                related.states.push(allstatechanges[j]);
+                            }
+                        }
+                    }
+                    
+                    //Get events
+                    for(var i = 0; i < c.related_events.length; ++i){
+                        for(var j = 0; j < allevents.length; ++j){
+                            if(c.related_events[i] === allevents[j]._id){
+                                related.events.push(allevents[j]);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
         return related;
     };
     
