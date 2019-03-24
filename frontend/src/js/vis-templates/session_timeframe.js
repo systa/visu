@@ -189,12 +189,11 @@ var SessionTimeframe = function(par){
     
     //WHAT IS DISPLAYED ON MOUSE OVER !!!
     var onMouseOver = function(data){
-        var dispstring = "";
+        var dispstring = "DETAILS:<br>";
        
-        dispstring += "data: " + data.toString() + "</br>"; 
-       
+        try{
         for(var atr in data){
-            if(data.hasOwnProperty(atr)){
+            if(typeof data[atr] !== "undefined" && data.hasOwnProperty(atr)){
                 if(!$.isPlainObject(data[atr]) && !$.isArray(data[atr])){
                     dispstring += atr+": "+data[atr].toString()+"</br>";
                    
@@ -214,6 +213,9 @@ var SessionTimeframe = function(par){
                    }
                 }
             }
+        }
+        }catch(e){
+            console.log(data, e);
         }
        
         _tooltip.html(dispstring);
