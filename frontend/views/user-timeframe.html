@@ -1,0 +1,48 @@
+<!--
+* Copyright (c) TUT Tampere University of Technology 2014-2015.
+* All rights reserved.
+* This software has been developed in Tekes-TIVIT project Need-for-Speed.
+* All rule set in consortium agreement of Need-for-Speed project apply.
+*
+* Main authors: Antti Luoto, Anna-Liisa Mattila, Henri Terho
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>User Timeframe</title>
+    <link rel ="stylesheet" href="src/css/generic-vis.css">
+    <script type="text/javascript" src="dist/js/_bower.js"></script>
+    <script type="text/javascript" src="dist/js/app.min.js"></script>
+    
+  </head>
+  <body onload="USER_QUERY_UI(USER_TIMEFRAME_MAIN)">
+        <div id = "queryui" class = "ui">
+            <form id ="queryform">
+                <H1>Data Filtering</H1>
+                <p>
+                    <H2>Time range filtering</H2>
+                    Leave the fields empty if you don't want to filter data based on time range.</br>
+                    sart date: <input type = "date" name = "startDate" id ="startDate"></input>
+                    start time (hh:mm): <input type = "time" name = "startTime" id = "startTime"></input></br>
+                    end date: <input type = "date" name = "endDate" id ="endDate"></input>
+                    end time (hh:mm): <input type = "time" name = "endTime" id = "endTime"></input></br>
+                </p>
+                <p>
+                    <H2>Data origin filtering</H2>
+                    Source file: <input type = "text" name = "source" id ="source" value="log.txt"></input></br>
+                </p>
+                <p>
+
+                <H2>User filter</H2>
+                <p>
+                    User name: <input type = "text" name = "cn" id = "constructName"></input></br>
+                </p>    
+                </p>
+            </form>
+        </div>
+        <div id ="loader"></div>
+  </body>
+</html>
+  
