@@ -34,3 +34,5 @@ build/Release
 # NPM downloaded modules.
 node_modules
 bower_components/
+
+todo\.txt
