@@ -32,7 +32,7 @@ var SESSION_TIMEFRAME_MAIN = function(par){
     var _timeSelector = false;
     
     //Initializing the module that helps with cerating the HTML and SVG elements
-    var _layout = DEMO_TEMPLATE();
+    var _layout = SESSION_TEMPLATE();
     
     //Function for resize event
     var onResize = function(){

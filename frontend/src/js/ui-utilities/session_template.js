@@ -7,7 +7,7 @@
 * Main authors: Antti Luoto, Anna-Liisa Mattila, Henri Terho
 */
 
-var DEMO_TEMPLATE = function(mpar){
+var SESSION_TEMPLATE = function(mpar){
     
     //The main container parameters
     var _mainParameters = mpar || {};
@@ -34,8 +34,10 @@ var DEMO_TEMPLATE = function(mpar){
     
     //Private variables for HTML & SVG elements
     var _legend = false;
+    var _text = false;
     var _search = false;
     var _input = false;
+    var _input2 = false;
     var _button = false;
     var _brushDIV = false;
     var _brushSVG = false;
@@ -137,6 +139,7 @@ var DEMO_TEMPLATE = function(mpar){
             var id = p.id !== undefined ? p.id : "searchContainer";
             var buttonId = p.buttonId !== undefined ? p.buttonId : "searchButton";
             var textFieldId = p.textFieldId !== undefined ? p.textFieldId : "searchBox";
+            var textFieldId2 = p.textFieldId2 !== undefined ? p.textFieldId2 : "searchBox2";
             var parent = p.parent !== undefined ? p.parent : _container;
             var labelFieldId = p.labelFieldId !== undefined ? p.labelFieldId : "text";
             
@@ -144,10 +147,22 @@ var DEMO_TEMPLATE = function(mpar){
             _search.className = className;
             _search.id = id;
             
+            _text = document.createTextNode("Filter data: ");
+            _text.id = labelFieldId;
+            _search.appendChild(_text);
+            
             _input = document.createElement("input");
             _input.type = "text";
+            _input.placeholder = "userID";
             _input.id = textFieldId;
             _search.appendChild(_input);
+            
+            
+            _input2 = document.createElement("input");
+            _input2.type = "text";
+            _input2.placeholder = "event type";
+            _input2.id = textFieldId2;
+            _search.appendChild(_input2);
             
             _button = document.createElement("button");
             _button.id = buttonId;
