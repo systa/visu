@@ -39,29 +39,22 @@ var CUSTOM_QUERY_UI = function(callback){
             filters.endTime = endDate;
         }
         
-        filters.context = false; //parseTextValue(document.getElementById("context").value);
+        filters.context = false; 
         filters.source = parseTextValue(document.getElementById("source").value);
         filters.source_id = parseTextValue(document.getElementById("source_id").value);
         
         var eventFilters = {};
         
-        eventFilters.creator = parseTextValue(document.getElementById("eventCreator").value);
-        eventFilters.type = parseTextValue(document.getElementById("eventType").value);
+        eventFilters.creator = false;
+        eventFilters.type = false; 
         eventFilters.duration = false; 
 
-        var evDate = parseTextValue(document.getElementById("eventDate").value);
-        var evTime = parseTextValue(document.getElementById("eventTime").value);
-        if(!evDate || !evTime){
-            eventFilters.time = false;
-        }
-        else{
-            eventFilters.time = new Date(evDate+"T"+evTime);
-        }
+        eventFilters.time = false;
         filters.events = eventFilters;
         
         var constructFilters = {};
         
-        constructFilters.name = parseTextValue(document.getElementById("constructName").value);
+        constructFilters.name = false; 
         constructFilters.type = "session"; 
         constructFilters.description = false; 
         
