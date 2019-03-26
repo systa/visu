@@ -274,25 +274,25 @@ function getData( source, callback ) {
                 var push = true;
                 switch(detail){
                     case "locked.": 
-                        event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Locked", hash: entry.hash, document: document.hash, page: null, statechange:stateChange, first_time: first_event_time, collide: entry.collide};
+                        event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Locked", hash: entry.hash, document: document.hash, page: null, statechange:stateChange, first_time: first_event_time, collide: entry.collide, name: document.name};
                         
                         stateChange.from = "(doc) unlocked"; stateChange.to = "(doc) locked";
                         break;
                         
                     case "unlocked.": 
-                        event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Unlocked", hash: entry.hash, document: document.hash, page: null, statechange:stateChange, first_time: first_event_time, collide: entry.collide};
+                        event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Unlocked", hash: entry.hash, document: document.hash, page: null, statechange:stateChange, first_time: first_event_time, collide: entry.collide, name: document.name};
                         
                         stateChange.from = "(doc) locked"; stateChange.to = "(doc) unlocked";
                         break;
                         
                     case "opened.":
-                        event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Open Document", hash: entry.hash, document: document.hash, page: null, statechange:stateChange, first_time: first_event_time, collide: entry.collide};
+                        event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Open Document", hash: entry.hash, document: document.hash, page: null, statechange:stateChange, first_time: first_event_time, collide: entry.collide, name: document.name};
                         
                         stateChange.from = "(doc) closed"; stateChange.to = "(doc) opened"; 
                         break;
                         
                     case "closed.":
-                        event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Close Document", hash: entry.hash, document: document.hash, page: null, statechange:stateChange, first_time: first_event_time, collide: entry.collide};
+                        event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Close Document", hash: entry.hash, document: document.hash, page: null, statechange:stateChange, first_time: first_event_time, collide: entry.collide, name: document.name};
                         
                         stateChange.from = "(doc) opened"; stateChange.to = "(doc) closed";  
                         break;
@@ -316,7 +316,7 @@ function getData( source, callback ) {
                 var page = {name: words[2]};
                                 
                 //Create event
-                event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Help", hash: entry.hash, document: null, first_time: first_event_time, collide: entry.collide};
+                event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Help", hash: entry.hash, document: null, first_time: first_event_time, collide: entry.collide, name: page.name};
                
                 if (words.length > 2) {
                     //Create construct page

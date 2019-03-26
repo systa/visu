@@ -142,7 +142,7 @@ function sendToDb( logData, source ) {
             event.time = parseMyTime(item.time, item.date);
             event.duration = 0;
             event.creator = item.session_id;
-            event.data = {hash: item.hash, action: item.action, first_time: item.first_time, collide: item.collide};
+            event.data = {hash: item.hash, action: item.action, first_time: item.first_time, collide: item.collide, name: false};
             event.id = item.hash;
             
             item.id = item.hash;
@@ -159,8 +159,10 @@ function sendToDb( logData, source ) {
             var event_type;
             if (action.includes("Document") || action.includes("Locked") || action.includes("Unlocked")){
                 event_type = "doc";
+                event.data.name = item.name;
             }else if (action.includes("Help")){
                 event_type = "help";
+                event.data.name = item.name;
             }else if (action.includes("Program") || action.includes("Exit")){
                 event_type = "start/end";                
             }else if (action.includes("Clicked on")|| action.includes("Library")){
@@ -328,7 +330,10 @@ function sendToDb( logData, source ) {
             links.push( { construct: idToID[event.document], target: idToID[event.id], type: 'event' } );   
          }
          else if(event.page) {
-            links.push( { construct: idToID[hashCode(event.page)], target: idToID[event.id], type: 'event' } );   
+            links.push( { construct: idToID[hashCode(event.page)], target: idToID[event.id], type: 'event' } ); 
+             
+            //Need to link page to user somehow maybe
+            //links.push( { construct: idToID[hashCode(event.page)], target: idToID[event.user_id], type: 'construct' } );
          }
          
       });
