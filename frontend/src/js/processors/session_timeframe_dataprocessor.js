@@ -100,51 +100,6 @@ var SESSION_TIMEFRAME_PROCESSOR = function(par){
                         });
                     }
                 }
-                
-                /*
-                for(var i = 0; i < statechanges.length; ++i){
-                    var sc = statechanges[i];
-                    var trimmedState = sc.statechange.to.replace(/\s/g,''); //removes ' ' character in string
-                    if(!skip){
-                        var tmp = {
-                            rowId : rid,
-                            start : st,
-                            state : state,
-                            end : sc.time,
-                            first_time : first_time
-                        };
-                        lifespans.push(tmp);
-                        st = sc.time;
-                        state = sc.statechange.to;
-                    }
-                    else{
-                        st = sc.time;
-                        state = sc.statechange.to;
-                        skip = false;
-                    }
-
-                    //if the final statechange is a resolution event we store the resolution time
-                    //otherwise the resolution time is left open --> construct's lifespan has not ended
-                    if(i === statechanges.length-1 && _states.resolution.indexOf(trimmedState) !== -1){
-                        rt = sc.time;
-                    }
-                    else if(_states.resolution.indexOf(trimmedState) !== -1){
-                        //if there were resolution event in between we don't want to draw line from it
-                        //to the start state but end the line. thus we need to skip next push
-                        skip = true;
-                    }
-
-                }
-                if(!skip){
-                    lifespans.push({
-                        rowId : rid,
-                        start : st,
-                        state : state,
-                        end : rt,
-                        first_time : first_time
-                    });
-                }
-                */
             }
         }
         return lifespans;
@@ -441,7 +396,7 @@ var SESSION_TIMEFRAME_PROCESSOR = function(par){
         //HERE
         data.lifespans = stateData.lifespans;
         
-        data.types = eventData.types.concat(stateData.types); //state/event types for legend
+        data.types = eventData.types; //.concat(stateData.types); //state/event types for legend
         data.types.sort();
 
         //var scId = sortRows(stateData.lifespans);

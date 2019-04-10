@@ -48,7 +48,9 @@ var SessionTimeframe = function(par){
     var _constructData = p.constructs !== undefined ? p.constructs : false;
     //If we want to display the construct types or not?
     var _displayTypes = p.displayTypes !== undefined ? p.displayTypes : true;
+    
     var _colorScale = p.colorScale !== undefined ? p.colorScale : d3.scale.category20();
+    var _colorScale2 = d3.scale.category10();
     
    try{
       console.log("[session_timeframe]Modifying timescale...");
@@ -90,8 +92,9 @@ var SessionTimeframe = function(par){
     _svg.attr("height", _height);
 
     //building color scale
-    _colorScale.domain(_typeDomain.concat(_labelDomain));
-
+    _colorScale.domain(_labelDomain);
+    _colorScale2.domain(["start/end","help","doc","feature"]);
+    
     //In SVG the draw order is reverse order of defining the nodes
     
     //Y-axis is constructed from rect and text SVG-elements. d3 axis is not used.
@@ -239,7 +242,7 @@ var SessionTimeframe = function(par){
     
     //Color for lifespans and events
     pub.getColor = function(data){
-        return _colorScale(data.type);
+        return _colorScale2(data.type);
     };
     
     //Color for labels (user name)
@@ -248,7 +251,7 @@ var SessionTimeframe = function(par){
     };
     
     pub.getStateColor = function(data){
-        return _colorScale(data.state);
+        return "#80c3cc"; //_colorScale(data.state);
     };
     
     //Returns the state text from data
@@ -345,6 +348,10 @@ var SessionTimeframe = function(par){
     
     pub.getColorScale = function(){
         return _colorScale;
+    };
+    
+    pub.getColorScale2 = function(){
+        return _colorScale2;
     };
     
     pub.updateData = function(ud){

@@ -69,7 +69,7 @@ var SESSION_TIMEFRAME_MAIN = function(par){
     
     //Legend on top of visu
     var createLegend = function(types){
-        var scale = _issueChart.getColorScale();
+        var scale = _issueChart.getColorScale2();
         for(var i = 0; i < types.length; ++i){
             var color = scale(types[i]);
             _layout.appendLabel({bgcolor: color, text: types[i]+" "});
