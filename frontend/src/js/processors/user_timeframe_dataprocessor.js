@@ -28,6 +28,8 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
     //even if it is a field of nested object.
     _rowId = _rowId.split(".");
     
+    console.log("[user_timeframe_dataprocessor]processing...", p);
+    
     //Sorts event based on time
     // if the timestamps are the same start events are allways smaller than other events
     // and close events are allways larger than other events
@@ -62,6 +64,8 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
     };
     
     var parseLifespans = function(statelist){
+        console.log(statelist);
+        
         var lifespans = [];
         //Looping through all constructs
         for(var rid in statelist){            
@@ -149,7 +153,7 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                         types.push(ev.statechange.from);
                     }
                 }
-                
+                 
                 for(var i = 0; i < ev.related_constructs.length; ++i){
                     if(ev.related_constructs[i] === null || ev.related_constructs[i] === undefined){
                         continue;
@@ -173,13 +177,14 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                         states[tmp.rowId].push(tmp);
                     }
                 }//for related_constructs ends
+                
             }//if id is found ends
         });//For each statechange ends
         //getting the lifespans from state data
         var lifespans = parseLifespans(states);
         return {
             lifespans : lifespans,
-            timeframe:[new Date(start), new Date(end)],
+            timeframe:[new Date(start), new Date(end)], //Timeframe of states... irrelevant if not per session
             types : types
         };
     };
@@ -215,6 +220,12 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                     types.push(ev.type);
                 }
                 
+                if(constructMap[ev.related_constructs[0].toString()] !== undefined){
+                    ev.rowId = constructMap[ev.related_constructs[0].toString()].rowId;
+                    evs.push(ev); 
+                }
+                
+                /*
                 for(var i = 0; i < ev.related_constructs.length; ++i){
                     if(ev.related_constructs[i] !== null || ev.related_constructs[i] !== undefined){
                         var tmp  = {};
@@ -232,112 +243,88 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                             evs.push(tmp); 
                         }
                     }
-                }
+                }*/
             }
             
         });
-        return {events: evs, timeframe:[new Date(start), new Date(end)], types : types};
+        return {
+            events: evs, 
+            timeframe:[new Date(start), new Date(end)], //Timeframe of events... irrelevant if not per session
+            types : types
+        };
     };
     
-    //Parses construct data and state option data from constructs.
-    //Adds rowId attribute to the constructs as it is needed for the visualization.
-    //Forms helper data structure for event parsing.
-    var parseConstructs = function(constructs){
-        var ids_help = [];
-        var anonymized = [];
-        var processedConstructs = [];
+    //Splits the constructs into the different types
+    //And add user_id to constructs
+    var splitConstructs = function(constructs){
+    
+        //Separate the constructs
+        var _users = [];
+        var _sessions = [];
+        var _docs = [];
+        var _pages = [];
 
-        var ids = [];
-        var lenId = 0;
-        var longestId = "";
-
-        var lenUser = 0;
-        var longestUser = "";
-        
         var identity_helper = [];
-        
-        var counter = 1;
-        //The helper data structure is for linking construct origin_id.source_id to events
+                
         var constructHelpper = {};
-        constructs.forEach(function(construct){
-            //To ignore duplicates
-            if(identity_helper.indexOf(construct._id) === -1){
-                identity_helper.push(construct._id);
-                //Finding the right attribute of a construct for y axis indetifier
-                var id = construct;
-                if(_fromOrigin){
-                    id = construct.origin_id[0];
-                }
-                for(var m = 0; m < _rowId.length; ++m){
-                    id = id[_rowId[m].toString()];
-                }
-                
-                //Anonymizing the row ids using the _astring base and a order number
-                //Better method where anonymization function/map could be given as a parameter
-                //for anonymization should be done next.
-                var aid = _astring;
-                //If the id is not in the list we add it and the anonymized correspondent
-                //the anonymization is done even if it is not used at the moment. However,
-                //as it is done in the same loop, it's not at the moment performance issue and
-                //can be here as long as we come up with better method.
-                if(ids_help.indexOf(id) === -1){
-                    ids_help.push(id);
-                    aid += counter.toString();
-                    anonymized.push(aid);
-                    ++counter;
-                }
-                else{
-                    aid = anonymized[ids_help.indexOf(id)];
+        constructs.forEach(function(item){
+            //Ignoring duplicates
+            if(identity_helper.indexOf(item._id) === -1){
+                identity_helper.push(item._id);
+                switch (item.type) {
+                    case "user":
+                        _users.push(item);
+                        break;
+                    case "session":
+                        item.user_id = item.related_constructs[0]; //Link to user
+                        _sessions.push(item);
+                        break;
+                    case "document":
+                        item.user_id = item.related_constructs[0]; //Link to user
+                        _docs.push(item);
+                        break;
+                    case "page":
+                        //Take care of linking pages later
+                        //item.user_id = item.related_constructs[0];
+                        _pages.push(item);
+                        break;
+                    /*default:
+                        console.log("[user_timeframe_dataprocessor]Error: Unkown construct type.");
+                        break;*/
                 }
                 
-                //row id is a visualization specific thing that is used in duration timeline chart
-                //as Y-axis identified and everything that should be associated to a same line
-                //should have same row id. If we use the anonymized ids we address the anonymized id to
-                //the construct. Otherwise we use the non anonymized identifier.
-                if(_anonymize){
-                    construct.rowId = aid;
-                }
-                else{
-                    construct.rowId = id;
-                }
-                constructHelpper[construct._id.toString()] = construct;
-                processedConstructs.push(construct);
-                if(construct.related_constructs[0].length > lenUser){
-                    lenUser = construct.related_constructs[0].length;
-                    longestUser = construct.related_constructs[0];
-                }
-
-                if(ids.indexOf(construct.rowId) === -1){
-                    ids.push(construct.rowId);
-
-                    if(construct.rowId.length > lenId){
-                        lenId = construct.rowId.length;
-                        longestId = construct.rowId;
-                    }
-                }
+                constructHelpper[item._id.toString()] = item;
             }
-            
         });
+            
         return{
-            helper:constructHelpper,
-            processedConstructs : processedConstructs,
-            ids : ids,
-            longestId : longestId,
-            longestUser: longestUser
+            helper  : constructHelpper,
+            users   : _users,
+            sessions: _sessions,
+            docs    : _docs,
+            pages   : _pages      
         };
     };
 
-    var sortRows = function(constructs){
+    var sortRows = function(constructs_split){
         var tmp = [];
         var ids = [];
 
-        //console.log("[dataprocessor]Contructs: ", constructs);
+        console.log("[dataprocessor]Contructs: ", constructs_split);
 
+        var constructs = [];
+        constructs = constructs_split.users.concat(constructs_split.sessions).concat(constructs_split.docs).concat(constructs_split.pages);
+        
+        console.log("[dataprocessor]Concat: ", constructs);
+        
         for(var i in constructs){
             var obj = constructs[i];
             tmp.push({name : obj.name, rowId : obj.rowId, user : obj.related_constructs[0]});
         }
-        //console.log(tmp);
+        
+        //Not sorting shit
+        /*
+        console.log("sorting");
         try{
             //Sort constructs -> will define the row of each construct (not rowID!)
             tmp.sort(function(c1, c2){
@@ -361,7 +348,7 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
         }catch(e){
             console.log(e);
         }
-        
+        */
         for(var i = 0; i < tmp.length; ++i){
             ids.push(tmp[i].rowId);
         }
@@ -379,21 +366,21 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
     };
     
     var parseData = function(constructs, events, statechanges){
+        console.log("[user_timeframe_dataprocessor]parsing...", constructs, events, statechanges);
+
         //object for the processed data
         var data = {};
         
         //from constructs we parse ids and constructs that are used
         //it also adds property rowID to constructs in _constructs list!
-        var constructData = parseConstructs(constructs);
+        
+        var constructData = splitConstructs(constructs);
         var eventData = parseEvents(events, constructData.helper);
         var stateData = parseStates(statechanges, constructData.helper);
-
-        data.constructs = constructData.processedConstructs;
-        data.longestId = constructData.longestId;
-        data.longestUser = constructData.longestUser; //construct user 
+        
+        //users/sessions/pages/docs
+        data.constructs = constructData;
         data.events = eventData.events;
-
-        //HERE
         data.lifespans = stateData.lifespans;
         
         data.types = eventData.types.concat(stateData.types); //state/event types for legend
@@ -402,29 +389,28 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
         //var scId = sortRows(stateData.lifespans);
         var scId = sortRows(data.constructs);
 
-        data.ids = mergeIdLists(scId, constructData.ids);
-
+        data.ids = scId.concat(constructData.ids); //mergeIdLists(scId, constructData.ids);
+        
         var start = eventData.timeframe[0];
         var s1 = eventData.timeframe[0].getTime();
         var s2 = stateData.timeframe[0].getTime();
         if(s2 < s1){
             start = stateData.timeframe[0];
         } //Gets start from min(stateData, eventData)
-
+        
         var end = eventData.timeframe[1];
         var e1 = eventData.timeframe[1].getTime();
         var e2 = stateData.timeframe[1].getTime();
         if(e2 > e1){
             end = stateData.timeframe[1];
         } //Gets end from max(stateData, eventData)
-        //console.log("[session_timeframe_dataprocessor]end time: max(", e1, ",", e2, ")");
-
+        
         //Define the actual timeframe ???
         var t_start = +(new Date(start.getFullYear(), start.getMonth(), start.getDate(), start.getHours(), start.getMinutes(), start.getSeconds()));
         var t_end = +(new Date(end.getFullYear(), end.getMonth(), end.getDate(), end.getHours(), end.getMinutes()+1, end.getSeconds()));
         data.timeframe = [0, t_end - t_start];
         
-        //giving the data to who needs it
+        //Giving the data to who needs it
         return data;
     };
     

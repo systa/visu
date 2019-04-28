@@ -45,7 +45,7 @@ var USER_QUERY_UI = function(callback){
         var constructFilters = {};
         
         constructFilters.name = parseTextValue(document.getElementById("constructName").value);
-        constructFilters.type = "user"; 
+        constructFilters.type = ["user", "document", "page", "session"]; 
         constructFilters.description = false; 
         
         filters.constructs = constructFilters;

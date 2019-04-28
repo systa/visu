@@ -32,18 +32,18 @@ var USER_TEMPLATE = function(mpar){
     _canvas.style.display = "none";
     var _context = _canvas.getContext('2d');
     
-    //Private variables for HTML & SVG elements
     var _legend = false;
-    var _text = false;
-    var _search = false;
-    var _input = false;
-    var _input2 = false;
-    var _button = false;
-    var _brushDIV = false;
-    var _brushSVG = false;
-    var _chartDIV = false;
-    var _chartSVG = false;
+    var _users = false; //User/session selection list
     
+    //Private variables for HTML & SVG elements
+    
+    //Timeselector
+    var _brushDIV = false;  
+    var _brushSVG = false;
+    
+    //Chart
+    var _chartDIV = false; 
+    var _chartSVG = false;
     
     //----------------------------------
     //    CREATE HTML & SVG ELEMENTS
@@ -66,6 +66,29 @@ var USER_TEMPLATE = function(mpar){
             console.log("Container for legend already exists!");
         }
         return _legend;
+    };
+    
+    //creates contrainer div and svg element for users component
+    //returns SVG element with d3 binding
+    var createUsersContainer = function(par){
+        if(!_users){
+            var p = par || {};
+        
+            var className = p.className !== undefined ? p.className : "dataselection";
+            var id = p.id !== undefined ? p.id : "usersContainer";
+            var parent = p.parent !== undefined ? p.parent : _container;
+            
+            //user selector container
+            _users = document.createElement("div");
+            _users.className = className;
+            _users.id = id;
+            parent.appendChild(_users);
+        }
+        else{
+            console.log("Container for user selection already exists!");
+        }
+        
+        return _users;
     };
     
     //creates contrainer div and svg element for brush component
@@ -131,53 +154,6 @@ var USER_TEMPLATE = function(mpar){
         return _chartSVG;
     };
     
-    var createTextSearchForm = function(par){
-        if(!_search){
-            var p = par || {};
-        
-            var className = p.className !== undefined ? p.className : "search";
-            var id = p.id !== undefined ? p.id : "searchContainer";
-            var buttonId = p.buttonId !== undefined ? p.buttonId : "searchButton";
-            var textFieldId = p.textFieldId !== undefined ? p.textFieldId : "searchBox";
-            var textFieldId2 = p.textFieldId2 !== undefined ? p.textFieldId2 : "searchBox2";
-            var parent = p.parent !== undefined ? p.parent : _container;
-            var labelFieldId = p.labelFieldId !== undefined ? p.labelFieldId : "text";
-            
-            _search = document.createElement("div"); 
-            _search.className = className;
-            _search.id = id;
-            
-            _text = document.createTextNode("Filter data: ");
-            _text.id = labelFieldId;
-            _search.appendChild(_text);
-            
-            _input = document.createElement("input");
-            _input.type = "text";
-            _input.placeholder = "userID";
-            _input.id = textFieldId;
-            _search.appendChild(_input);
-            
-            
-            _input2 = document.createElement("input");
-            _input2.type = "text";
-            _input2.placeholder = "event type";
-            _input2.id = textFieldId2;
-            _search.appendChild(_input2);
-            
-            _button = document.createElement("button");
-            _button.id = buttonId;
-            var text = document.createTextNode("search");
-            _button.appendChild(text);
-            _search.appendChild(_button);
-            
-            parent.appendChild(_search);
-        }
-        else{
-            console.log("Text search form already exists");
-        }
-        return _search;
-    };
-    
     //---------------------------------------
     //    PUBLIC METHODS
     //---------------------------------------
@@ -186,17 +162,9 @@ var USER_TEMPLATE = function(mpar){
     //---------------------------------------
     //    GETTERS FOR SVG & HTML ELEMENTS
     //---------------------------------------
-    pub.getSearchContainer = function(){
-        return _search;
-    };
-    pub.getSearchTextField = function(){
-        return {userid: _input, type: _input2};
-    };
-    pub.getSearchButton = function(){
-        return _button;
-    };
-    pub.getLegendContainer = function(){
-        return _legend;
+
+    pub.getUsersContainer = function(){
+        return _users;
     };
     pub.getBrushContainer = function(){
         return _brushDIV;
@@ -237,45 +205,16 @@ var USER_TEMPLATE = function(mpar){
     //creates the HTML and SVG elements for the layout and appends those into the document
     //if hierarchy parameter is not defined the layout will be created using default parameters
     //and the order of the elements in the document is the default (from top: legend, brush, chart)
-    //Parameters : 
-    //  hierarchy (optional), Array of Objects containing: {parameters : {}, type: STRING}
-    //      "parameters" contains the parameters for the created chart elements (id, svgid, className, parent).
-    //      "type" is the type of the element to be created (note that one element type can be created only once).
-    //          type options are "legend", "brush" and "chart" if the type does not match any
-    //          of these the dafault type is "chart".
-    //      The order of the array defines the order where the elements are added to their parents
-    //          (will affect the layout if the elements have the same parent).
-    pub.createLayout = function(hierarchy){
-        if(hierarchy === undefined){
-            createTextSearchForm();
-            createLegendContainer();
-            createBrushSVG();
-            createChartSVG();
-        }
-        else{
-            
-            for(var i = 0; i < hierarchy.length; ++i){
-                var el = hierarchy[i];
-                if(el.type == "search"){
-                    createTextSearchForm(el.parameters);
-                }
-                else if(el.type === "legend"){
-                    createLegendContainer(el.parameters);
-                }
-                else if(el.type === "brush"){
-                    createBrushSVG(el.parameters);
-                }
-                else{
-                    createChartSVG(el.parameters);
-                }
-            }
-        }
+    pub.createLayout = function(){
+        
+        createUsersContainer();
+        createLegendContainer();
+        createBrushSVG();
+        createChartSVG();
         
         _containerParent.appendChild(_container);
         return {
             container       : _container,
-            search          : _search,
-            legendContainer : _legend,
             brushContainer  : _brushDIV,
             chartContainer  : _chartDIV,
             brushSVG        : _brushSVG,
@@ -283,7 +222,7 @@ var USER_TEMPLATE = function(mpar){
         };
     };
     
-    //Appends a label to legend element
+    //Appends a label to users element
     //parameters:
     //bgcolor : background color for the label text, the default is legend background color.
     //text : the label text

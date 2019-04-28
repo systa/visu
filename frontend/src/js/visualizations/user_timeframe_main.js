@@ -17,7 +17,7 @@ var USER_TIMEFRAME_MAIN = function(par){
     
     //The left and right margin as well as width should be the same
     //for all the charts if we want to align the draw areas vertically
-    var _issueChartMargins = {top: 20, bottom: 4, left: 50, right: 50};
+    var _mainChartMargins = {top: 20, bottom: 4, left: 50, right: 50};
     var _timeSelectorMargins = {top: 20, bottom: 10, left: 50, right: 50};
     
     var _width = 0;
@@ -28,39 +28,39 @@ var USER_TIMEFRAME_MAIN = function(par){
     var _containerWidth = 0;
     
     //The chart objects will be here
-    var _issueChart = false;
+    var _eventChart = false;    //Shows events related to session
+    var _docChart = false;      //Shows documents used during session
+    var _pageChart = false;     //Shows pages opened during session
     var _timeSelector = false;
     
+    var _dataSelector = false;
+    
     //Initializing the module that helps with cerating the HTML and SVG elements
-    var _layout = DEMO_TEMPLATE();
+    var _layout = USER_TEMPLATE();
     
     //Function for resize event
     var onResize = function(){
         var container = _layout.getContainer();
-
         _containerWidth = window.innerWidth-_containerMargins.left-_containerMargins.right;
         _width = _containerWidth;
-        
         //The height that the two charts can use in maximum (total)
         _height = (window.innerHeight-(_timeSelectorHeight +
-            _issueChartMargins.top + _issueChartMargins.bottom +
+            _mainChartMargins.top + _mainChartMargins.bottom +
             _timeSelectorMargins.top + _timeSelectorMargins.bottom +
             _containerMargins.top));
-            
         container.style.position = "absolute";
         container.style.width = _containerWidth.toString() + "px";
         container.style.left = _containerMargins.left.toString() + "px";
         container.style.top = _containerMargins.top.toString() + "px";
-        
         //Setting the size of charts
-        if(_issueChart !== false){
+        if(_mainChart !== false){
             //We should not exceed the total height
-            var min = _issueChart.getMinHeight();
+            var min = _mainChart.getMinHeight();
             var height = _height*0.75;
             if(height < min){
                 height = min;
             }
-            _issueChart.onResize(_width, height, _issueChartMargins);
+            _mainChart.onResize(_width, height, _mainChartMargins);
         }
         if(_timeSelector !== false){
             _timeSelector.onResize(_width, _timeSelectorHeight, _timeSelectorMargins);
@@ -68,30 +68,39 @@ var USER_TIMEFRAME_MAIN = function(par){
     };
     
     //Legend on top of visu
-    var createLegend = function(types){
-        var scale = _issueChart.getColorScale();
-        for(var i = 0; i < types.length; ++i){
-            var color = scale(types[i]);
-            _layout.appendLabel({bgcolor: color, text: types[i]+" "});
+    var createUserlist = function(users){
+        var scale = _mainChart.getColorScale();
+        for(var i = 0; i < users.length; ++i){
+            var color = scale(users[i]);
+            _layout.appendLabel({bgcolor: color, text: users[i]+" "});
         }
     };
     
     //Initializes the chart template and draws the visualization.
     var initCharts = function(data, timeframe){
+        console.log("[user_timeframe_main]initChart function");
         var elements = _layout.createLayout();
         
         if(!timeframe){
             timeframe = data.timeframe;
         }
         
-        _issueChartMargins.left = _layout.getSVGTextWidth(data.longestId)+12;
-        _issueChartMargins.right = 60; //_layout.getSVGTextWidth(data.longestUser)+12;
-        _timeSelectorMargins.left =  _issueChartMargins.left;
-        _timeSelectorMargins.right = _issueChartMargins.right;
+        _mainChartMargins.left = _layout.getSVGTextWidth(data.longestId)+12;
+        _mainChartMargins.right = 60; //_layout.getSVGTextWidth(data.longestUser)+12;
+        _timeSelectorMargins.left =  _mainChartMargins.left;
+        _timeSelectorMargins.right = _mainChartMargins.right;
         
-        _issueChart = UserTimeframe({
+        console.log("[user_timeframe_main]DataSelector");
+        _dataSelector = DataSelector({
+            users : data.constructs.users,
+            sessions : data.constructs.sessions
+        });
+        _dataSelector.draw();
+        
+        console.log("[user_timeframe_main]UserTimeframe");
+        _mainChart = UserTimeframe({
             svg : elements.chartSVG,
-            margins : _issueChartMargins,
+            margins : _mainChartMargins,
             timeframe : timeframe,
             ids : data.ids,
             events : data.events,
@@ -102,9 +111,10 @@ var USER_TIMEFRAME_MAIN = function(par){
         });
 
         var onBrush= function(timeRange){
-            _issueChart.onBrush(timeRange);
+            _mainChart.onBrush(timeRange);
         };
 
+        console.log("[user_timeframe_main]TimeSelector");
         _timeSelector = TimeSelector({
             svg : elements.brushSVG,
             margins : _timeSelectorMargins,
@@ -114,62 +124,25 @@ var USER_TIMEFRAME_MAIN = function(par){
             customTime: false
         });
         
-        createLegend(data.types);
-        onResize();
+        console.log("[user_timeframe_main]createUserlist: ", data.constructs.users);
+        createUserlist(data.constructs.users);
         
-        //Search button used to filter by user ID
-        _layout.getSearchButton().addEventListener('click', function(){
-            var result = _layout.getSearchTextField();
-            var input = result.userid.value;
-            var input2 = result.type.value;
-            
-            if(input.length !== 0 || input2.length !== 0){
-                input = input.length !== 0 ? input.trim().split(',') : false;
-                input2 = input2.length !== 0 ? input2.trim().split(',') : false;
-                
-                //Force display of start/end
-                if(input2){
-                    input2[input2.length] = "start/end";
-                }
-                
-                var res; 
-                if(input){
-                    var filters = {ids: input, types: input2};
-                    res = _search.filterUserID(filters, _constructs, _states, _events);
-                }else{
-                    res = _search.filterNoID(input2, _constructs, _states, _events);
-                }
-                var parsed_data = _parser(res.constructs, res.events, res.states);
-                
-                _issueChart.updateData({
-                    ids : parsed_data.ids,
-                    events : parsed_data.events,
-                    lifespans : parsed_data.lifespans,
-                    constructs : parsed_data.constructs
-                });
-                
-            }//empty string clear filtering
-            else{
-                var parsed_data = _parser(_constructs, _events, _states);
-                
-                _issueChart.updateData({
-                    ids : parsed_data.ids,
-                    events : parsed_data.events,
-                    lifespans : parsed_data.lifespans,
-                    constructs : parsed_data.constructs
-                });
-            }
-            //The chart should be resized as it has different amount of data
-            onResize();
-        });
+        console.log("[user_timeframe_main]onResize");
+        onResize();
         
         window.addEventListener('resize', onResize);
 
         document.getElementById("loader").style.display = "none";
+        
+        console.log("[user_timeframe_main]show");
+        
         _layout.show();
-
+        
+        //Draws the time selector from time_selector.js
         _timeSelector.draw();
-        _issueChart.draw();
+        
+        //Draws the main chart from user_timeframe.js
+        //_mainChart.draw();
     };
 
 //-----------------------------------------
@@ -201,17 +174,18 @@ var USER_TIMEFRAME_MAIN = function(par){
     var _events = false;
     var _states = false;
     var _constructs = false;
+                
     
     var whenLoaded = function(){
         if(_events && _constructs && _states){
-            var parsed_data = _parser(_constructs, _events, _states);
-           
-           console.log("[user_timeframe_main]Parsed Data: ", parsed_data);
-                      
             try{
+                var parsed_data = _parser(_constructs, _events, _states);
+
+                console.log("[user_timeframe_main]Parsed Data: ", parsed_data);
+
                 initCharts(parsed_data, _timeframe); //timeframe of the filters
-            }catch(e){
-                console.log(e);
+            }catch(e1){
+                console.log("[user_timeframe_main]Error: ", e1);
             }
         }
         return false;
@@ -220,8 +194,7 @@ var USER_TIMEFRAME_MAIN = function(par){
     var eventsLoaded = function(data){
         _events = data;
         whenLoaded();
-    };
-    
+    };    
     var constructsLoaded = function(data){
         _constructs = data;
         whenLoaded();
@@ -230,9 +203,10 @@ var USER_TIMEFRAME_MAIN = function(par){
         _states = data;
         whenLoaded();
     };
-       
+    
     _query.getFilteredConstructs(_queryFilters.constructFilters, constructsLoaded);
     _query.getFilteredStatechanges(_queryFilters.eventFilters, statesLoaded);
     _query.getFilteredEvents(_queryFilters.eventFilters, eventsLoaded);
+
 };
  

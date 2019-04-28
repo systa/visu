@@ -39,35 +39,34 @@ var UserTimeframe = function(par){
     var _width = p.width !== undefined ? p.width : 256;
     var _height = p.height !== undefined ? p.height : 32;
     var _margins = p.margins !== undefined ? p.margins : {top: 0, bottom : 0, left: 0, right: 0};
-    var _xDomain = p.timeframe !== undefined ? p.timeframe : [0, 1000]; //useless because already defined in _main
+    
+    var _xDomain = p.timeframe !== undefined ? p.timeframe : [0, 1000]; 
+    var _yDomain = p.ids !== undefined ? p.ids : [];
+    
     var _labelDomain = p.labelColors !== undefined ? p.labelColors : [];
     var _typeDomain = p.stateColors !== undefined ? p.stateColors : [];
-    var _yDomain = p.ids !== undefined ? p.ids : [];
+    
     var _eventData = p.events !== undefined ? p.events : [];
     var _lifespanData = p.lifespans !== undefined ? p.lifespans : [];
     var _constructData = p.constructs !== undefined ? p.constructs : false;
-    //If we want to display the construct types or not?
-    var _displayTypes = p.displayTypes !== undefined ? p.displayTypes : true;
+    
+    var _displayTypes = p.displayTypes !== undefined ? p.displayTypes : true; 
+    
     var _colorScale = p.colorScale !== undefined ? p.colorScale : d3.scale.category20();
     
-    var _range = 0;
-
+    //Timescale in the graph
     var _timeScale = d3.time.scale().domain(_xDomain);
-    //var _timeScale = d3.scale.linear();
-
     _timeScale.domain(_xDomain);
-
-    //console.log("[custom_timeline.js]Range:", [_margins.left, _width-_margins.right]);
     _timeScale.range([_margins.left, _width-_margins.right]);
 
-    //the tick size is negative because the orient of the axis is top. This reverts the axis...
+    //The tick size is negative because the orient of the axis is top. This reverts the axis...
     var _timeAxis = d3.svg.axis().orient("top").scale(_timeScale).tickSize(-_height+_margins.top+_margins.bottom);
-    //_timeAxis.tickFormat(d3.format(",f")); //Number format on graph axis
-  
-    //building ordinal scale for test sets based on the build id
+    
+    //Building ordinal scale for test sets based on the build id
+    // (???)
     var _scaleY = d3.scale.ordinal().rangeBands([_margins.top, _height-_margins.bottom]).domain(_yDomain);
 
-    //calculaiting height for one row now that we know how many rows we will have
+    //Calculaiting height for one row now that we know how many rows we will have
     var _rowHeight = ((_height-_margins.bottom-_margins.top)/_yDomain.length);
     var _minRowHeight = 30;//12;
     var _maxRowHeight = 40;//16;
@@ -249,7 +248,8 @@ var UserTimeframe = function(par){
     };
     
     pub.draw = function(){
-
+        console.log("[user_timeframe]pub.draw");
+        
         //background and y-axis
         _bg.attr('fill', "#FCFCFC")
             .attr('x', 0)
@@ -260,10 +260,13 @@ var UserTimeframe = function(par){
             //.on("mousemove", onMouseMove)
             .on("mouseout", onMouseOut);
 
-        _names.attr('x', 2)
-            .attr('y', function(d){return _scaleY(d)+_rowHeight*0.75;})
-            .text(function(d){return d.toString();});
-            
+        _names.attr('x', 2);
+        _names.attr('y', function(d){return _scaleY(d)+_rowHeight*0.75;});
+        _names.text(function(d){
+            if(d)
+                return d.toString();
+        });
+        
         _lifespans.attr('x1', getLpStart)
             .attr('x2', getLpEnd)
             .attr('y1', getLineY)
@@ -307,6 +310,7 @@ var UserTimeframe = function(par){
     };
     
     pub.onResize = function(width, height, margins){
+        console.log("[user_timeframe]pub.onResize");
         _width = width;
         _height = height;
         _margins = margins;
