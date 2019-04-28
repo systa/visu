@@ -326,7 +326,7 @@ function getData( source, callback ) {
                 if (words.length > 2) {
                     //Create construct page
                     if (notIn3(pages, page)) {
-                        var toPush = {name: page.name};
+                        var toPush = {name: page.name, user_id: session.user_id};
                         pages.push(toPush);
                     }
                     

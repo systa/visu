@@ -14,7 +14,7 @@ var _ = require( 'underscore' );
 
 var crypto = require('crypto');
 
-var debugLink = false;
+var debugLink = true;
 var debugSend = false;
 var debugParse = false;
 
@@ -292,7 +292,7 @@ function sendToDb( logData, source ) {
    // links issues to milestones and constructs to events using the previously collected information
    function link(logData) {
       if(debugLink){
-         console.log("[Poster]Linking...");
+         console.log("[Poster]Linking");
       }
       // variables used to determine when we are done linking
       var linkCount = 0; // how many to be created
@@ -333,7 +333,19 @@ function sendToDb( logData, source ) {
          }
          
       });
+       
+      console.log("[Poster]Linking pages: "+ logData.pages.length);
+      var pages = logData.pages;
+      console.log("[Poster]Page 1 ", logData.pages[0]);
+       try{
+          _.each(pages, function (page){
+             links.push( { construct: idToID[page.id], target: idToID[page.user_id], type: 'construct' } );
+          });
+       }catch(e){
+           console.log('Error linking pages:', e);
+       }
       
+       
       //await sleep(1000);
       // Link documents to users
       if(debugLink){
