@@ -22,6 +22,8 @@ function getRelatedSessions(user, sessions){
     return relatedSessions;
 }
 
+var currentSession = false;
+
 var DataSelector = function(par){
     console.log("[data_selector.js]DataSelector");
     
@@ -31,7 +33,8 @@ var DataSelector = function(par){
     var _width = p.width !== undefined ? p.width : 1000;
     var _height = p.height !== undefined ? p.height : 40;
     var _margins = p.margins !== undefined ? p.margins : {top: 0, bottom : 0, left: 0, right: 0};
-    var _brushCallback = p.onBrushFunction !== undefined ? p.onBrushFunction : function(){console.log("[time_selector.js]No brush fct defined...");};
+    
+    var _changeCallback = p.onSessionChange !== undefined ? p.onSessionChange : function(){console.log("[data_selector]No session change fct defined...");};
     
     var _users = p.users !== undefined ? p.users : ["User 1", "User 2", "User 3"];
     var _sessions = p.sessions !== undefined ? p.sessions : ["Session 1", "Session 2", "Session 3"];
@@ -89,13 +92,25 @@ var DataSelector = function(par){
             .data(_currentSessions).enter()
             .append('option')
             .text(function (d) { return d._id; });
+        
+        currentSession = _currentSessions[0];
+        //console.log("[data_selector]New session: ", currentSession);
+        _changeCallback();
     };
     
     function onSessionChange() {
         sessionValue = d3.select('#sessionSelect').property('value');
-	    d3.select('#sessionSelectDIV').append('p').text(sessionValue + ' is the last selected session.');
         
-        //Todo: change diagram
+        var session;
+        for(var i in _currentSessions){ 
+            if(_currentSessions[i]._id === sessionValue){
+                session = _currentSessions[i];
+            }
+        }
+        
+        currentSession = session;
+        //console.log("[data_selector]New session: ", currentSession);
+        _changeCallback();
     };
 
     //public methods
@@ -103,6 +118,10 @@ var DataSelector = function(par){
 
     pub.draw = function(){
         //console.log("[data_selector.js]Drawing the data selector.");
+    };
+    
+    pub.getSession = function(){
+        return currentSession;
     };
   
     return pub;

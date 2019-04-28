@@ -349,6 +349,7 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
             console.log(e);
         }
         */
+        
         for(var i = 0; i < tmp.length; ++i){
             ids.push(tmp[i].rowId);
         }

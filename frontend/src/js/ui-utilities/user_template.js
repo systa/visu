@@ -208,7 +208,7 @@ var USER_TEMPLATE = function(mpar){
     pub.createLayout = function(){
         
         createUsersContainer();
-        createLegendContainer();
+        //createLegendContainer();
         createBrushSVG();
         createChartSVG();
         

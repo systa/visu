@@ -32,8 +32,9 @@ var USER_TIMEFRAME_MAIN = function(par){
     var _docChart = false;      //Shows documents used during session
     var _pageChart = false;     //Shows pages opened during session
     var _timeSelector = false;
-    
     var _dataSelector = false;
+    
+    var _currentSession = false;
     
     //Initializing the module that helps with cerating the HTML and SVG elements
     var _layout = USER_TEMPLATE();
@@ -90,12 +91,42 @@ var USER_TIMEFRAME_MAIN = function(par){
         _timeSelectorMargins.left =  _mainChartMargins.left;
         _timeSelectorMargins.right = _mainChartMargins.right;
         
+        var updateData = function(session){
+            /* TODO: Select constructs related to the session
+             * That is: the session itself, and the pages/docs linked to the session */
+            var res = _search.filterSession(session, _constructs, _states, _events);
+            
+            var parsed_data = _parser(res.constructs, res.events, res.states);
+            
+            console.log("[user_timeframe_main]Parsed & Filtered:", parsed_data);
+                
+            _mainChart.updateData({
+                ids : parsed_data.ids,
+                events : parsed_data.events,
+                lifespans : parsed_data.lifespans,
+                constructs : parsed_data.constructs
+            });
+        };
+        
+        var onSessionChange = function(){
+            _currentSession = _dataSelector.getSession();
+            console.log("[user_timeframe_main]New session: ", _currentSession);
+                                
+            updateData(_currentSession);
+        };
+        
         console.log("[user_timeframe_main]DataSelector");
         _dataSelector = DataSelector({
             users : data.constructs.users,
-            sessions : data.constructs.sessions
+            sessions : data.constructs.sessions,
+            onSessionChange : onSessionChange
         });
         _dataSelector.draw();
+        
+        /*_currentSession = _dataSelector.getSession();
+        console.log("[user_timeframe_main]Session:", _currentSession);
+        updateData(_currentSession);
+        */
         
         console.log("[user_timeframe_main]UserTimeframe");
         _mainChart = UserTimeframe({
@@ -124,17 +155,17 @@ var USER_TIMEFRAME_MAIN = function(par){
             customTime: false
         });
         
-        console.log("[user_timeframe_main]createUserlist: ", data.constructs.users);
-        createUserlist(data.constructs.users);
+        //console.log("[user_timeframe_main]createUserlist: ", data.constructs.users);
+        //createUserlist(data.constructs.users);
         
-        console.log("[user_timeframe_main]onResize");
+        //console.log("[user_timeframe_main]onResize");
         onResize();
         
         window.addEventListener('resize', onResize);
 
         document.getElementById("loader").style.display = "none";
         
-        console.log("[user_timeframe_main]show");
+        //console.log("[user_timeframe_main]show");
         
         _layout.show();
         

@@ -127,6 +127,42 @@ var PROCESSOR_UTILITES = function(){
         return related;
     };
     
+    pub.findRelatedConstructs2 = function(data, allconstructs){
+        var related = [];
+        data.forEach(function(item){
+            for(var i = 0; i < item.related_constructs.length ; ++i){
+                for(var j = 0; j < allconstructs.length; ++j){
+                    if(item.related_constructs[i] === allconstructs[j]._id){
+                        if(allconstructs[j].type === "page" || allconstructs[j].type === "document"){
+                            related.push(allconstructs[j]);
+                        }
+                    }
+                }
+            }
+        });
+        return related;
+    };
+    
+    pub.filterSession = function(session, allconstructs, allstates, allevents){
+        var related = {constructs: [], events: [], states: []};
+    
+        console.log("[processor_utilities]Session: ", session);
+        console.log("[processor_utilities]All constructs: ", allconstructs);
+        
+        //Gets all docs and pages related to the user
+        var user = pub.findRelatedConstructs([session], allconstructs);
+        related.constructs = pub.findRelatedConstructs2(user, allconstructs);
+        //Add the session itself
+        related.constructs.push(session);
+        
+        console.log("[processor_utilities]Related constructs: ", related.constructs);
+        
+        related.events = pub.findRelatedEvents(related.constructs, allevents);
+        related.states = pub.findRelatedStatechanges(related.constructs, allstates);
+        
+        return related;
+    };
+    
     //data = ids, types
     pub.filterUserID = function(data, allconstructs, allstates, allevents){
         var related = {constructs: [], events: [], states: []};
