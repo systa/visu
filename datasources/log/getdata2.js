@@ -185,19 +185,24 @@ function getData( source, callback ) {
     var pages = []; //List of help pages 
     var stateChanges = []; //List of state changes
 
+    var user_helper = [];
+    var session_helper = [];
+    
     //For each session
     for (var i = 0; i < data.length; i++) {
         var session = data[i];
         var previous_document;
         
-        //User list: push user ids
-        if (notIn2(users, session.user_id)) {
+        if(user_helper.indexOf(session.user_id) === -1){
+            user_helper.push(session.user_id);
+            
             var toPush = {id: session.user_id};
             users.push(toPush);
         }
         
-        //Session list: push session ids + user ids
-        if (notIn4(sessions, session.id)) {
+        if(session_helper.indexOf(session.id) === -1){
+            session_helper.push(session.id);
+            
             var toPush = {id: session.id, user_id: session.user_id};
             sessions.push(toPush);
         }
@@ -399,6 +404,9 @@ function getData( source, callback ) {
     var result = {events: events, users: users, sessions: sessions, documents:documents, statechanges: stateChanges, pages: pages};
     //display(result);
 
+    console.log("[Getdata]Users: ", users.length);
+    console.log("[Getdata]Sessions: ", sessions.length);
+    
     callback(result);
 }
 

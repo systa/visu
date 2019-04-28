@@ -313,18 +313,14 @@ function sendToDb( logData, source ) {
          links.push( { construct: idToID[session.id], target: idToID[session.user_id], type: 'construct' } );
       });
       
-      
+      //await sleep(1000);
       // Link events to session & document/help page (if needed)
-      
       if(debugLink){
          console.log("[Poster]Linking events: "+ logData.events.length);
       }
       var events = logData.events;
       _.each(events, function (event){
          links.push( { construct: idToID[event.session_id], target: idToID[event.id], type: 'event' } );
-         if(event.action.includes("Exit")){
-             //console.log("Linked Exit action to: ", event.session_id);
-         }
           
          if(event.document) {
             links.push( { construct: idToID[event.document], target: idToID[event.id], type: 'event' } );   
@@ -338,8 +334,8 @@ function sendToDb( logData, source ) {
          
       });
       
+      //await sleep(1000);
       // Link documents to users
-      
       if(debugLink){
          console.log("[Poster]Linking documents: "+ logData.documents.length);
       }
@@ -353,8 +349,16 @@ function sendToDb( logData, source ) {
          console.log("Links: " + linkCount);
       }
       
+      var stop = 0;
       // create all of the links.
       links.forEach( function ( link ) {
+          /*stop++;
+         if (stop%20 === 0){
+             console.log("[Poster]Waiting...", stop);
+             var waitTill = new Date(new Date().getTime() + seconds * 1000);
+             while(waitTill > new Date()){}
+         }*/
+          
          if(debugLink){
             console.log("construct: "+ link.construct+ " target: "+link.target, " type: "+link.type);
          }
