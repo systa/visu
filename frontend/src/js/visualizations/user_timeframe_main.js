@@ -69,11 +69,11 @@ var USER_TIMEFRAME_MAIN = function(par){
     };
     
     //Legend on top of visu
-    var createUserlist = function(users){
-        var scale = _mainChart.getColorScale();
-        for(var i = 0; i < users.length; ++i){
-            var color = scale(users[i]);
-            _layout.appendLabel({bgcolor: color, text: users[i]+" "});
+    var createLegend = function(types){
+        var scale = _mainChart.getColorScale2();
+        for(var i = 0; i < types.length; ++i){
+            var color = scale(types[i]);
+            _layout.appendLabel({bgcolor: color, text: types[i]+" "});
         }
     };
     
@@ -113,6 +113,7 @@ var USER_TIMEFRAME_MAIN = function(par){
             console.log("[user_timeframe_main]New session: ", _currentSession);
                                 
             updateData(_currentSession);
+            _mainChart.onSessionChange();
         };
         
         console.log("[user_timeframe_main]DataSelector");
@@ -155,8 +156,7 @@ var USER_TIMEFRAME_MAIN = function(par){
             customTime: false
         });
         
-        //console.log("[user_timeframe_main]createUserlist: ", data.constructs.users);
-        //createUserlist(data.constructs.users);
+        createLegend(data.types);
         
         //console.log("[user_timeframe_main]onResize");
         onResize();
@@ -173,7 +173,7 @@ var USER_TIMEFRAME_MAIN = function(par){
         _timeSelector.draw();
         
         //Draws the main chart from user_timeframe.js
-        //_mainChart.draw();
+        _mainChart.draw();
     };
 
 //-----------------------------------------

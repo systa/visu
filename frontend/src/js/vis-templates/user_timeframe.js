@@ -53,6 +53,7 @@ var UserTimeframe = function(par){
     var _displayTypes = p.displayTypes !== undefined ? p.displayTypes : true; 
     
     var _colorScale = p.colorScale !== undefined ? p.colorScale : d3.scale.category20();
+    var _colorScale2 = d3.scale.category10();
     
     //Timescale in the graph
     var _timeScale = d3.time.scale().domain(_xDomain);
@@ -82,7 +83,8 @@ var UserTimeframe = function(par){
     _svg.attr("height", _height);
 
     //building color scale
-    _colorScale.domain(_typeDomain.concat(_labelDomain));
+    _colorScale.domain(_labelDomain);
+    _colorScale2.domain(["start/end","help","doc","feature"]);
 
     //In SVG the draw order is reverse order of defining the nodes
     
@@ -181,12 +183,11 @@ var UserTimeframe = function(par){
     
     //WHAT IS DISPLAYED ON MOUSE OVER !!!
     var onMouseOver = function(data){
-        var dispstring = "";
+        var dispstring = "DETAILS:<br>";
        
-        dispstring += "data: " + data.toString() + "</br>"; 
-       
+        try{
         for(var atr in data){
-            if(data.hasOwnProperty(atr)){
+            if(typeof data[atr] !== "undefined" && data.hasOwnProperty(atr)){
                 if(!$.isPlainObject(data[atr]) && !$.isArray(data[atr])){
                     dispstring += atr+": "+data[atr].toString()+"</br>";
                    
@@ -206,6 +207,9 @@ var UserTimeframe = function(par){
                    }
                 }
             }
+        }
+        }catch(e){
+            console.log(data, e);
         }
        
         _tooltip.html(dispstring);
@@ -229,7 +233,7 @@ var UserTimeframe = function(par){
     
     //Color for lifespans and events
     pub.getColor = function(data){
-        return _colorScale(data.type);
+        return _colorScale2(data.type);
     };
     
     //Color for labels (user name)
@@ -309,6 +313,12 @@ var UserTimeframe = function(par){
         pub.draw();
     };
     
+    pub.onSessionChange = function(){
+        //_timeScale.domain(timeRange);      
+        console.log("[user_timeframe]pub.onSessionChange");
+        pub.draw();
+    };
+    
     pub.onResize = function(width, height, margins){
         console.log("[user_timeframe]pub.onResize");
         _width = width;
@@ -340,6 +350,10 @@ var UserTimeframe = function(par){
     
     pub.getColorScale = function(){
         return _colorScale;
+    };
+    
+    pub.getColorScale2 = function(){
+        return _colorScale2;
     };
     
     pub.updateData = function(ud){
