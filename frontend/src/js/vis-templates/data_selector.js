@@ -25,8 +25,6 @@ function getRelatedSessions(user, sessions){
 var currentSession = false;
 
 var DataSelector = function(par){
-    //console.log("[data_selector.js]DataSelector");
-    
     //PARSING PARAMETERS
     var p = par || {};
 
@@ -39,8 +37,6 @@ var DataSelector = function(par){
     var _users = p.users !== undefined ? p.users : ["User 1", "User 2", "User 3"];
     var _sessions = p.sessions !== undefined ? p.sessions : ["Session 1", "Session 2", "Session 3"];
     
-    //console.log("Sessions:", _sessions);
-    //console.log("Users:", _users);
     var _currentSessions = getRelatedSessions(_users[0], _sessions);
     currentSession = _currentSessions[0];
     
@@ -83,9 +79,7 @@ var DataSelector = function(par){
             }
         }
         
-        //Todo: change session list
         _currentSessions = getRelatedSessions(user, _sessions);
-        
         _selectSession.selectAll('option').remove();
                 
         SessionOptions = _selectSession
@@ -95,7 +89,6 @@ var DataSelector = function(par){
             .text(function (d) { return d._id; });
         
         currentSession = _currentSessions[0];
-        //console.log("[data_selector]New session: ", currentSession);
         _changeCallback();
     };
     
@@ -110,7 +103,6 @@ var DataSelector = function(par){
         }
         
         currentSession = session;
-        //console.log("[data_selector]New session: ", currentSession);
         _changeCallback();
     };
 
