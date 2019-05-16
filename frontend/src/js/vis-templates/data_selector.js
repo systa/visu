@@ -70,7 +70,7 @@ var DataSelector = function(par){
         .selectAll('option')
 	    .data(_currentSessions).enter()
 	    .append('option')
-		.text(function (d) { return ".." + d._id.substring(20); });
+		.text(function (d) { return d._id; });
 
     /* ON CHANGE */
     function onUserChange() {
@@ -93,7 +93,7 @@ var DataSelector = function(par){
             .selectAll('option')
             .data(_currentSessions).enter()
             .append('option')
-            .text(function (d) { return ".." + d._id.substring(20); });
+            .text(function (d) { return d._id; });
         
         currentSession = _currentSessions[0];
         //console.log("[data_selector]New session: ", currentSession);
@@ -105,8 +105,7 @@ var DataSelector = function(par){
         
         var session;
         for(var i in _currentSessions){ 
-            var subid = sessionValue.substring(2);
-            if(_currentSessions[i]._id.substring(20) === subid){
+            if(_currentSessions[i]._id === sessionValue){
                 session = _currentSessions[i];
             }
         }
