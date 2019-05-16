@@ -291,7 +291,6 @@ var UserTimeframe = function(par){
         _names.attr('y', function(d){return _scaleY(d.id)+_rowHeight*0.75;});
         //_names.text("lol");
         _names.text(function(d){
-            console.log("[print]d:", d);
             if(d){
                 return d.name.toString();
             }

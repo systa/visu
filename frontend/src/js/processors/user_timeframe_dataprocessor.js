@@ -396,6 +396,7 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
         data.lifespans = stateData.lifespans;
         
         data.types = eventData.types.concat(stateData.types); //state/event types for legend
+        data.types.splice(data.types.length - 2, 2);//removes session open/closed states of legend
         data.types.sort();
 
         var tmpId = sortRows(data.constructs);
