@@ -66,6 +66,13 @@ var UserTimeframe = function(par){
     //Building ordinal scale for test sets based on the build id
     // (???)
     var _scaleY = d3.scale.ordinal().rangeBands([_margins.top, _height-_margins.bottom]).domain(_yDomain);
+    
+    //console.log("[user_timeframe]_scaleY domain:", _yDomain);
+    
+    for(var x in _yDomain){
+        var id = _yDomain[x];
+        //console.log("[user_timeframe]scale(",id,") = ", _scaleY(id));
+    }
 
     //Calculaiting height for one row now that we know how many rows we will have
     var _rowHeight = ((_height-_margins.bottom-_margins.top)/_yDomain.length);
@@ -96,7 +103,7 @@ var UserTimeframe = function(par){
     
     //Status group is related to the "Y-axis". It shows the status of the session
     if(_displayTypes){
-        var _stateGroup = _svg.append("g");
+        var _stateGroup = _svg.append("g").attr('what','right legend');
         var _states = _stateGroup.selectAll("rect").data(_constructData).enter().append("rect");
         var _labels = _stateGroup.selectAll("text").data(_constructData).enter().append("text");
     }
@@ -116,52 +123,71 @@ var UserTimeframe = function(par){
     
     var _tooltip = d3.select("body").append("div").attr('class', "tooltip");
     
-    //Lifespan start (always 0)
+    //Lifespan start
     var getLpStart = function(data){
         var domain = _timeScale.domain();
+        var start = new Date(data.start);
+        var end = new Date(data.end);
+        
+        //if end is false...
+        //data endpoint is mapped to the domain end point
+        if(!data.end){
+            end = domain[domain.length-1];
+        }
 
-        return _timeScale(domain[0]);
+        //clipping the coordinates to brush selection
+        if(start <= domain[0] && end >= domain[0]){
+            start = domain[0];
+        }
+        else if((start < domain[0] && end < domain[0]) || start > domain[domain.length-1]){
+            start = domain[0];
+        }
+
+        return _timeScale(start);
     };
     
     //Lifespan end
     var getLpEnd = function(data){
         var domain = _timeScale.domain();
-        
-        //if end is false, data endpoint is mapped to the domain end point
+        var start = new Date(data.start);
+        var end = new Date(data.end);
+
+        //if end is false...
+        //data endpoint is mapped to the domain end point
         if(!data.end){
-            data.end = domain[domain.length-1]; 
+            end = domain[domain.length-1]; 
         }
-
-        var n_end = new Date(data.end).getTime();
-        var n_first = new Date(data.first_time).getTime();
-        var y = n_end - n_first;
-
-        if (y >= + domain[domain.length-1]) {
-            return _timeScale(domain[domain.length-1]);
-        }else if (y <= + domain[0]) {    
+        //If the start date is not in the selection range we draw nothing.
+        if(start > domain[domain.length-1] || end < domain[0]){
             return _timeScale(domain[0]);
         }
-            
-        return _timeScale(y);
+        //clipping the line to the current selection
+        if(start <= domain[0] && end >= domain[0]){
+            start = domain[0];
+        }
+        if(end >= domain[domain.length-1] && start <= domain[domain.length-1]){
+            end = domain[domain.length-1];
+        }
+        var w = _timeScale(end);
+        
+        return w;
+        
     };
     
     //Gets the timeline bars start point
     //The start point is the x-coordinate of the runtime bar
     var getX = function(data){
         var domain = _timeScale.domain();
-        var start = + new Date(data.time);
-        var base = + new Date(data.data.first_time);
-        
+        var start = new Date(data.time);
         var circleDiameter = _rowHeight*0.33*2;
 
-        var x = start - base;
-        
         //clipping the coordinates to brush selection
-        if(x < domain[0] || x > domain[domain.length-1]){
+        if(start <= domain[0] || start >= domain[domain.length-1]){
             return -circleDiameter;
         }
 
-        return _timeScale(x);
+        var x = _timeScale(start);
+        return x;
     };
   
     //Gets the data row based on buildId
@@ -174,7 +200,6 @@ var UserTimeframe = function(par){
         y += _rowHeight*0.33;
         
         if (data.data && data.data.collide !== 0){
-            //console.log("[custom_timeline.js]Data collides:", data.data.collide);
             y += (_rowHeight*0.1) * data.data.collide;
         }
         
@@ -247,12 +272,13 @@ var UserTimeframe = function(par){
     
     //Returns the state text from data
     pub.getLabel = function(data){
-        return ".." + data.related_constructs[0].substring(20);
-        //return data.type;
+        //return ".." + data.related_constructs[0].substring(20);
+        
+        return data.type;
     };
     
     pub.draw = function(){
-        console.log("[user_timeframe]pub.draw");
+        //console.log("[user_timeframe]pub.draw");
         
         //background and y-axis
         _bg.attr('fill', "#FCFCFC")
@@ -290,6 +316,8 @@ var UserTimeframe = function(par){
 
         //Text and color for labels
         if(_displayTypes){
+            //console.log("[user_timeframe]Displaying types:");
+            
             _states.attr('fill', pub.getColor2)
                 .attr('x', _width-_margins.right)
                 .attr('width', _margins.right)
@@ -299,6 +327,8 @@ var UserTimeframe = function(par){
             _labels.attr('x', _width-_margins.right)
                 .attr('y', function(d){return getY(d)+_rowHeight*0.75;})
                 .text(pub.getLabel);
+            
+            //console.log("[user_timeframe]States/labels:", _states, _labels);
         }
         
         //x-axis
@@ -313,14 +343,15 @@ var UserTimeframe = function(par){
         pub.draw();
     };
     
-    pub.onSessionChange = function(){
-        //_timeScale.domain(timeRange);      
+    /*pub.onSessionChange = function(timeRange, yDomain){
+        _timeScale.domain(timeRange);
+        
         console.log("[user_timeframe]pub.onSessionChange");
         pub.draw();
-    };
+    };*/
     
     pub.onResize = function(width, height, margins){
-        console.log("[user_timeframe]pub.onResize");
+        //console.log("[user_timeframe]pub.onResize");
         _width = width;
         _height = height;
         _margins = margins;
@@ -375,6 +406,12 @@ var UserTimeframe = function(par){
         _timeScale.range([_margins.left, _width-_margins.right]);
         //building ordinal scale for test sets based on the build id
         _scaleY.domain(_yDomain);
+        
+        //console.log("[user_timeframe]Domain:",_yDomain);
+        for(var x in _yDomain){
+        var id = _yDomain[x];
+            //console.log("[user_timeframe]scale(",id,") = ", _scaleY(id));
+        }
 
         //calculaiting height for one row now that we know how many rows we will have
         _rowHeight = ((_height-_margins.bottom-_margins.top)/_yDomain.length);
@@ -396,7 +433,7 @@ var UserTimeframe = function(par){
         
         //Status group is related to the "Y-axis". It shows the status of the test if it failed or passed.
         if(_displayTypes){
-            _stateGroup = _svg.append("g");
+            _stateGroup = _svg.append("g").attr('what','right legend');
             _states = _stateGroup.selectAll("rect").data(_constructData).enter().append("rect");
             _labels = _stateGroup.selectAll("text").data(_constructData).enter().append("text");
         }
@@ -411,6 +448,8 @@ var UserTimeframe = function(par){
         _events = _eventGroup.selectAll("circle").data(_eventData).enter().append("circle");
         
         _xAxisGraphic = _svg.append("g").attr("class", "x axis");
+        
+        pub.draw();
     };
     
     

@@ -41,15 +41,7 @@ var TimeSelector = function(par){
     var _brushCallback = p.onBrushFunction !== undefined ? p.onBrushFunction : function(){console.log("[time_selector.js]No brush fct defined...");};
 
     //static scale for selecting data shown
-    var _scale;
-    //dynamic scale for showing timeframe
-    if(_linear){
-        //_scale = d3.scale.linear().domain([0,_xDomain[1]-_xDomain[0]]);
-        _scale = d3.scale.linear().domain(_xDomain);
-    }
-    else{
-       _scale = d3.time.scale().domain(_xDomain);
-    }
+    var _scale = _linear ? d3.scale.linear().domain(_xDomain) : _scale = d3.time.scale().domain(_xDomain);
     _scale.range([_margins.left, _width-_margins.right]);
     
    var _brushAxis = d3.svg.axis().orient("bottom").tickSize((_height-(_margins.top+_margins.bottom))*0.5).scale(_scale);
@@ -62,16 +54,32 @@ var TimeSelector = function(par){
    
     //event listener for brush events
     var onBrush = function(){
-        console.log("[time_selector.js]Brush on the time selector.");
         _brushCallback(_brush.empty() ? _scale.domain() : _brush.extent());
     };
     var _brush = d3.svg.brush().x(_scale).on("brush", onBrush);
     
     var _brushGraphic = _svg.append("g").attr("class", "brush");
     var _axisGraphic = _svg.append("g").attr("class", "selection axis");
-  
+    
     //public methods
     var pub = {};
+    
+    pub.changeDomain = function(domain){
+        console.log("[time_selector.js]New domain: ", domain);
+        
+        _xDomain = domain;
+        _scale = _linear ? d3.scale.linear().domain(_xDomain) : _scale = d3.time.scale().domain(_xDomain);
+        _scale.range([_margins.left, _width-_margins.right]);
+        
+        _brush.x(_scale);
+        
+        _brushAxis.scale(_scale);
+        
+        _axisGraphic.selectAll("*").remove();
+        _axisGraphic = _svg.append("g").attr("class", "selection axis");
+        
+        pub.draw();
+    }
 
     pub.draw = function(){
         //console.log("[time_selector.js]Drawing the time selector.");

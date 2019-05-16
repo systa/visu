@@ -101,9 +101,9 @@ var PROCESSOR_UTILITES = function(){
     pub.findRelatedStatechanges = function(data, allstatechanges){
         var related = [];
         data.forEach(function(item){
-            for(var i = 0; i < item.related_statechanges.length ; ++i){
+            for(var i = 0; i < item.related_events.length ; ++i){
                 for(var j = 0; j < allstatechanges.length; ++j){
-                    if(item.related_statechanges[i] === allstatechanges[j]._id){
+                    if(item.related_events[i] === allstatechanges[j]._id){
                         related.push(allstatechanges[j]);
                     }
                 }
@@ -146,16 +146,14 @@ var PROCESSOR_UTILITES = function(){
     pub.filterSession = function(session, allconstructs, allstates, allevents){
         var related = {constructs: [], events: [], states: []};
     
-        console.log("[processor_utilities]Session: ", session);
-        console.log("[processor_utilities]All constructs: ", allconstructs);
-        
         //Gets all docs and pages related to the user
-        var user = pub.findRelatedConstructs([session], allconstructs);
-        related.constructs = pub.findRelatedConstructs2(user, allconstructs);
+        //var user = pub.findRelatedConstructs([session], allconstructs);
+        
+        related.constructs = pub.findRelatedConstructs2([session], allconstructs);
+        console.log("[processor_utilities]related:", related.constructs);
+        
         //Add the session itself
         related.constructs.push(session);
-        
-        console.log("[processor_utilities]Related constructs: ", related.constructs);
         
         related.events = pub.findRelatedEvents(related.constructs, allevents);
         related.states = pub.findRelatedStatechanges(related.constructs, allstates);
@@ -187,7 +185,7 @@ var PROCESSOR_UTILITES = function(){
                     for(var i = 0; i < c.related_events.length; ++i){
                         for(var j = 0; j < allevents.length; ++j){
                             if(c.related_events[i] === allevents[j]._id){
-                                console.log(types);
+                                //console.log(types);
                                 //Filter event types
                                 if(types === false){
                                     related.events.push(allevents[j]);

@@ -28,8 +28,6 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
     //even if it is a field of nested object.
     _rowId = _rowId.split(".");
     
-    console.log("[user_timeframe_dataprocessor]processing...", p);
-    
     //Sorts event based on time
     // if the timestamps are the same start events are allways smaller than other events
     // and close events are allways larger than other events
@@ -42,7 +40,6 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
         if(t1 === t2){
 
             if(e1.statechange === undefined || e2.statechange === undefined){
-                //console.log("o1: ", e1, " o2: ", e2);
                 return 0;
             }
 
@@ -64,7 +61,7 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
     };
     
     var parseLifespans = function(statelist){
-        console.log(statelist);
+        //console.log(statelist);
         
         var lifespans = [];
         //Looping through all constructs
@@ -84,7 +81,6 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                 var skip = false;
 
                 //Looping through state changes of one construct
-                var first_time = statechanges[0].time;
                 var sc;
                 for(var i = 0; i < statechanges.length; ++i){
                     //Only consider states linked to session
@@ -99,8 +95,7 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                             rowId : rid,
                             start : st.time,
                             state : sc.statechange.to,
-                            end : rt,
-                            first_time : first_time
+                            end : rt
                         });
                     }
                 }
@@ -129,8 +124,7 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
             if(identity_helper.indexOf(ev._id) === -1){
                 identity_helper.push(ev._id);
                 
-                var first_time = new Date(ev.data.first_time).getTime();
-                var time = new Date(ev.time).getTime() - first_time;
+                var time = new Date(ev.time).getTime();
                 
                 //detecting the timeframe
                 if(time < start || start === false){
@@ -182,6 +176,7 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
         });//For each statechange ends
         //getting the lifespans from state data
         var lifespans = parseLifespans(states);
+        
         return {
             lifespans : lifespans,
             timeframe:[new Date(start), new Date(end)], //Timeframe of states... irrelevant if not per session
@@ -203,24 +198,24 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
             if(identity_helper.indexOf(ev._id) === -1){
                 identity_helper.push(ev._id);
                 
-                var first_time = new Date(ev.data.first_time).getTime();
-                var time = new Date(ev.time).getTime() - first_time;
+                var time = new Date(ev.time).getTime();
                 
                 //detecting the timeframe
                 if(time < start || start === false){
                     start = time;
-                    //console.log("new end time: ",start,"=",new Date(ev.time).getTime(),"-",first_time);
                 }
                 if(time > end || end === false){
                     end = time;
-                    //console.log("new end time: ",end,"=",new Date(ev.time).getTime(),"-",first_time);
                 }
 
                 if(types.indexOf(ev.type) === -1){
                     types.push(ev.type);
                 }
                 
-                if(constructMap[ev.related_constructs[0].toString()] !== undefined){
+                if (ev.related_constructs.length === 0){
+                    console.log("[user_timeframe_dataprocessor]Event has no related constructs:", ev);
+                }
+                else if(constructMap[ev.related_constructs[0].toString()] !== undefined){
                     ev.rowId = constructMap[ev.related_constructs[0].toString()].rowId;
                     evs.push(ev); 
                 }
@@ -271,6 +266,16 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
             //Ignoring duplicates
             if(identity_helper.indexOf(item._id) === -1){
                 identity_helper.push(item._id);
+                
+                var id = item;
+                if(_fromOrigin){
+                    id = item.origin_id[0];
+                }
+                for(var m = 0; m < _rowId.length; ++m){
+                    id = id[_rowId[m].toString()];
+                }
+                item.rowId = id;
+                
                 switch (item.type) {
                     case "user":
                         _users.push(item);
@@ -310,16 +315,16 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
         var tmp = [];
         var ids = [];
 
-        console.log("[dataprocessor]Contructs: ", constructs_split);
-
         var constructs = [];
         constructs = constructs_split.users.concat(constructs_split.sessions).concat(constructs_split.docs).concat(constructs_split.pages);
         
-        console.log("[dataprocessor]Concat: ", constructs);
-        
         for(var i in constructs){
             var obj = constructs[i];
-            tmp.push({name : obj.name, rowId : obj.rowId, user : obj.related_constructs[0]});
+            var name = obj.name;
+            if (obj.type === "page"){
+                name = name.split("kactus2.2.0")[1];
+            }
+            tmp.push({name : name, rowId : obj.rowId, user : obj.related_constructs[0]});
         }
         
         //Not sorting shit
@@ -352,6 +357,7 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
         
         for(var i = 0; i < tmp.length; ++i){
             ids.push(tmp[i].rowId);
+            //ids.push(tmp[i].name);
         }
         
         return ids;
@@ -374,10 +380,13 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
         
         //from constructs we parse ids and constructs that are used
         //it also adds property rowID to constructs in _constructs list!
+        var constructData = false;
+        var eventData = false;
+        var stateData = false;
         
-        var constructData = splitConstructs(constructs);
-        var eventData = parseEvents(events, constructData.helper);
-        var stateData = parseStates(statechanges, constructData.helper);
+        try{ constructData = splitConstructs(constructs); } catch (e) {console.log("[user_timeframe_dataprocessor]Error 1:", e);}
+        try{ eventData = parseEvents(events, constructData.helper); } catch (e) {console.log("[user_timeframe_dataprocessor]Error 2:", e);}
+        try{ stateData = parseStates(statechanges, constructData.helper); } catch (e) {console.log("[user_timeframe_dataprocessor]Error 3:", e);}
         
         //users/sessions/pages/docs
         data.constructs = constructData;
@@ -409,7 +418,10 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
         //Define the actual timeframe ???
         var t_start = +(new Date(start.getFullYear(), start.getMonth(), start.getDate(), start.getHours(), start.getMinutes(), start.getSeconds()));
         var t_end = +(new Date(end.getFullYear(), end.getMonth(), end.getDate(), end.getHours(), end.getMinutes()+1, end.getSeconds()));
-        data.timeframe = [0, t_end - t_start];
+        
+        data.timeframe = [t_start, t_end];
+    
+        console.log("[user_timeframe_dataprocessor]Parsed:", data);
         
         //Giving the data to who needs it
         return data;

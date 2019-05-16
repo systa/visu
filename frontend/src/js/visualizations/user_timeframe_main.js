@@ -11,7 +11,7 @@ var USER_TIMEFRAME_MAIN = function(par){
 //-----------------------------------------
 //  DRAWING RELATED STUFF
 //-----------------------------------------
-    console.log("user_timeframe_main");
+    //console.log("user_timeframe_main");
    
     var _timeSelectorHeight = 50;
     
@@ -70,6 +70,7 @@ var USER_TIMEFRAME_MAIN = function(par){
     
     //Legend on top of visu
     var createLegend = function(types){
+        //console.log("[user_timeframe_main]Appending labels");
         var scale = _mainChart.getColorScale2();
         for(var i = 0; i < types.length; ++i){
             var color = scale(types[i]);
@@ -79,7 +80,7 @@ var USER_TIMEFRAME_MAIN = function(par){
     
     //Initializes the chart template and draws the visualization.
     var initCharts = function(data, timeframe){
-        console.log("[user_timeframe_main]initChart function");
+        //console.log("[user_timeframe_main]initChart function");
         var elements = _layout.createLayout();
         
         if(!timeframe){
@@ -104,16 +105,24 @@ var USER_TIMEFRAME_MAIN = function(par){
                 ids : parsed_data.ids,
                 events : parsed_data.events,
                 lifespans : parsed_data.lifespans,
-                constructs : parsed_data.constructs
+                constructs : parsed_data.constructs,
+                timeframe : parsed_data.timeframe
             });
+            
+            //var ret = {timeframe: parsed_data.timeframe, ids: };
+            
+            return parsed_data.timeframe;
         };
         
         var onSessionChange = function(){
             _currentSession = _dataSelector.getSession();
-            console.log("[user_timeframe_main]New session: ", _currentSession);
+            console.log("[user_timeframe_main]onSessionChange: ", _currentSession);
                                 
-            updateData(_currentSession);
-            _mainChart.onSessionChange();
+            var timeframe = updateData(_currentSession);
+            
+            //_mainChart.onSessionChange(timeframe);
+            
+            _timeSelector.changeDomain(timeframe);
         };
         
         console.log("[user_timeframe_main]DataSelector");
@@ -130,6 +139,7 @@ var USER_TIMEFRAME_MAIN = function(par){
         */
         
         console.log("[user_timeframe_main]UserTimeframe");
+        console.log("[user_timeframe_main]data ids:", data.ids);
         _mainChart = UserTimeframe({
             svg : elements.chartSVG,
             margins : _mainChartMargins,
@@ -139,7 +149,8 @@ var USER_TIMEFRAME_MAIN = function(par){
             lifespans : data.lifespans,
             constructs : data.constructs,
             stateColors :   data.types,
-            colorScale : d3.scale.category20c()
+            colorScale : d3.scale.category20c(),
+            displayTypes : true
         });
 
         var onBrush= function(timeRange){
@@ -157,8 +168,6 @@ var USER_TIMEFRAME_MAIN = function(par){
         });
         
         createLegend(data.types);
-        
-        //console.log("[user_timeframe_main]onResize");
         onResize();
         
         window.addEventListener('resize', onResize);
@@ -186,8 +195,8 @@ var USER_TIMEFRAME_MAIN = function(par){
     var _mapping = p.mapping !== undefined ? p.mapping : false;
     var _filters = p.filters !== undefined ? p.filters : false;
     
-    console.log("[user_timeframe_main]mappings: ", _mapping);
-    console.log("[user_timeframe_main]filters: ", _filters);
+    //console.log("[user_timeframe_main]mappings: ", _mapping);
+    //console.log("[user_timeframe_main]filters: ", _filters);
     
     var _timeframe = false;
     if(_filters.startTime && _filters.endTime){
@@ -211,12 +220,15 @@ var USER_TIMEFRAME_MAIN = function(par){
         if(_events && _constructs && _states){
             try{
                 var parsed_data = _parser(_constructs, _events, _states);
-
-                console.log("[user_timeframe_main]Parsed Data: ", parsed_data);
-
-                initCharts(parsed_data, _timeframe); //timeframe of the filters
             }catch(e1){
-                console.log("[user_timeframe_main]Error: ", e1);
+                console.log("[user_timeframe_main]Error1: ", e1);
+            }
+            console.log("[user_timeframe_main]Parsed Data: ", parsed_data);
+            
+            try{
+                initCharts(parsed_data, _timeframe); //timeframe of the filters
+            }catch(e2){
+                console.log("[user_timeframe_main]Error2: ", e2);
             }
         }
         return false;
