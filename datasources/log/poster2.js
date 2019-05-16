@@ -15,8 +15,8 @@ var _ = require( 'underscore' );
 var crypto = require('crypto');
 
 var debugLink = true;
-var debugSend = false;
-var debugParse = false;
+var debugSend = true;
+var debugParse = true;
 
 function hashCode(string) {
    var shasum = crypto.createHash('sha1');
@@ -119,15 +119,11 @@ function sendToDb( logData, source ) {
                artefact.name = String(item.id); //Name is simply the hash
             }else if (type === "session") {
                artefact.name = item.id; //Name is simply the hash
-            }else if (type === "document") {
-               artefact.name = item.name; //Name is the doc name
+            }else if (type === "document" || type === "page") {
+               artefact.name = item.name; //Name is the doc or page name
                item.id = item.hash;
                meta.hash = item.hash;
                artefact.data = meta;
-            }else if (type === "page") {
-               artefact.name = item.name; //Name is the page name
-               item.id = hashCode(item.name);
-               //item.id = item.name;
             }
 
             artefact.origin_id = { context: origin.context, source: origin.source, source_id: String(item.id) };
@@ -215,8 +211,8 @@ function sendToDb( logData, source ) {
       }
       
       if(debugSend){
-         console.log("start: ", start, " end: ", end);
-         console.log("All requests: ",pending.length, " in buffer: ", buffer.length);
+         //console.log("start: ", start, " end: ", end);
+         //console.log("All requests: ",pending.length, " in buffer: ", buffer.length);
       }
         
       var bufferPromise = new Promise(function(resolve, reject){
@@ -276,11 +272,11 @@ function sendToDb( logData, source ) {
                
                if (!idToID[item.id]){
                   idToID[item.id] = body._id;
+                   
+                  if(debugLink){
+                    //console.log("[Poster]"+ type +": idToID["+item.id+"] = "+idToID[item.id]);
+                  }
                } 
-               
-               if(debugLink){
-                  console.log("[Poster]"+ type +": idToID["+item.id+"] = "+idToID[item.id]);
-               }
                
                obj.sent = true;
                resolve("post");
@@ -322,14 +318,24 @@ function sendToDb( logData, source ) {
       _.each(events, function (event){
          links.push( { construct: idToID[event.session_id], target: idToID[event.id], type: 'event' } );
           
+        if(!idToID[event.session_id] || !idToID[event.id]){
+            console.log("[Poster]Link problem (event to session): ", event);
+        }
+          
          if(event.document) {
-            links.push( { construct: idToID[event.document], target: idToID[event.id], type: 'event' } );   
+            links.push( { construct: idToID[event.document], target: idToID[event.id], type: 'event' } );  
+            
+                       
+            if(!idToID[event.document] || !idToID[event.id]){
+                console.log("[Poster]Link problem (event to document): ", event);
+            }
          }
          else if(event.page) {
-            links.push( { construct: idToID[hashCode(event.page)], target: idToID[event.id], type: 'event' } ); 
+            links.push( { construct: idToID[event.page], target: idToID[event.id], type: 'event' } ); 
              
-            //Need to link page to user somehow maybe
-            //links.push( { construct: idToID[hashCode(event.page)], target: idToID[event.user_id], type: 'construct' } );
+             if(!idToID[event.page] || !idToID[event.id]){
+                console.log("[Poster]Link problem (event to page): ", event);
+            }
          }
          
       });
@@ -340,6 +346,7 @@ function sendToDb( logData, source ) {
        try{
           _.each(pages, function (page){
              links.push( { construct: idToID[page.id], target: idToID[page.user_id], type: 'construct' } );
+             links.push( { construct: idToID[page.id], target: idToID[page.session_id], type: 'construct' } );
           });
        }catch(e){
            console.log('Error linking pages:', e);
@@ -354,6 +361,7 @@ function sendToDb( logData, source ) {
       var documents = logData.documents;
       _.each(documents, function (document){
          links.push( { construct: idToID[document.hash], target: idToID[document.user_id], type: 'construct' } );
+         links.push( { construct: idToID[document.hash], target: idToID[document.session_id], type: 'construct' } );
       });
       
       linkCount = links.length;
@@ -364,15 +372,12 @@ function sendToDb( logData, source ) {
       var stop = 0;
       // create all of the links.
       links.forEach( function ( link ) {
-          /*stop++;
-         if (stop%20 === 0){
-             console.log("[Poster]Waiting...", stop);
-             var waitTill = new Date(new Date().getTime() + seconds * 1000);
-             while(waitTill > new Date()){}
-         }*/
           
-         if(debugLink){
-            console.log("construct: "+ link.construct+ " target: "+link.target, " type: "+link.type);
+         if(debugLink && link.construct && link.target){
+            //console.log("construct: "+ link.construct+ " target: "+link.target, " type: "+link.type);
+             
+         }else{
+             console.log("Something went wrong:", link);
          }
 
          request.put( {
@@ -395,12 +400,27 @@ function sendToDb( logData, source ) {
                process.exit();
             }
             linked++;
+             
+              if (linked > 7000 && linked % 200 === 1){
+                 console.log("[Poster]Waiting...", linked);
+                 var seconds = 2;
+                 var waitTill = new Date(new Date().getTime() + seconds * 1000);
+                 while(waitTill > new Date()){}
+             }else if (linked > 5000 && linked % 500 === 1){
+                 console.log("[Poster]Waiting...", linked);
+                 var seconds = 5;
+                 var waitTill = new Date(new Date().getTime() + seconds * 1000);
+                 while(waitTill > new Date()){}
+             }
+             
             if ( linked === linkCount ) {
                // all links formed we are done
                // could call a callback here if we had one
                if(debugLink){
                   console.log( '[Poster]Everything saved to database.' );
                }
+            }else{
+                console.log("[Poster]Links saved:" + linked + "/" + linkCount);
             }
          });
       });

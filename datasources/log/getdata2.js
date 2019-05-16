@@ -108,7 +108,7 @@ function notIn2(users, user_id) {
 //Returns true if page is not in pages
 function notIn3(pages, page) {
     for(var i = 0; i < pages.length; i++)
-        if (pages[i].name == page.name) return false;
+        if (pages[i].hash == page.hash) return false;
      
     return true;
 }
@@ -262,14 +262,14 @@ function getData( source, callback ) {
             }else if (str.includes("Document")) {
                 //Isolate document name
                 words = str.split(' ');
-                var document = {name: words[1], user_id: session.user_id, hash: hashCode(words[1]+session.user_id)};
+                var document = {name: words[1], user_id: session.user_id, session_id: session.id, hash: hashCode(words[1]+session.id)};
                 previous_document = document.hash;
                 
                 for (var k = 2; k < words.length-1; k++) {document.name = document.name + words[k];} 
                 
                 //Create construct document
                 if (notIn(documents, document)) {
-                    var toPush = {name: document.name, user_id: document.user_id, hash: document.hash};
+                    var toPush = {name: document.name, user_id: document.user_id, session_id: document.session_id, hash: document.hash};
                     documents.push(toPush);
                 }
                 
@@ -318,15 +318,15 @@ function getData( source, callback ) {
             else if (str.includes("Help")) {
                 //Isolate page name
                 words = str.split(' ');
-                var page = {name: words[2]};
-                                
+                var page = {name: words[2], hash: hashCode(words[2]+session.id)};
+                
                 //Create event
                 event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Help", hash: entry.hash, document: null, first_time: first_event_time, collide: entry.collide, name: page.name};
                
-                if (words.length > 2) {
+                //if (words.length > 2) {
                     //Create construct page
                     if (notIn3(pages, page)) {
-                        var toPush = {name: page.name, user_id: session.user_id};
+                        var toPush = {name: page.name, user_id: session.user_id, session_id: session.id, hash: page.hash};
                         pages.push(toPush);
                     }
                     
@@ -336,14 +336,16 @@ function getData( source, callback ) {
                     stateChanges.push(stateChange);
                     
                     //TODO: close previous help when a new one is opened
-                }
+                //}else{
+                    //console.log("[getdata]Page:", words);
+                //}
                 
                 event.statechange = stateChange;
                 
                 if (str.includes("Clicked"))
                     event.page = "Help";
                 else
-                    event.page = page.name;
+                    event.page = page.hash;
                               
                 events.push(event);    
             }
