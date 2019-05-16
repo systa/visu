@@ -325,8 +325,6 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
             var name = obj.name;
             if (obj.type === "page"){
                 name = name.split("kactus2.2.0")[1];
-            }else if (obj.type === "session"){
-                name = "Session";
             }
             tmp.push({name : name, rowId : obj.rowId, user : obj.related_constructs[0]});
         }
@@ -359,16 +357,12 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
         }
         */
         
-        var longestName = "";
         for(var i = 0; i < tmp.length; ++i){
             ids_names.push({id: tmp[i].rowId, name: tmp[i].name});
             ids.push(tmp[i].rowId);
-            
-            if(tmp[i].name.length > longestName.length)
-                longestName = tmp[i].name;
         }
         
-        return {ids: ids, all: ids_names, longestId: longestName};
+        return {ids: ids, all: ids_names};
     };
 
     var mergeIdLists = function(stateId, constructId){
@@ -407,7 +401,6 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
         var tmpId = sortRows(data.constructs);
         data.ids = tmpId.ids;
         data.names = tmpId.all;
-        data.longestId = tmpId.longestId;
         
         var start = eventData.timeframe[0];
         var s1 = eventData.timeframe[0].getTime();

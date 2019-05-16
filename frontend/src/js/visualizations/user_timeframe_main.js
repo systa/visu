@@ -93,7 +93,6 @@ var USER_TIMEFRAME_MAIN = function(par){
         _mainChart.updateData({
             ids : parsed_data.ids,
             names : parsed_data.names,
-            longestId : parsed_data.longestId,
             events : parsed_data.events,
             lifespans : parsed_data.lifespans,
             constructs : parsed_data.constructs,
@@ -132,7 +131,6 @@ var USER_TIMEFRAME_MAIN = function(par){
             timeframe : timeframe,
             ids : data.ids,
             names : data.names,
-            longestId : data.longestId,
             events : data.events,
             lifespans : data.lifespans,
             constructs : data.constructs,

@@ -47,7 +47,7 @@ var DataSelector = function(par){
     /* SELECTORS */
     var _selectUser = d3.select('#usersContainer')
         .append('div').attr('id','userSelectDIV')
-    
+        
         .append('select').attr('id','userSelect')
   	    .attr('class','select')
         .on('change', onUserChange);
@@ -64,7 +64,7 @@ var DataSelector = function(par){
         .selectAll('option')
 	    .data(_users).enter()
 	    .append('option')
-		.text(function (d) { return ".." + d._id.substring(20); });
+		.text(function (d) { return d.name; });
     
     var SessionOptions = _selectSession
         .selectAll('option')
@@ -78,8 +78,7 @@ var DataSelector = function(par){
 	    console.log("Selected user:", userValue);
         var user;
         for(var i in _users){
-            var subid = userValue.substring(2);
-            if(_users[i]._id.substring(20) === subid){
+            if(_users[i].name === userValue){
                 user = _users[i];
             }
         }
