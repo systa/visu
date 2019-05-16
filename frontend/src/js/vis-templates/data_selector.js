@@ -39,18 +39,20 @@ var DataSelector = function(par){
     
     var _currentSessions = getRelatedSessions(_users[0], _sessions);
     currentSession = _currentSessions[0];
-    
+        
     /* SELECTORS */
     var _selectUser = d3.select('#usersContainer')
         .append('div').attr('id','userSelectDIV')
-        
+        .append("text").text("Select user: ")
         .append('select').attr('id','userSelect')
   	    .attr('class','select')
         .on('change', onUserChange);
+    
+    //d3.select('#userSelectDIV').append("text").text("Select:");
 
     var _selectSession = d3.select('#usersContainer')
         .append('div').attr('id','sessionSelectDIV')
-        
+        .append("text").text("Select session: ")
         .append('select').attr('id','sessionSelect')
   	    .attr('class','select')
         .on('change', onSessionChange);
@@ -60,13 +62,13 @@ var DataSelector = function(par){
         .selectAll('option')
 	    .data(_users).enter()
 	    .append('option')
-		.text(function (d) { return d.name; });
+		.text(function (d) { return ".." + d._id.substring(20); });
     
     var SessionOptions = _selectSession
         .selectAll('option')
 	    .data(_currentSessions).enter()
 	    .append('option')
-		.text(function (d) { return d._id; });
+		.text(function (d) { return ".." + d._id.substring(20); });
 
     /* ON CHANGE */
     function onUserChange() {
@@ -74,7 +76,8 @@ var DataSelector = function(par){
 	    console.log("Selected user:", userValue);
         var user;
         for(var i in _users){
-            if(_users[i].name === userValue){
+            var subid = userValue.substring(2);
+            if(_users[i]._id.substring(20) === subid){
                 user = _users[i];
             }
         }
@@ -86,7 +89,7 @@ var DataSelector = function(par){
             .selectAll('option')
             .data(_currentSessions).enter()
             .append('option')
-            .text(function (d) { return d._id; });
+            .text(function (d) { return ".." + d._id.substring(20); });
         
         currentSession = _currentSessions[0];
         _changeCallback();
@@ -97,7 +100,8 @@ var DataSelector = function(par){
         
         var session;
         for(var i in _currentSessions){ 
-            if(_currentSessions[i]._id === sessionValue){
+            var subid = sessionValue.substring(2);
+            if(_currentSessions[i]._id.substring(20) === subid){
                 session = _currentSessions[i];
             }
         }
