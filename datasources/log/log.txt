@@ -97,8 +97,6 @@
 25.01.2017 10:14:43 user 2ac246473b284b67c533c80e99a84749 in session 3175409c-fb4a-488d-a595-c68161d59043: Document Exercise_Returns (1.0) unlocked.
 25.01.2017 10:14:43 user 2ac246473b284b67c533c80e99a84749 in session 3175409c-fb4a-488d-a595-c68161d59043: Clicked on Refresh
 25.01.2017 10:15:54 user 2ac246473b284b67c533c80e99a84749 in session 3175409c-fb4a-488d-a595-c68161d59043: Help page qthelp://com.tut.kactus2.2.0/doc/index.html opened.
-25.01.2017 10:15:54 user 2ac246473b284b67c533c80e99a84749 in session 3175409c-fb4a-488d-a595-c68161d59043: Help opened.
-25.01.2017 10:15:54 user 2ac246473b284b67c533c80e99a84749 in session 3175409c-fb4a-488d-a595-c68161d59043: Clicked on Help
 25.01.2017 10:16:10 user 2ac246473b284b67c533c80e99a84749 in session 3175409c-fb4a-488d-a595-c68161d59043: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/filesets.html opened.
 25.01.2017 10:16:12 user 2ac246473b284b67c533c80e99a84749 in session 3175409c-fb4a-488d-a595-c68161d59043: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/general.html opened.
 25.01.2017 10:16:14 user 2ac246473b284b67c533c80e99a84749 in session 3175409c-fb4a-488d-a595-c68161d59043: Help page qthelp://com.tut.kactus2.2.0/doc/componenteditor/filesets.html opened.
