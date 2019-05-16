@@ -343,13 +343,6 @@ var UserTimeframe = function(par){
         pub.draw();
     };
     
-    /*pub.onSessionChange = function(timeRange, yDomain){
-        _timeScale.domain(timeRange);
-        
-        console.log("[user_timeframe]pub.onSessionChange");
-        pub.draw();
-    };*/
-    
     pub.onResize = function(width, height, margins){
         //console.log("[user_timeframe]pub.onResize");
         _width = width;
@@ -406,12 +399,6 @@ var UserTimeframe = function(par){
         _timeScale.range([_margins.left, _width-_margins.right]);
         //building ordinal scale for test sets based on the build id
         _scaleY.domain(_yDomain);
-        
-        //console.log("[user_timeframe]Domain:",_yDomain);
-        for(var x in _yDomain){
-        var id = _yDomain[x];
-            //console.log("[user_timeframe]scale(",id,") = ", _scaleY(id));
-        }
 
         //calculaiting height for one row now that we know how many rows we will have
         _rowHeight = ((_height-_margins.bottom-_margins.top)/_yDomain.length);

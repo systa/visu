@@ -42,6 +42,7 @@ var DataSelector = function(par){
     //console.log("Sessions:", _sessions);
     //console.log("Users:", _users);
     var _currentSessions = getRelatedSessions(_users[0], _sessions);
+    currentSession = _currentSessions[0];
     
     /* SELECTORS */
     var _selectUser = d3.select('#usersContainer')

@@ -78,6 +78,29 @@ var USER_TIMEFRAME_MAIN = function(par){
         }
     };
     
+    var updateData = function(){
+        /* TODO: Select constructs related to the session
+         * That is: the session itself, and the pages/docs linked to the session */
+        _currentSession = _dataSelector.getSession();
+        console.log("[user_timeframe_main]onSessionChange: ", _currentSession);
+
+        var res = _search.filterSession(_currentSession, _constructs, _states, _events);
+
+        var parsed_data = _parser(res.constructs, res.events, res.states);
+
+        console.log("[user_timeframe_main]Parsed & Filtered:", parsed_data);
+
+        _mainChart.updateData({
+            ids : parsed_data.ids,
+            events : parsed_data.events,
+            lifespans : parsed_data.lifespans,
+            constructs : parsed_data.constructs,
+            timeframe : parsed_data.timeframe
+        });
+
+        _timeSelector.changeDomain(parsed_data.timeframe);
+    };
+    
     //Initializes the chart template and draws the visualization.
     var initCharts = function(data, timeframe){
         //console.log("[user_timeframe_main]initChart function");
@@ -92,54 +115,15 @@ var USER_TIMEFRAME_MAIN = function(par){
         _timeSelectorMargins.left =  _mainChartMargins.left;
         _timeSelectorMargins.right = _mainChartMargins.right;
         
-        var updateData = function(session){
-            /* TODO: Select constructs related to the session
-             * That is: the session itself, and the pages/docs linked to the session */
-            var res = _search.filterSession(session, _constructs, _states, _events);
-            
-            var parsed_data = _parser(res.constructs, res.events, res.states);
-            
-            console.log("[user_timeframe_main]Parsed & Filtered:", parsed_data);
-                
-            _mainChart.updateData({
-                ids : parsed_data.ids,
-                events : parsed_data.events,
-                lifespans : parsed_data.lifespans,
-                constructs : parsed_data.constructs,
-                timeframe : parsed_data.timeframe
-            });
-            
-            //var ret = {timeframe: parsed_data.timeframe, ids: };
-            
-            return parsed_data.timeframe;
-        };
-        
-        var onSessionChange = function(){
-            _currentSession = _dataSelector.getSession();
-            console.log("[user_timeframe_main]onSessionChange: ", _currentSession);
-                                
-            var timeframe = updateData(_currentSession);
-            
-            //_mainChart.onSessionChange(timeframe);
-            
-            _timeSelector.changeDomain(timeframe);
-        };
-        
         console.log("[user_timeframe_main]DataSelector");
         _dataSelector = DataSelector({
             users : data.constructs.users,
             sessions : data.constructs.sessions,
-            onSessionChange : onSessionChange
+            onSessionChange : updateData
         });
         _dataSelector.draw();
-        
-        /*_currentSession = _dataSelector.getSession();
-        console.log("[user_timeframe_main]Session:", _currentSession);
-        updateData(_currentSession);
-        */
-        
+
         console.log("[user_timeframe_main]UserTimeframe");
-        console.log("[user_timeframe_main]data ids:", data.ids);
         _mainChart = UserTimeframe({
             svg : elements.chartSVG,
             margins : _mainChartMargins,
@@ -174,8 +158,6 @@ var USER_TIMEFRAME_MAIN = function(par){
 
         document.getElementById("loader").style.display = "none";
         
-        //console.log("[user_timeframe_main]show");
-        
         _layout.show();
         
         //Draws the time selector from time_selector.js
@@ -195,9 +177,6 @@ var USER_TIMEFRAME_MAIN = function(par){
     var _mapping = p.mapping !== undefined ? p.mapping : false;
     var _filters = p.filters !== undefined ? p.filters : false;
     
-    //console.log("[user_timeframe_main]mappings: ", _mapping);
-    //console.log("[user_timeframe_main]filters: ", _filters);
-    
     var _timeframe = false;
     if(_filters.startTime && _filters.endTime){
          //Filters based on time
@@ -214,8 +193,7 @@ var USER_TIMEFRAME_MAIN = function(par){
     var _events = false;
     var _states = false;
     var _constructs = false;
-                
-    
+
     var whenLoaded = function(){
         if(_events && _constructs && _states){
             try{
@@ -227,9 +205,14 @@ var USER_TIMEFRAME_MAIN = function(par){
             
             try{
                 initCharts(parsed_data, _timeframe); //timeframe of the filters
+                console.log("[user_timeframe_main]Current session:", _currentSession);
+                
             }catch(e2){
                 console.log("[user_timeframe_main]Error2: ", e2);
             }
+            
+            updateData();
+            onResize();
         }
         return false;
     };
