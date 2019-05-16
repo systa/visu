@@ -92,6 +92,7 @@ var USER_TIMEFRAME_MAIN = function(par){
 
         _mainChart.updateData({
             ids : parsed_data.ids,
+            names : parsed_data.names,
             events : parsed_data.events,
             lifespans : parsed_data.lifespans,
             constructs : parsed_data.constructs,

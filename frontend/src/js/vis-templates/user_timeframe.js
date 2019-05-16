@@ -388,6 +388,8 @@ var UserTimeframe = function(par){
         
         _xDomain = u.timeframe !== undefined ? u.timeframe : _xDomain;
         _yDomain = u.ids !== undefined ? u.ids : _yDomain;
+        _yNames = u.names !== undefined ? u.names : _yNames;
+        
         _eventData = u.events !== undefined ? u.events : _eventData;
         _lifespanData = u.lifespans !== undefined ? u.lifespans : _lifespanData;
         _constructData = u.constructs !== undefined ? u.constructs : _constructData;
