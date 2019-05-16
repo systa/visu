@@ -313,8 +313,10 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
 
     var sortRows = function(constructs_split){
         var tmp = [];
-        var ids = [];
-
+        
+        var ids = []; //Only the ids
+        var ids_names = []; //IDs used in yDomain and names used in display
+        
         var constructs = [];
         constructs = constructs_split.users.concat(constructs_split.sessions).concat(constructs_split.docs).concat(constructs_split.pages);
         
@@ -356,11 +358,11 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
         */
         
         for(var i = 0; i < tmp.length; ++i){
+            ids_names.push({id: tmp[i].rowId, name: tmp[i].name});
             ids.push(tmp[i].rowId);
-            //ids.push(tmp[i].name);
         }
         
-        return ids;
+        return {ids: ids, all: ids_names};
     };
 
     var mergeIdLists = function(stateId, constructId){
@@ -396,10 +398,9 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
         data.types = eventData.types.concat(stateData.types); //state/event types for legend
         data.types.sort();
 
-        //var scId = sortRows(stateData.lifespans);
-        var scId = sortRows(data.constructs);
-
-        data.ids = scId.concat(constructData.ids); //mergeIdLists(scId, constructData.ids);
+        var tmpId = sortRows(data.constructs);
+        data.ids = tmpId.ids;
+        data.names = tmpId.all;
         
         var start = eventData.timeframe[0];
         var s1 = eventData.timeframe[0].getTime();

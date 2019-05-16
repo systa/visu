@@ -41,7 +41,9 @@ var UserTimeframe = function(par){
     var _margins = p.margins !== undefined ? p.margins : {top: 0, bottom : 0, left: 0, right: 0};
     
     var _xDomain = p.timeframe !== undefined ? p.timeframe : [0, 1000]; 
-    var _yDomain = p.ids !== undefined ? p.ids : [];
+    var _yDomain = p.ids !== undefined ? p.ids : ["no ids"];
+    
+    var _yNames = p.names !== undefined ? p.names : ["no names"];
     
     var _labelDomain = p.labelColors !== undefined ? p.labelColors : [];
     var _typeDomain = p.stateColors !== undefined ? p.stateColors : [];
@@ -66,13 +68,6 @@ var UserTimeframe = function(par){
     //Building ordinal scale for test sets based on the build id
     // (???)
     var _scaleY = d3.scale.ordinal().rangeBands([_margins.top, _height-_margins.bottom]).domain(_yDomain);
-    
-    //console.log("[user_timeframe]_scaleY domain:", _yDomain);
-    
-    for(var x in _yDomain){
-        var id = _yDomain[x];
-        //console.log("[user_timeframe]scale(",id,") = ", _scaleY(id));
-    }
 
     //Calculaiting height for one row now that we know how many rows we will have
     var _rowHeight = ((_height-_margins.bottom-_margins.top)/_yDomain.length);
@@ -99,7 +94,10 @@ var UserTimeframe = function(par){
     //the _bgGroup, _bg and _names are the "Y-axis" graphical presentation.
     var _bgGroup = _svg.append("g");
     var _bg = _bgGroup.selectAll("rect").data(_constructData).enter().append("rect");
-    var _names = _bgGroup.selectAll("text").data(_yDomain).enter().append("text");
+    
+    //Displayed names of constructs
+    //var _namesData = {ids: _yDomain, text: _yNames};
+    var _names = _bgGroup.selectAll("text").data(_yNames).enter().append("text");
     
     //Status group is related to the "Y-axis". It shows the status of the session
     if(_displayTypes){
@@ -278,7 +276,6 @@ var UserTimeframe = function(par){
     };
     
     pub.draw = function(){
-        //console.log("[user_timeframe]pub.draw");
         
         //background and y-axis
         _bg.attr('fill', "#FCFCFC")
@@ -287,14 +284,17 @@ var UserTimeframe = function(par){
             .attr('y', getY)
             .attr('height', _rowHeight)
             .on("mouseover", onMouseOver)
-            //.on("mousemove", onMouseMove)
             .on("mouseout", onMouseOut);
 
+        //Displayed names on the left
         _names.attr('x', 2);
-        _names.attr('y', function(d){return _scaleY(d)+_rowHeight*0.75;});
+        _names.attr('y', function(d){return _scaleY(d.id)+_rowHeight*0.75;});
+        //_names.text("lol");
         _names.text(function(d){
-            if(d)
-                return d.toString();
+            console.log("[print]d:", d);
+            if(d){
+                return d.name.toString();
+            }
         });
         
         _lifespans.attr('x1', getLpStart)
@@ -416,7 +416,9 @@ var UserTimeframe = function(par){
         //the _bgGroup, _bg and _names are the "Y-axis" graphical presentation.
         _bgGroup = _svg.append("g");
         _bg = _bgGroup.selectAll("rect").data(_constructData).enter().append("rect");
-        _names = _bgGroup.selectAll("text").data(_yDomain).enter().append("text");
+        
+        //var _namesData = {ids: _yDomain, text: _yNames};
+        _names = _bgGroup.selectAll("text").data(_yNames).enter().append("text");
         
         //Status group is related to the "Y-axis". It shows the status of the test if it failed or passed.
         if(_displayTypes){

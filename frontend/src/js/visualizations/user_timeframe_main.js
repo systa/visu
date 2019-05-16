@@ -129,6 +129,7 @@ var USER_TIMEFRAME_MAIN = function(par){
             margins : _mainChartMargins,
             timeframe : timeframe,
             ids : data.ids,
+            names : data.names,
             events : data.events,
             lifespans : data.lifespans,
             constructs : data.constructs,
