@@ -106,12 +106,28 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                         });
 
                         break;
-                    /*
-                    case "document":
-                        if (sc.statechange.to.includes("close"))
-                            rt = sc.time;    
-                        break;
                     
+                    case "document":
+                        var st = statechanges[0].time; //start time
+                        var state = statechanges[0].statechange.to; //state we are in
+                        var rt = false;//resolution time
+                    
+                        for(var i = 0; i < statechanges.length; ++i){
+                            sc = statechanges[i];   
+                            if (sc.statechange.to.includes("close")){
+                                rt = sc.time;  
+                                
+                                lifespans.push({
+                                    rowId : rid,
+                                    start : st,
+                                    state : state,
+                                    end : rt
+                                });
+                            }
+                        }
+                        
+                        break;
+                    /*
                     case "page":
                         if (sc.statechange.to.includes("open") && i > 0)
                             lifespans[i-1].end = sc.time;
