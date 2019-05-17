@@ -94,8 +94,6 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                 var type = statelist[rid].type;
                 statechanges.sort(stSortFunction);
                 
-                //console.log("[dataprocessor]States of ", rid, ":", statechanges);
-                
                 switch (type){
                    case "session":
                         lifespans.push({
@@ -208,7 +206,7 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
             }
         }
         
-        console.log("[dataprocessor]Output:", lifespans);
+        //console.log("[dataprocessor]Output:", lifespans);
         return lifespans;
     };
     
@@ -514,7 +512,7 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
     };
     
     var parseData = function(constructs, events, statechanges){
-        console.log("[user_timeframe_dataprocessor]parsing...", constructs, events, statechanges);
+        //console.log("[user_timeframe_dataprocessor]parsing...", constructs, events, statechanges);
 
         //object for the processed data
         var data = {};
@@ -563,7 +561,7 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
         
         data.timeframe = [t_start, t_end];
     
-        console.log("[user_timeframe_dataprocessor]Parsed:", data);
+        //console.log("[user_timeframe_dataprocessor]Parsed:", data);
         
         //Giving the data to who needs it
         return data;

@@ -65,7 +65,7 @@ var TimeSelector = function(par){
     var pub = {};
     
     pub.changeDomain = function(domain){
-        console.log("[time_selector.js]New domain: ", domain);
+        //console.log("[time_selector.js]New domain: ", domain);
         
         _xDomain = domain;
         _scale = _linear ? d3.scale.linear().domain(_xDomain) : _scale = d3.time.scale().domain(_xDomain);

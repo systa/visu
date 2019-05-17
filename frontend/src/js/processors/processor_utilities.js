@@ -150,7 +150,7 @@ var PROCESSOR_UTILITES = function(){
         //var user = pub.findRelatedConstructs([session], allconstructs);
         
         related.constructs = pub.findRelatedConstructs2([session], allconstructs);
-        console.log("[processor_utilities]related:", related.constructs);
+        //console.log("[processor_utilities]related:", related.constructs);
         
         //Add the session itself
         related.constructs.push(session);

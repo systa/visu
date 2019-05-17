@@ -117,7 +117,7 @@ var USER_TIMEFRAME_MAIN = function(par){
         _timeSelectorMargins.left =  _mainChartMargins.left;
         _timeSelectorMargins.right = _mainChartMargins.right;
         
-        console.log("[user_timeframe_main]DataSelector");
+        //console.log("[user_timeframe_main]DataSelector");
         _dataSelector = DataSelector({
             users : data.constructs.users,
             sessions : data.constructs.sessions,
@@ -125,7 +125,7 @@ var USER_TIMEFRAME_MAIN = function(par){
         });
         _dataSelector.draw();
 
-        console.log("[user_timeframe_main]UserTimeframe");
+        //console.log("[user_timeframe_main]UserTimeframe");
         _mainChart = UserTimeframe({
             svg : elements.chartSVG,
             margins : _mainChartMargins,
@@ -144,7 +144,7 @@ var USER_TIMEFRAME_MAIN = function(par){
             _mainChart.onBrush(timeRange);
         };
 
-        console.log("[user_timeframe_main]TimeSelector");
+        //console.log("[user_timeframe_main]TimeSelector");
         _timeSelector = TimeSelector({
             svg : elements.brushSVG,
             margins : _timeSelectorMargins,
@@ -204,12 +204,11 @@ var USER_TIMEFRAME_MAIN = function(par){
             }catch(e1){
                 console.log("[user_timeframe_main]Error1: ", e1);
             }
+            
             console.log("[user_timeframe_main]Parsed Data: ", parsed_data);
             
             try{
                 initCharts(parsed_data, _timeframe); //timeframe of the filters
-                console.log("[user_timeframe_main]Current session:", _currentSession);
-                
             }catch(e2){
                 console.log("[user_timeframe_main]Error2: ", e2);
             }
