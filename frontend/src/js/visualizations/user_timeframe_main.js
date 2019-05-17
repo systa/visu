@@ -112,6 +112,7 @@ var USER_TIMEFRAME_MAIN = function(par){
         }
         
         _mainChartMargins.left = _layout.getSVGTextWidth(data.longestId)+12;
+        
         _mainChartMargins.right = 60; //_layout.getSVGTextWidth(data.longestUser)+12;
         _timeSelectorMargins.left =  _mainChartMargins.left;
         _timeSelectorMargins.right = _mainChartMargins.right;

@@ -94,7 +94,7 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                 var type = statelist[rid].type;
                 statechanges.sort(stSortFunction);
                 
-                console.log("[dataprocessor]States of ", rid, ":", statechanges);
+                //console.log("[dataprocessor]States of ", rid, ":", statechanges);
                 
                 switch (type){
                    case "session":
@@ -427,6 +427,8 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
             var name = obj.name;
             if (obj.type === "page"){
                 name = name.split("kactus2.2.0")[1];
+            }else if (obj.type === "session"){
+                name = "Session";
             }
             tmp.push({name : name, rowId : obj.rowId, user : obj.related_constructs[0]});
         }
@@ -458,13 +460,19 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
             console.log(e);
         }
         */
-        
+        var longestName = "";
         for(var i = 0; i < tmp.length; ++i){
             ids_names.push({id: tmp[i].rowId, name: tmp[i].name});
             ids.push(tmp[i].rowId);
+            
+            if(longestName.length < tmp[i].name.length)
+                longestName = tmp[i].name;
         }
         
-        return {ids: ids, all: ids_names};
+        if(longestName.length > 25)
+            longestName = "wwwwwwwwwwwwwwwwwwwwwwwww";
+        
+        return {ids: ids, all: ids_names, longestName: longestName};
     };
 
     var mergeIdLists = function(stateId, constructId){
@@ -504,6 +512,7 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
         var tmpId = sortRows(data.constructs);
         data.ids = tmpId.ids;
         data.names = tmpId.all;
+        data.longestId = tmpId.longestName;
         
         var start = eventData.timeframe[0];
         var s1 = eventData.timeframe[0].getTime();

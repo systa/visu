@@ -296,11 +296,26 @@ var UserTimeframe = function(par){
         _names.attr('y', function(d){return _scaleY(d.id)+_rowHeight*0.75;});
         //_names.text("lol");
         _names.text(function(d){
+            var str = "";
             if(d){
-                return d.name.toString();
+                var tmp = d.name.split("/");
+                
+                if(tmp[1] === "doc")
+                    str = tmp[tmp.length-1];
+                else
+                    str = d.name.toString();
             }
+            
+            if (str.length > 20){
+                str = str.substring(0, 15) + "[...]";
+            }
+            
+            return str;
         });
+        _names.on("mouseover", onMouseOver)
+              .on("mouseout", onMouseOut);
         
+        //construct lifespans
         _lifespans.attr('x1', getLpStart)
             .attr('x2', getLpEnd)
             .attr('y1', getLineY)
@@ -310,6 +325,7 @@ var UserTimeframe = function(par){
             //.on("mousemove", onMouseMove)
             .on("mouseout", onMouseOut);
 
+        //Event circles
         _events.attr('fill', pub.getColor)
             .attr('cx', getX) //X coordinate
             .attr('cy', getLineY) //Y coordinate
