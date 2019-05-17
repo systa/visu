@@ -395,6 +395,8 @@ var UserTimeframe = function(par){
         //type data can be left out by setting displayTypes parameter to false
         _displayTypes = p.displayTypes !== undefined ? p.displayTypes : _displayTypes;
         
+        console.log("[user_timeframe]Lifespans:", _lifespanData);
+        
         //reassigning scales
         _timeScale.domain(_xDomain);
         _timeScale.range([_margins.left, _width-_margins.right]);

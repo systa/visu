@@ -60,17 +60,66 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
         return t1-t2;
     };
     
-    var parseLifespans = function(statelist){
-        //console.log(statelist);
+    var typeSelect = function(statelist, type){
+        var states = [];
         
+        for(var i in statelist){
+            var state = statelist[i];
+            
+            switch(type){
+                case "session":
+                    if(state.type == "start/end")
+                        states.push(state);
+                    break;
+                case "document":
+                    if(state.type == "doc")
+                        states.push(state);
+                    break;
+                case "page":
+                    if(state.type == "help")
+                        states.push(state);
+                    break;
+            }
+        }
+        
+        return states;
+    }
+    
+    var parseLifespans = function(statelist){
         var lifespans = [];
         //Looping through all constructs
         for(var rid in statelist){            
             if(statelist.hasOwnProperty(rid)){
-                var statechanges = statelist[rid];
-                //console.log(rid, statechanges);
+                var statechanges = typeSelect(statelist[rid].evs, statelist[rid].type);
+                var type = statelist[rid].type;
                 statechanges.sort(stSortFunction);
+                
+                console.log("[dataprocessor]States of ", rid, ":", statechanges);
+                
+                switch (type){
+                   case "session":
+                        lifespans.push({
+                            rowId : rid,
+                            start : statechanges[0].time,
+                            state : statechanges[0].statechange.to,
+                            end : statechanges[1].time
+                        });
 
+                        break;
+                    /*
+                    case "document":
+                        if (sc.statechange.to.includes("close"))
+                            rt = sc.time;    
+                        break;
+                    
+                    case "page":
+                        if (sc.statechange.to.includes("open") && i > 0)
+                            lifespans[i-1].end = sc.time;
+
+                        break; */
+                }
+                
+                /*
                 //The first state in the array is the first statechange taken into account
                 var st = statechanges[0].time; //start time
                 var state = statechanges[0].statechange.to; //state we are in
@@ -83,24 +132,38 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                 //Looping through state changes of one construct
                 var sc;
                 for(var i = 0; i < statechanges.length; ++i){
-                    //Only consider states linked to session
                     sc = statechanges[i];
-                    if (sc.statechange && sc.statechange.to.includes("session")) {
+                    
+                    switch(type){
+                        case "session":
+                            if (sc.statechange.to.includes("close"))
+                                rt = sc.time;
+                            
                         
-                        if (sc.statechange.to.includes("close")){
-                            rt = sc.time;
-                        }
-                        
-                        lifespans.push({
-                            rowId : rid,
-                            start : st.time,
-                            state : sc.statechange.to,
-                            end : rt
-                        });
+                            break;
+                        case "document":
+                            if (sc.statechange.to.includes("close"))
+                                rt = sc.time;    
+                            break;
+                        case "page":
+                            if (sc.statechange.to.includes("open") && i > 0)
+                                lifespans[i-1].end = sc.time;
+                                
+                            break;
                     }
-                }
+
+                    lifespans.push({
+                        rowId : rid,
+                        start : st,
+                        state : sc.statechange.to,
+                        end : rt
+                    });
+                    
+                }*/
             }
         }
+        
+        console.log("[dataprocessor]Output:", lifespans);
         return lifespans;
     };
     
@@ -164,11 +227,13 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                     //Storing the link between events and constructs so that the visualization understands it.
                     if(constructMap[ev.related_constructs[i].toString()] !== undefined){
                         tmp.rowId = constructMap[ev.related_constructs[i].toString()].rowId;
-                    
+                        
+                        //tmp.type = ev.type; //type of construct treated here
                         if(!states[tmp.rowId]){
-                            states[tmp.rowId] = [];
+                            var tmp_type = constructMap[ev.related_constructs[i].toString()].type;
+                            states[tmp.rowId] = {type: tmp_type, evs: []};
                         }
-                        states[tmp.rowId].push(tmp);
+                        states[tmp.rowId].evs.push(tmp);
                     }
                 }//for related_constructs ends
                 
@@ -179,7 +244,7 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
         
         return {
             lifespans : lifespans,
-            timeframe:[new Date(start), new Date(end)], //Timeframe of states... irrelevant if not per session
+            timeframe:[new Date(start - 1000), new Date(end)], //Timeframe of states... irrelevant if not per session
             types : types
         };
     };
