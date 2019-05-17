@@ -126,17 +126,18 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                                 
                                 //st = false;
                                 rt = false;
-                                state = "(doc) closed";
+                                //state = "(doc) closed";
                                 
                             //New lifespan
-                            }else if(sc.statechange.to.includes("opened")){
+                            }else /*if(sc.statechange.to.includes("opened")){
                                 st = sc.time;
                                 rt = false;
+                                //state = "(doc) opened";
                                 
                             //Changing lifespan
-                            }else if(state !== sc.statechange.to){
+                            }else */if(state !== sc.statechange.to){
                                 rt = sc.time;  
-                                state = sc.statechange.to;
+                                state = sc.statechange.from;
                                 
                                 lifespans.push({
                                     rowId : rid,
@@ -146,6 +147,7 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                                 });
                                 
                                 st = sc.time;
+                                state = sc.statechange.to;
                                 rt = false;
                                 
                             }else{
@@ -161,48 +163,7 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
 
                         break; */
                 }
-                
-                /*
-                //The first state in the array is the first statechange taken into account
-                var st = statechanges[0].time; //start time
-                var state = statechanges[0].statechange.to; //state we are in
-                var rt = false;//resolution time
-                
-                //skip flag which is used for not to draw states
-                //between resolution state and next start state e.g. in cases of reopened issues
-                var skip = false;
 
-                //Looping through state changes of one construct
-                var sc;
-                for(var i = 0; i < statechanges.length; ++i){
-                    sc = statechanges[i];
-                    
-                    switch(type){
-                        case "session":
-                            if (sc.statechange.to.includes("close"))
-                                rt = sc.time;
-                            
-                        
-                            break;
-                        case "document":
-                            if (sc.statechange.to.includes("close"))
-                                rt = sc.time;    
-                            break;
-                        case "page":
-                            if (sc.statechange.to.includes("open") && i > 0)
-                                lifespans[i-1].end = sc.time;
-                                
-                            break;
-                    }
-
-                    lifespans.push({
-                        rowId : rid,
-                        start : st,
-                        state : sc.statechange.to,
-                        end : rt
-                    });
-                    
-                }*/
             }
         }
         
