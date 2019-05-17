@@ -372,6 +372,26 @@ var UserTimeframe = function(par){
         pub.draw();
     };
     
+    pub.onResize2 = function(){
+        _rowHeight = ((_height-_margins.bottom-_margins.top)/_yDomain.length);
+        if(_rowHeight < _minRowHeight){
+            _rowHeight = _minRowHeight;
+        }
+        else if(_rowHeight > _maxRowHeight){
+            _rowHeight = _maxRowHeight;
+        }
+        _height = (_rowHeight * _yDomain.length) + _margins.bottom+_margins.top;
+        
+        _timeScale.range([_margins.left, _width-_margins.right]);
+        _timeAxis.tickSize(-_height+_margins.top+_margins.bottom);
+        _scaleY.rangeBands([_margins.top, _height-_margins.bottom]);
+        
+        _svg.attr("width", _width);
+        _svg.attr("height", _height);
+        
+        pub.draw();
+    };
+    
     pub.getMinHeight = function(){
        return _rowHeight*_yDomain.length+_margins.top+_margins.bottom;
     };
@@ -446,7 +466,7 @@ var UserTimeframe = function(par){
         
         _xAxisGraphic = _svg.append("g").attr("class", "x axis");
         
-        pub.draw();
+        pub.onResize2();
     };
     
     
