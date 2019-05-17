@@ -203,7 +203,7 @@ var UserTimeframe = function(par){
         y += _rowHeight*0.33;
         
         if (data.data && data.data.collide !== 0){
-            //y += (_rowHeight*0.1) * data.data.collide;
+            y += (_rowHeight*0.1) * data.data.collide;
         }
         
         return y;

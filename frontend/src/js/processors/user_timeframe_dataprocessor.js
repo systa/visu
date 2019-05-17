@@ -112,9 +112,11 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                         var state = statechanges[0].statechange.to; //state we are in
                         var rt = false;//resolution time
                     
-                        for(var i = 0; i < statechanges.length; ++i){
-                            sc = statechanges[i];   
-                            if (sc.statechange.to.includes("close")){
+                        for(var i = 1; i < statechanges.length; ++i){
+                            sc = statechanges[i]; 
+                            
+                            //Closing a lifespan
+                            if (sc.statechange.to.includes("closed")){
                                 rt = sc.time;  
                                 
                                 lifespans.push({
@@ -123,6 +125,33 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                                     state : state,
                                     end : rt
                                 });
+                                
+                                //st = false;
+                                rt = false;
+                                state = "(doc) closed";
+                                
+                            //New lifespan
+                            }else if(sc.statechange.to.includes("opened")){
+                                st = sc.time;
+                                rt = false;
+                                
+                            //Changing lifespan
+                            }else if(state !== sc.statechange.to){
+                                rt = sc.time;  
+                                state = sc.statechange.to;
+                                
+                                lifespans.push({
+                                    rowId : rid,
+                                    start : st,
+                                    state : state,
+                                    end : rt
+                                });
+                                
+                                st = sc.time;
+                                rt = false;
+                                
+                            }else{
+                                //st = sc.time;
                             }
                         }
                         
