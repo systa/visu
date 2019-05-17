@@ -281,7 +281,28 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                     console.log("[user_timeframe_dataprocessor]Event has no related constructs:", ev);
                 }
                 else if(constructMap[ev.related_constructs[0].toString()] !== undefined){
-                    ev.rowId = constructMap[ev.related_constructs[0].toString()].rowId;
+                    //Find best related construct
+                    var num = 0;
+                    for(var i in ev.related_constructs){
+                        var rel = constructMap[ev.related_constructs[i].toString()];
+                        
+                        switch(ev.type){
+                            case "help":
+                                if (rel.type === "page")
+                                    num = i;
+                                break;
+                            case "doc":
+                                if (rel.type === "document")
+                                    num = i;
+                                break;
+                            case "feature":
+                                if (rel.type === "session")
+                                    num = i;
+                                break;
+                        }
+                    }
+
+                    ev.rowId = constructMap[ev.related_constructs[num].toString()].rowId;
                     evs.push(ev); 
                 }
                 
