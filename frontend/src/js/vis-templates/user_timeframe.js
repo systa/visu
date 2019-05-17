@@ -70,15 +70,15 @@ var UserTimeframe = function(par){
     var _scaleY = d3.scale.ordinal().rangeBands([_margins.top, _height-_margins.bottom]).domain(_yDomain);
 
     //Calculaiting height for one row now that we know how many rows we will have
-    var _rowHeight = ((_height-_margins.bottom-_margins.top)/_yDomain.length);
-    var _minRowHeight = 30;//12;
+    var _rowHeight = 40; /*((_height-_margins.bottom-_margins.top)/_yDomain.length);
+    var _minRowHeight = 40;//12;
     var _maxRowHeight = 40;//16;
     if(_rowHeight < _minRowHeight){
         _rowHeight = _minRowHeight;
     }
     else if(_rowHeight > _maxRowHeight){
         _rowHeight = _maxRowHeight;
-    }
+    }*/
     _height = (_rowHeight * _yDomain.length) + _margins.bottom+_margins.top;
     
     _svg.attr("width", _width);
@@ -200,9 +200,9 @@ var UserTimeframe = function(par){
     
     var getLineY = function(data){
         var y = getY(data);
-        y += _rowHeight*0.33;
+        y += _rowHeight*0.6;
         
-        if (data.data && data.data.collide !== 0){
+        if (data.type !== "help" && data.data && data.data.collide !== 0){
             y += (_rowHeight*0.1) * data.data.collide;
         }
         
@@ -369,13 +369,13 @@ var UserTimeframe = function(par){
         _height = height;
         _margins = margins;
         
-        _rowHeight = ((_height-_margins.bottom-_margins.top)/_yDomain.length);
+        /*_rowHeight = ((_height-_margins.bottom-_margins.top)/_yDomain.length);
         if(_rowHeight < _minRowHeight){
             _rowHeight = _minRowHeight;
         }
         else if(_rowHeight > _maxRowHeight){
             _rowHeight = _maxRowHeight;
-        }
+        }*/
         _height = (_rowHeight * _yDomain.length) + _margins.bottom+_margins.top;
         
         _timeScale.range([_margins.left, _width-_margins.right]);
@@ -389,13 +389,14 @@ var UserTimeframe = function(par){
     };
     
     pub.onResize2 = function(){
+        /*
         _rowHeight = ((_height-_margins.bottom-_margins.top)/_yDomain.length);
         if(_rowHeight < _minRowHeight){
             _rowHeight = _minRowHeight;
         }
         else if(_rowHeight > _maxRowHeight){
             _rowHeight = _maxRowHeight;
-        }
+        }*/
         _height = (_rowHeight * _yDomain.length) + _margins.bottom+_margins.top;
         
         _timeScale.range([_margins.left, _width-_margins.right]);
@@ -445,13 +446,13 @@ var UserTimeframe = function(par){
         _scaleY.domain(_yDomain);
 
         //calculaiting height for one row now that we know how many rows we will have
-        _rowHeight = ((_height-_margins.bottom-_margins.top)/_yDomain.length);
+        /*_rowHeight = ((_height-_margins.bottom-_margins.top)/_yDomain.length);
         if(_rowHeight < _minRowHeight){
             _rowHeight = _minRowHeight;
         }
         else if(_rowHeight > _maxRowHeight){
             _rowHeight = _maxRowHeight;
-        }
+        }*/
         _height = (_rowHeight * _yDomain.length) + _margins.bottom+_margins.top;
 
         //The data update
