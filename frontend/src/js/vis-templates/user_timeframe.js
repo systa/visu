@@ -185,6 +185,11 @@ var UserTimeframe = function(par){
         }
 
         var x = _timeScale(start);
+        
+        if (data.data && data.data.collide !== 0){
+            //x += (_rowHeight*0.1) * data.data.collide;
+        }
+        
         return x;
     };
   
@@ -198,7 +203,7 @@ var UserTimeframe = function(par){
         y += _rowHeight*0.33;
         
         if (data.data && data.data.collide !== 0){
-            y += (_rowHeight*0.1) * data.data.collide;
+            //y += (_rowHeight*0.1) * data.data.collide;
         }
         
         return y;
