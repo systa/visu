@@ -54,8 +54,8 @@ var UserTimeframe = function(par){
     
     var _displayTypes = p.displayTypes !== undefined ? p.displayTypes : true; 
     
-    var _colorScale = p.colorScale !== undefined ? p.colorScale : d3.scale.category20();
-    var _colorScale2 = d3.scale.category10();
+    var _colorScale = p.colorScaleEvent !== undefined ? p.colorScaleEvent : d3.scale.category20c();
+    var _colorScale2 = p.colorScaleLifespan !== undefined ? p.colorScaleLifespan : d3.scale.category20c();
     
     //Timescale in the graph
     var _timeScale = d3.time.scale().domain(_xDomain);
@@ -83,11 +83,7 @@ var UserTimeframe = function(par){
     
     _svg.attr("width", _width);
     _svg.attr("height", _height);
-
-    //building color scale
-    _colorScale.domain(_labelDomain);
-    _colorScale2.domain(["start/end","help","doc","feature"]);
-
+    
     //In SVG the draw order is reverse order of defining the nodes
     
     //Y-axis is constructed from rect and text SVG-elements. d3 axis is not used.
@@ -259,26 +255,84 @@ var UserTimeframe = function(par){
         _svg.selectAll("*").remove();
     };
     
-    //Color for lifespans and events
-    pub.getColor = function(data){
-        return _colorScale2(data.type);
-    };
+    //Lifespan colors:
+    var cDoc1 = "#abe8ff"; //Open
+    var cDoc2 = "#526099"; //Locked
+    var cDoc3 = "#648def"; //Unlocked
+    var cPage = "#ffed4c";
+    var cSession = "#ffc1c2";
     
-    //Color for labels (user name)
-    pub.getColor2 = function(data){
-        return _colorScale(data.related_constructs[0]);
-    };
+    //Event colors:
+    var cFeature = "#d84587";
+    var cStartEnd = "#ffb2ad";
     
+    var cPageOpen = "#ffed4c";
+    var cPageSwitch = "#ff9544";
+    
+    var cDocOpen = "#abe8ff";
+    var cDocLock = "#526099";
+    var cDocUnlock = "#648def";
+    var cDocClose = "#293955";
+    
+    //Color for events
+    pub.getEventColor = function(data){
+        var action = data.data.action;
+        switch(data.type){
+            case "doc":
+                if(action.includes("Open")) return cDocOpen;
+                if(action.includes("Locked")) return cDocLock;
+                if(action.includes("Unlocked")) return cDocUnlock;
+                if(action.includes("Close")) return cDocClose;
+                
+            case "help":
+                if(action.includes("Clicked")) return cPageOpen;
+                if(action.includes("Switched")) return cPageSwitch;
+                
+            case "feature":
+                return cFeature;
+                
+            case "start/end":
+                return cStartEnd;
+        }
+    };
+
+    //Color for lifespans
     pub.getStateColor = function(data){
-        return _colorScale(data.state);
+        switch(data.state){
+            case "(doc) opened":
+                return cDoc1;
+            case "(doc) locked":
+                return cDoc2;
+            case "(doc) unlocked":
+                return cDoc3;
+            case "(help) opened":
+                return cPage;
+            case "(session) open":
+                return cSession;
+        }
     };
     
-    //Returns the state text from data
-    pub.getLabel = function(data){
-        //return ".." + data.related_constructs[0].substring(20);
-        
-        return data.type;
-    };
+    pub.getColorType = function(type){
+        switch(type){
+            case "doc":
+                return cDocOpen;/*
+                if(action.includes("Open")) return cDocOpen;
+                if(action.includes("Locked")) return cDocLock;
+                if(action.includes("Unlocked")) return cDocUnlock;
+                if(action.includes("Close")) return cDocClose;*/
+                
+            case "help":
+                return cPageOpen;/*
+                if(action.includes("Cliked")) return cPageOpen;
+                if(action.includes("Switched")) return cPageSwitch;*/
+                
+            case "feature":
+                return cFeature;
+                
+            case "start/end":
+                return cStartEnd;
+        }
+    }
     
     pub.draw = function(){
         
@@ -294,7 +348,6 @@ var UserTimeframe = function(par){
         //Displayed names on the left
         _names.attr('x', 2);
         _names.attr('y', function(d){return _scaleY(d.id)+_rowHeight*0.75;});
-        //_names.text("lol");
         _names.text(function(d){
             var str = "";
             if(d){
@@ -322,34 +375,15 @@ var UserTimeframe = function(par){
             .attr('y2', getLineY)
             .attr('stroke', pub.getStateColor)
             .on("mouseover", onMouseOver)
-            //.on("mousemove", onMouseMove)
             .on("mouseout", onMouseOut);
 
         //Event circles
-        _events.attr('fill', pub.getColor)
+        _events.attr('fill', pub.getEventColor)
             .attr('cx', getX) //X coordinate
             .attr('cy', getLineY) //Y coordinate
             .attr('r', _rowHeight*0.33*0.5) //Ray of event circle
             .on("mouseover", onMouseOver)
-            //.on("mousemove", onMouseMove)
             .on("mouseout", onMouseOut);
-
-        //Text and color for labels
-        if(_displayTypes){
-            //console.log("[user_timeframe]Displaying types:");
-            
-            _states.attr('fill', pub.getColor2)
-                .attr('x', _width-_margins.right)
-                .attr('width', _margins.right)
-                .attr('y', getY)
-                .attr('height', _rowHeight);
-            
-            _labels.attr('x', _width-_margins.right)
-                .attr('y', function(d){return getY(d)+_rowHeight*0.75;})
-                .text(pub.getLabel);
-            
-            //console.log("[user_timeframe]States/labels:", _states, _labels);
-        }
         
         //x-axis
         _xAxisGraphic.attr("transform", "translate(0,"+(_margins.top)+")")
@@ -364,18 +398,10 @@ var UserTimeframe = function(par){
     };
     
     pub.onResize = function(width, height, margins){
-        //console.log("[user_timeframe]pub.onResize");
         _width = width;
         _height = height;
         _margins = margins;
-        
-        /*_rowHeight = ((_height-_margins.bottom-_margins.top)/_yDomain.length);
-        if(_rowHeight < _minRowHeight){
-            _rowHeight = _minRowHeight;
-        }
-        else if(_rowHeight > _maxRowHeight){
-            _rowHeight = _maxRowHeight;
-        }*/
+
         _height = (_rowHeight * _yDomain.length) + _margins.bottom+_margins.top;
         
         _timeScale.range([_margins.left, _width-_margins.right]);
@@ -389,14 +415,6 @@ var UserTimeframe = function(par){
     };
     
     pub.onResize2 = function(){
-        /*
-        _rowHeight = ((_height-_margins.bottom-_margins.top)/_yDomain.length);
-        if(_rowHeight < _minRowHeight){
-            _rowHeight = _minRowHeight;
-        }
-        else if(_rowHeight > _maxRowHeight){
-            _rowHeight = _maxRowHeight;
-        }*/
         _height = (_rowHeight * _yDomain.length) + _margins.bottom+_margins.top;
         
         _timeScale.range([_margins.left, _width-_margins.right]);
@@ -411,14 +429,6 @@ var UserTimeframe = function(par){
     
     pub.getMinHeight = function(){
        return _rowHeight*_yDomain.length+_margins.top+_margins.bottom;
-    };
-    
-    pub.getColorScale = function(){
-        return _colorScale;
-    };
-    
-    pub.getColorScale2 = function(){
-        return _colorScale2;
     };
     
     pub.updateData = function(ud){
@@ -445,14 +455,6 @@ var UserTimeframe = function(par){
         //building ordinal scale for test sets based on the build id
         _scaleY.domain(_yDomain);
 
-        //calculaiting height for one row now that we know how many rows we will have
-        /*_rowHeight = ((_height-_margins.bottom-_margins.top)/_yDomain.length);
-        if(_rowHeight < _minRowHeight){
-            _rowHeight = _minRowHeight;
-        }
-        else if(_rowHeight > _maxRowHeight){
-            _rowHeight = _maxRowHeight;
-        }*/
         _height = (_rowHeight * _yDomain.length) + _margins.bottom+_margins.top;
 
         //The data update
@@ -471,9 +473,8 @@ var UserTimeframe = function(par){
             _states = _stateGroup.selectAll("rect").data(_constructData).enter().append("rect");
             _labels = _stateGroup.selectAll("text").data(_constructData).enter().append("text");
         }
-        //Defining the data!
-        //Lifespan data
-        
+
+        //Lifespan datq
         _lifespanGroup = _svg.append("g");
         _lifespans = _lifespanGroup.selectAll("line").data(_lifespanData).enter().append("line");
         

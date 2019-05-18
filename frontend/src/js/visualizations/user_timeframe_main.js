@@ -70,10 +70,8 @@ var USER_TIMEFRAME_MAIN = function(par){
     
     //Legend on top of visu
     var createLegend = function(types){
-        //console.log("[user_timeframe_main]Appending labels");
-        var scale = _mainChart.getColorScale2();
         for(var i = 0; i < types.length; ++i){
-            var color = scale(types[i]);
+            var color = _mainChart.getColorType(types[i]);
             _layout.appendLabel({bgcolor: color, text: types[i]+" "});
         }
     };
@@ -136,7 +134,8 @@ var USER_TIMEFRAME_MAIN = function(par){
             lifespans : data.lifespans,
             constructs : data.constructs,
             stateColors :   data.types,
-            colorScale : d3.scale.category20c(),
+            colorScaleEvents: d3.scale.category20c(),
+            colorScaleLifespan : d3.scale.category20(),
             displayTypes : true
         });
 
