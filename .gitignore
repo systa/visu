@@ -36,3 +36,23 @@ node_modules
 bower_components/
 
 todo\.txt
+
+datasources/log/log10\.txt
+
+datasources/log/log_s\.txt
+
+datasources/log/log2\.txt
+
+datasources/log/log3\.txt
+
+datasources/log/log4\.txt
+
+datasources/log/log5\.txt
+
+datasources/log/log6\.txt
+
+datasources/log/log7\.txt
+
+datasources/log/log8\.txt
+
+datasources/log/log9\.txt
