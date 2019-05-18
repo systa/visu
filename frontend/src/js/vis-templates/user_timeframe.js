@@ -202,7 +202,7 @@ var UserTimeframe = function(par){
         var y = getY(data);
         y += _rowHeight*0.6;
         
-        if (data.type !== "help" && data.data && data.data.collide !== 0){
+        if (data.type === "doc" && data.data && data.data.collide !== 0){
             y += (_rowHeight*0.1) * data.data.collide;
         }
         

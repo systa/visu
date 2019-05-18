@@ -121,8 +121,8 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                         for(var i = 1; i < statechanges.length; ++i){
                             sc = statechanges[i]; 
                             
-                            //Closing a lifespan
-                            if (sc.statechange.to.includes("closed")){
+                            //Closing a lifespan (document closed only)
+                            if (sc.statechange.to.includes("closed") && !state.includes("closed")){
                                 rt = sc.time;  
                                 
                                 lifespans.push({
@@ -137,13 +137,9 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                                 //state = "(doc) closed";
                                 
                             //New lifespan
-                            }else /*if(sc.statechange.to.includes("opened")){
-                                st = sc.time;
-                                rt = false;
-                                //state = "(doc) opened";
-                                
+                            }else                                 
                             //Changing lifespan
-                            }else */if(state !== sc.statechange.to){
+                            if(/*state !== sc.statechange.to && */!sc.statechange.from.includes("closed")){
                                 rt = sc.time;  
                                 state = sc.statechange.from;
                                 
@@ -173,12 +169,14 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                         for(var i = 1; i < statechanges.length; ++i){
                             sc = statechanges[i]; 
                             
-                            if (sc.statechange.to.includes("opened")){
+                            //if (sc.statechange.from.includes("closed")){
+                            if (state.includes("closed") && sc.statechange.from.includes("closed")){
                                 st = sc.time;
                                 rt = false;
-                                state = sc.statechange.to;
+                                state = sc.statechange.to; //Next state is open
 
-                            }else if (sc.data.action.includes("Switched")){
+                            //}else if (sc.statechange.from.includes("opened")){
+                            }else if (state.includes("opened") && sc.statechange.from.includes("opened")){
                                 rt = sc.time;
 
                                 lifespans.push({
@@ -188,7 +186,7 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                                         end : rt
                                     });
                                 
-                                state = sc.statechange.to;
+                                state = sc.statechange.to; //Next state is closed
                             }else{
                                 console.log("[data_processor]Should not happen: action not detected");
                             }
