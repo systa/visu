@@ -88,11 +88,17 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
     var parseLifespans = function(statelist){
         var lifespans = [];
         //Looping through all constructs
+        var session_rt = false;
+        
         for(var rid in statelist){            
             if(statelist.hasOwnProperty(rid)){
                 var statechanges = typeSelect(statelist[rid].evs, statelist[rid].type);
                 var type = statelist[rid].type;
                 statechanges.sort(stSortFunction);
+                
+                var st;
+                var state;
+                var rt;
                 
                 switch (type){
                    case "session":
@@ -103,12 +109,14 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                             end : statechanges[1].time
                         });
 
+                        session_rt = statechanges[1].time;
+                        
                         break;
                     
                     case "document":
-                        var st = statechanges[0].time; //start time
-                        var state = statechanges[0].statechange.to; //state we are in
-                        var rt = false;//resolution time
+                        st = statechanges[0].time; //start time
+                        state = statechanges[0].statechange.to; //state we are in
+                        rt = false;//resolution time
                     
                         for(var i = 1; i < statechanges.length; ++i){
                             sc = statechanges[i]; 
@@ -156,18 +164,56 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                         }
                         
                         break;
-                    /*
+                    
                     case "page":
-                        if (sc.statechange.to.includes("open") && i > 0)
-                            lifespans[i-1].end = sc.time;
+                        st = statechanges[0].time; //start time
+                        state = statechanges[0].statechange.to; //state we are in
+                        rt = false;//resolution time
+                        
+                        for(var i = 1; i < statechanges.length; ++i){
+                            sc = statechanges[i]; 
+                            
+                            if (sc.statechange.to.includes("opened")){
+                                st = sc.time;
+                                rt = false;
+                                state = sc.statechange.to;
 
-                        break; */
+                            }else if (sc.data.action.includes("Switched")){
+                                rt = sc.time;
+
+                                lifespans.push({
+                                        rowId : rid,
+                                        start : st,
+                                        state : state,
+                                        end : rt
+                                    });
+                                
+                                state = sc.statechange.to;
+                            }else{
+                                console.log("[data_processor]Should not happen: action not detected");
+                            }
+                        }
+                        
+                        /*//Lifespan of last opened page
+                        if(state.includes("opened")){
+                            lifespans.push({
+                                        rowId : rid,
+                                        start : st,
+                                        state : state,
+                                        end : session_rt
+                                    });
+                        }*/
+                        
+                        break; 
+                    default:
+                        console.log("[data_processor]Should not happen: default");
+                        break;
                 }
 
             }
         }
         
-        //console.log("[dataprocessor]Output:", lifespans);
+        console.log("[dataprocessor]Output:", lifespans);
         return lifespans;
     };
     
