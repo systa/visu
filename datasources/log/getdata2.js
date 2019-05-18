@@ -188,10 +188,13 @@ function getData( source, callback ) {
     var user_helper = [];
     var session_helper = [];
     
+    var previous_page = false;
+    
     //For each session
     for (var i = 0; i < data.length; i++) {
         var session = data[i];
         var previous_document;
+        previous_page = false;
         
         if(user_helper.indexOf(session.user_id) === -1){
             user_helper.push(session.user_id);
@@ -320,25 +323,35 @@ function getData( source, callback ) {
                 words = str.split(' ');
                 var page = {name: words[2], hash: hashCode(words[2]+session.id)};
                 
+                //Close previous page
+                if(previous_page){
+                    //Create event
+                    event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Switched help page", hash: entry.hash+1, document: null, first_time: first_event_time, collide: entry.collide, name: previous_page.name, page: previous_page.hash};
+                    
+                    stateChange = {event: entry.hash+1, from: "(help) opened", to:"(help) closed"}; //Link to related event
+                    stateChanges.push(stateChange);
+                    
+                    event.statechange = stateChange;
+                    events.push(event);  
+                                        
+                    //console.log("[getdata]Creating switch event:", event);
+                }
+                
+                previous_page = page;
+                
                 //Create event
                 event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Help", hash: entry.hash, document: null, first_time: first_event_time, collide: entry.collide, name: page.name};
                
-                //if (words.length > 2) {
-                    //Create construct page
-                    if (notIn3(pages, page)) {
-                        var toPush = {name: page.name, user_id: session.user_id, session_id: session.id, hash: page.hash};
-                        pages.push(toPush);
-                    }
-                    
-                    //Create state change
-                    var detail = words[words.length-1]; //Opened, closed, locked, unlocked
-                    stateChange = {event: entry.hash, from: "(help) closed", to:"(help) opened"}; //Link to related event
-                    stateChanges.push(stateChange);
-                    
-                    //TODO: close previous help when a new one is opened
-                //}else{
-                    //console.log("[getdata]Page:", words);
-                //}
+                //Create construct page
+                if (notIn3(pages, page)) {
+                    var toPush = {name: page.name, user_id: session.user_id, session_id: session.id, hash: page.hash};
+                    pages.push(toPush);
+                }
+
+                //Create state change
+                var detail = words[words.length-1]; //Opened, closed, locked, unlocked
+                stateChange = {event: entry.hash, from: "(help) closed", to:"(help) opened"}; //Link to related event
+                stateChanges.push(stateChange);
                 
                 event.statechange = stateChange;
                 
@@ -402,6 +415,19 @@ function getData( source, callback ) {
     }
     
     //TODO force close all pages/documents at the end of session
+    //Close previous page
+    if(previous_page){
+        //Create event
+        event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Switched help page", hash: entry.hash+1, document: null, first_time: first_event_time, collide: entry.collide, name: previous_page.name, page: previous_page.hash};
+
+        stateChange = {event: entry.hash+1, from: "(help) opened", to:"(help) closed"}; //Link to related event
+        stateChanges.push(stateChange);
+
+        event.statechange = stateChange;
+        events.push(event);  
+
+        console.log("[getdata]Creating switch event:", event);
+    }
     
     var result = {events: events, users: users, sessions: sessions, documents:documents, statechanges: stateChanges, pages: pages};
     //display(result);

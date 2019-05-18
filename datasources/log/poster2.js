@@ -156,7 +156,7 @@ function sendToDb( logData, source ) {
             if (action.includes("Document") || action.includes("Locked") || action.includes("Unlocked")){
                 event_type = "doc";
                 event.data.name = item.name;
-            }else if (action.includes("Help")){
+            }else if (action.includes("Help") || action.includes("Switched")){
                 event_type = "help";
                 event.data.name = item.name;
             }else if (action.includes("Program") || action.includes("Exit")){
@@ -373,6 +373,8 @@ function sendToDb( logData, source ) {
       // create all of the links.
       links.forEach( function ( link ) {
           
+          if(linked > 6000){
+          
          if(debugLink && link.construct && link.target){
             //console.log("construct: "+ link.construct+ " target: "+link.target, " type: "+link.type);
              
@@ -423,7 +425,9 @@ function sendToDb( logData, source ) {
                 console.log("[Poster]Links saved:" + linked + "/" + linkCount);
             }
          });
-      });
+      }else{
+          linked++;
+      }});
    }//end link()
 }
 
