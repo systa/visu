@@ -85,25 +85,6 @@ function parseLog( content ) {
     return data;
 }
 
-//Returns true if document is not in documents
-function notIn(documents, document) {
-    for(var i = 0; i < documents.length; i++)
-        if (documents[i].hash == document.hash) return false;
-     
-    return true;
-}
-
-//Returns true if user_id is not in users
-function notIn2(users, user_id) {
-    var str = new String(user_id);
-    for(var i = 0; i < users.length; i++){
-        var str2 = new String(users[i]);
-        if (str.localeCompare(str2) == 0)
-            return false;
-    }
-    
-    return true;
-}
 
 //Returns true if page is not in pages
 function notIn3(pages, page) {
@@ -113,13 +94,6 @@ function notIn3(pages, page) {
     return true;
 }
 
-//Returns true if session is not in sessions
-function notIn4(sessions, session_id) {
-    for(var i = 0; i < sessions.length; i++)
-        if (sessions[i].session_id == session_id) return false;
-     
-    return true;
-}
 
 function display(result) {
     console.log("1. Users");
@@ -187,6 +161,8 @@ function getData( source, callback ) {
 
     var user_helper = [];
     var session_helper = [];
+    var doc_helper = [];
+    var page_helper = [];
     
     var previous_page = false;
     
@@ -271,7 +247,9 @@ function getData( source, callback ) {
                 for (var k = 2; k < words.length-1; k++) {document.name = document.name + words[k];} 
                 
                 //Create construct document
-                if (notIn(documents, document)) {
+                if(doc_helper.indexOf(document.hash) === -1){
+                    doc_helper.push(document.hash);
+                    
                     var toPush = {name: document.name, user_id: document.user_id, session_id: document.session_id, hash: document.hash};
                     documents.push(toPush);
                 }
@@ -333,8 +311,6 @@ function getData( source, callback ) {
                     
                     event.statechange = stateChange;
                     events.push(event);  
-                                        
-                    //console.log("[getdata]Creating switch event:", event);
                 }
                 
                 previous_page = page;
@@ -343,7 +319,9 @@ function getData( source, callback ) {
                 event = {date: entry.date, time: entry.time, session_id: entry.session_id, action: "Clicked on Help", hash: entry.hash, document: null, first_time: first_event_time, collide: entry.collide, name: page.name};
                
                 //Create construct page
-                if (notIn3(pages, page)) {
+                if(page_helper.indexOf(page.hash) === -1){
+                    page_helper.push(page.hash);   
+                    
                     var toPush = {name: page.name, user_id: session.user_id, session_id: session.id, hash: page.hash};
                     pages.push(toPush);
                 }
@@ -425,8 +403,6 @@ function getData( source, callback ) {
 
         event.statechange = stateChange;
         events.push(event);  
-
-        console.log("[getdata]Creating switch event:", event);
     }
     
     var result = {events: events, users: users, sessions: sessions, documents:documents, statechanges: stateChanges, pages: pages};

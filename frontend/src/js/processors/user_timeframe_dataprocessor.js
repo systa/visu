@@ -188,7 +188,7 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                                 
                                 state = sc.statechange.to; //Next state is closed
                             }else{
-                                console.log("[data_processor]Should not happen: action not detected");
+                                //console.log("[data_processor]Should not happen: action not detected");
                             }
                         }
                         
@@ -337,16 +337,28 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                     console.log("[user_timeframe_dataprocessor]Event has no related constructs:", ev);
                 }
                 else if(constructMap[ev.related_constructs[0].toString()] !== undefined){
+                    var num = 0;
                     
                     //Find best related construct
-                    var num = 0;
+                    /*switch(ev.type){
+                            case "help":
+                                num = 1;
+                                break;
+                            case "doc":
+                                num = 1;
+                                break;
+                            case "feature":
+                                num = 0;
+                                break;
+                        }
+                    */
                     for(var i in ev.related_constructs){
                         var rel = constructMap[ev.related_constructs[i].toString()];
                         
-                        if(!rel || !rel.type){
+                        /*if(!rel || !rel.type){
                             console.log("[user_timeframe_dataprocessor]Rel not found:",  ev);
                             break;
-                        }
+                        }*/
                         
                         switch(ev.type){
                             case "help":
@@ -363,6 +375,12 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                                 break;
                         }
                     }
+                    
+                    /*if(!ev.related_constructs[num]){
+                        console.log("[data_processor]Related construct is fucked:", ev);
+                        num = 0;
+                    }*/
+                    
                     ev.rowId = constructMap[ev.related_constructs[num].toString()].rowId;
                     evs.push(ev); 
                     
