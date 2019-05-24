@@ -57,6 +57,31 @@ body{
     color : #202020;
 }
 
+.tooltipR{
+    padding : 0.1%;
+    z-index : 10;
+    position : fixed;
+    bottom : 0;
+    right : 0;
+    /*left : 0;*/
+    visibility : hidden;
+    font-size : 0.85em;
+    background-color : #F0F0F0;
+    color : #202020;
+}
+
+.tooltipL{
+    padding : 0.1%;
+    z-index : 10;
+    position : fixed;
+    bottom : 0;
+    left : 0;
+    visibility : hidden;
+    font-size : 0.85em;
+    background-color : #F0F0F0;
+    color : #202020;
+}
+
 .chart{
     font-size: 0.95em;
     font-family:"Lucida Console", Monaco, Monospace;

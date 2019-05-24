@@ -50,9 +50,7 @@ var UserTimeframe = function(par){
     
     var _eventData = p.events !== undefined ? p.events : [];
     var _lifespanData = p.lifespans !== undefined ? p.lifespans : [];
-    var _constructData = p.constructs !== undefined ? p.constructs : false;
-    
-    var _displayTypes = p.displayTypes !== undefined ? p.displayTypes : true; 
+    var _constructData = p.constructs !== undefined ? p.constructs : [];
     
     var _colorScale = p.colorScaleEvent !== undefined ? p.colorScaleEvent : d3.scale.category20c();
     var _colorScale2 = p.colorScaleLifespan !== undefined ? p.colorScaleLifespan : d3.scale.category20c();
@@ -95,13 +93,6 @@ var UserTimeframe = function(par){
     //var _namesData = {ids: _yDomain, text: _yNames};
     var _names = _bgGroup.selectAll("text").data(_yNames).enter().append("text");
     
-    //Status group is related to the "Y-axis". It shows the status of the session
-    if(_displayTypes){
-        var _stateGroup = _svg.append("g").attr('what','right legend');
-        var _states = _stateGroup.selectAll("rect").data(_constructData).enter().append("rect");
-        var _labels = _stateGroup.selectAll("text").data(_constructData).enter().append("text");
-    }
-    
     //Defining the data!
     
     //Lifespan data
@@ -116,6 +107,8 @@ var UserTimeframe = function(par){
     var _xAxisGraphic = _svg.append("g").attr("class", "x axis");
     
     var _tooltip = d3.select("body").append("div").attr('class', "tooltip");
+    /*var _tooltipL = d3.select("body").append("div").attr('class', "tooltipL");
+    var _tooltipR = d3.select("body").append("div").attr('class', "tooltipR");*/
     
     //Lifespan start
     var getLpStart = function(data){
@@ -180,13 +173,7 @@ var UserTimeframe = function(par){
             return -circleDiameter;
         }
 
-        var x = _timeScale(start);
-        
-        if (data.data && data.data.collide !== 0){
-            //x += (_rowHeight*0.1) * data.data.collide;
-        }
-        
-        return x;
+        return _timeScale(start);
     };
   
     //Gets the data row based on buildId
@@ -235,17 +222,34 @@ var UserTimeframe = function(par){
         }catch(e){
             console.log(data, e);
         }
-       
+        
+        /*
+        var domain = _timeScale.domain();
+        //Display left
+        if(data.time && getX(data) > _timeScale(domain[domain.length-1]/2)){
+            _tooltipL.html(dispstring);
+            return _tooltipL.style("visibility", "visible");
+        
+        //Display right
+        }else{
+            _tooltipR.html(dispstring);
+            return _tooltipR.style("visibility", "visible");
+        }*/
         _tooltip.html(dispstring);
-        return _tooltip.style("visibility", "visible");
-    };
-    
-    var onMouseMove = function(data){
-        return _tooltip.style("top", (event.pageY-30)+"px").style("left",(event.pageX+15)+"px");
+        return _tooltip.style("visibility", "visible");    
     };
     
     var onMouseOut = function(data){
         return _tooltip.style("visibility", "hidden");
+        /*var domain = _timeScale.domain();
+        //Display left
+        if(data.time && getX(data) > _timeScale(domain[domain.length-1]/2)){
+            return _tooltipL.style("visibility", "hidden");
+        
+        //Display right
+        }else{
+            return _tooltipR.style("visibility", "hidden");
+        }*/
     };
 
     //public methods
@@ -314,23 +318,20 @@ var UserTimeframe = function(par){
     
     pub.getColorType = function(type){
         switch(type){
-            case "doc":
-                return cDocOpen;/*
-                if(action.includes("Open")) return cDocOpen;
-                if(action.includes("Locked")) return cDocLock;
-                if(action.includes("Unlocked")) return cDocUnlock;
-                if(action.includes("Close")) return cDocClose;*/
-                
-            case "help":
-                return cPageOpen;/*
-                if(action.includes("Cliked")) return cPageOpen;
-                if(action.includes("Switched")) return cPageSwitch;*/
-                
-            case "feature":
-                return cFeature;
-                
+            case "(doc) open":
+                return cDoc1;
+            case "(doc) locked":
+                return cDoc2;
+            case "(doc) unlocked":
+                return cDoc3;
+            case "(page) opened":
+                return cPageOpen;
+            case "(page) closed":
+                return cPageSwitch;
             case "start/end":
                 return cStartEnd;
+            case "feature":
+                return cFeature;
         }
     }
     
@@ -343,6 +344,7 @@ var UserTimeframe = function(par){
             .attr('y', getY)
             .attr('height', _rowHeight)
             .on("mouseover", onMouseOver)
+            //.on("mousemove", onMouseMove)
             .on("mouseout", onMouseOut);
 
         //Displayed names on the left
@@ -447,7 +449,7 @@ var UserTimeframe = function(par){
         //type data can be left out by setting displayTypes parameter to false
         _displayTypes = p.displayTypes !== undefined ? p.displayTypes : _displayTypes;
         
-        console.log("[user_timeframe]Lifespans:", _lifespanData);
+        console.log("[user_timeframe]Constructs:", _constructData);
         
         //reassigning scales
         _timeScale.domain(_xDomain);
@@ -466,15 +468,8 @@ var UserTimeframe = function(par){
         
         //var _namesData = {ids: _yDomain, text: _yNames};
         _names = _bgGroup.selectAll("text").data(_yNames).enter().append("text");
-        
-        //Status group is related to the "Y-axis". It shows the status of the test if it failed or passed.
-        if(_displayTypes){
-            _stateGroup = _svg.append("g").attr('what','right legend');
-            _states = _stateGroup.selectAll("rect").data(_constructData).enter().append("rect");
-            _labels = _stateGroup.selectAll("text").data(_constructData).enter().append("text");
-        }
 
-        //Lifespan datq
+        //Lifespan data
         _lifespanGroup = _svg.append("g");
         _lifespans = _lifespanGroup.selectAll("line").data(_lifespanData).enter().append("line");
         

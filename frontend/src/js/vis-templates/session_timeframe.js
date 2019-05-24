@@ -261,7 +261,7 @@ var SessionTimeframe = function(par){
     };
     
     pub.draw = function(){
-
+        
         //background and y-axis
         _bg.attr('fill', "#FCFCFC")
             .attr('x', 0)
@@ -272,10 +272,11 @@ var SessionTimeframe = function(par){
             //.on("mousemove", onMouseMove)
             .on("mouseout", onMouseOut);
 
+        
         _names.attr('x', 2)
             .attr('y', function(d){return _scaleY(d)+_rowHeight*0.75;})
             .text(function(d){return d.toString();});
-            
+        
         _lifespans.attr('x1', getLpStart)
             .attr('x2', getLpEnd)
             .attr('y1', getLineY)
@@ -284,7 +285,7 @@ var SessionTimeframe = function(par){
             .on("mouseover", onMouseOver)
             //.on("mousemove", onMouseMove)
             .on("mouseout", onMouseOut);
-
+        
         _events.attr('fill', pub.getColor)
             .attr('cx', getX) //X coordinate
             .attr('cy', getLineY) //Y coordinate
@@ -293,6 +294,7 @@ var SessionTimeframe = function(par){
             //.on("mousemove", onMouseMove)
             .on("mouseout", onMouseOut);
 
+        
         //Text and color for labels
         if(_displayTypes){
             _states.attr('fill', pub.getColor2)
@@ -306,11 +308,13 @@ var SessionTimeframe = function(par){
                 .text(pub.getLabel);
         }
         
+        
         //x-axis
         _xAxisGraphic.attr("transform", "translate(0,"+(_margins.top)+")")
             .call(_timeAxis)
             .selectAll(".tick text")
             .style("text-anchor", "start");
+        
     };
     
     pub.onBrush = function(timeRange){

@@ -373,7 +373,7 @@ function sendToDb( logData, source ) {
       // create all of the links.
       links.forEach( function ( link ) {
           
-          if(linked > 6000){
+          if(linked >= 0){
           
          if(debugLink && link.construct && link.target){
             //console.log("construct: "+ link.construct+ " target: "+link.target, " type: "+link.type);
@@ -425,9 +425,8 @@ function sendToDb( logData, source ) {
                 console.log("[Poster]Links saved:" + linked + "/" + linkCount);
             }
          });
-      }else{
-          linked++;
-      }});
+      } else{ linked++;   }
+      });
    }//end link()
 }
 

@@ -72,7 +72,7 @@ var USER_TIMEFRAME_MAIN = function(par){
     var createLegend = function(types){
         for(var i = 0; i < types.length; ++i){
             var color = _mainChart.getColorType(types[i]);
-            _layout.appendLabel({bgcolor: color, text: types[i]+" "});
+            _layout.appendLabel({bgcolor: color, text: " "+types[i]+" "});
         }
     };
     
@@ -93,7 +93,7 @@ var USER_TIMEFRAME_MAIN = function(par){
             names : parsed_data.names,
             events : parsed_data.events,
             lifespans : parsed_data.lifespans,
-            constructs : parsed_data.constructs,
+            constructs : _search.unifiedList(parsed_data.constructs),
             timeframe : parsed_data.timeframe
         });
 
@@ -132,7 +132,7 @@ var USER_TIMEFRAME_MAIN = function(par){
             names : data.names,
             events : data.events,
             lifespans : data.lifespans,
-            constructs : data.constructs,
+            constructs : _search.unifiedList(data.constructs),
             stateColors :   data.types,
             colorScaleEvents: d3.scale.category20c(),
             colorScaleLifespan : d3.scale.category20(),
@@ -153,7 +153,10 @@ var USER_TIMEFRAME_MAIN = function(par){
             customTime: false
         });
         
-        createLegend(data.types);
+        //createLegend(data.types);
+        var _legend = ["feature", "start/end", "(doc) locked", "(doc) unlocked", "(doc) open", "(page) opened", "(page) closed"];
+        createLegend(_legend);
+        
         onResize();
         
         window.addEventListener('resize', onResize);

@@ -194,8 +194,18 @@ var SESSION_TIMEFRAME_PROCESSOR = function(par){
         var identity_helper = [];
         
         events.forEach(function(ev){
+            var stop = false;
+            
+            if (ev.data && ev.data.action.includes("Switched")){
+                stop = true; //Ignore "switched" events
+            }
+            
+            if (ev.data && ev.data.action.includes("ocked") && !ev.isStatechange){
+                stop = true; //Ignore "cliked on (un)locked" events that don't link to a state change 
+            }
+            
             //Ignoring duplicates
-            if(identity_helper.indexOf(ev._id) === -1){
+            if(!stop && identity_helper.indexOf(ev._id) === -1){
                 identity_helper.push(ev._id);
                 
                 var first_time = new Date(ev.data.first_time).getTime();

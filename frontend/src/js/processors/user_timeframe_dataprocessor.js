@@ -306,9 +306,17 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
         
         var identity_helper = [];
         
+        console.log("[user_timeframe_dataprocessor]Map:", constructMap);
+        
         events.forEach(function(ev){
+            var stop = false;
+            
+            if (ev.data && ev.data.action.includes("ocked") && !ev.isStatechange){
+                stop = true; //Ignore "cliked on (un)locked" events that don't link to a state change 
+            }
+            
             //Ignoring duplicates
-            if(identity_helper.indexOf(ev._id) === -1){
+            if(!stop && identity_helper.indexOf(ev._id) === -1){
                 identity_helper.push(ev._id);
                 
                 var time = new Date(ev.time).getTime();
@@ -329,10 +337,16 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                     console.log("[user_timeframe_dataprocessor]Event has no related constructs:", ev);
                 }
                 else if(constructMap[ev.related_constructs[0].toString()] !== undefined){
+                    
                     //Find best related construct
                     var num = 0;
                     for(var i in ev.related_constructs){
                         var rel = constructMap[ev.related_constructs[i].toString()];
+                        
+                        if(!rel || !rel.type){
+                            console.log("[user_timeframe_dataprocessor]Rel not found:",  ev);
+                            break;
+                        }
                         
                         switch(ev.type){
                             case "help":
@@ -349,9 +363,9 @@ var USER_TIMEFRAME_PROCESSOR = function(par){
                                 break;
                         }
                     }
-
                     ev.rowId = constructMap[ev.related_constructs[num].toString()].rowId;
                     evs.push(ev); 
+                    
                 }
                 
                 /*

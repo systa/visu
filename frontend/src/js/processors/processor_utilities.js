@@ -243,5 +243,19 @@ var PROCESSOR_UTILITES = function(){
         return related;
     };
     
+    pub.unifiedList = function(contructData){
+        var constructs = [];
+        
+        for (var type in contructData){
+            var list = contructData[type];
+            
+            for (var i in list){
+                constructs.push(list[i]);
+            }
+        }
+        
+        return constructs;
+    }
+    
     return pub;
 };
