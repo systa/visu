@@ -12,21 +12,20 @@ A node based web app to visualize commit and issue data. Hosts a rest database a
 
 Installation
 -------------
-1) Cloning the repo and running the app
+1. Cloning the repo and running the app
 
-    git clone https://github.con/coin-quin/vis-a-vis.git -b dockerized
-    docker-compose up
+* git clone https://github.con/coin-quin/vis-a-vis.git -b dockerized
+* docker-compose up
 
--> the server is now running and can be accessed at localhost:8080, but no data is loaded on it yet
+**-> the server is now running and can be accessed at localhost:8080, but no data is loaded on it yet**
 
-2) Loading data source (Kactus2 logs)
+2. Loading data source (Kactus2 logs)
 
-    cd datasources/log/
-    sudo npm install
-    node collector2.js
-    > input log.txt
+* cd datasources/log/
+* sudo npm install
+* node collector2.js
+* > input log.txt
 
+*/!\ the loading of the data sometimes fails during the link sending, the app might crash if not all links have been sent to the DB when opening the visu (if this occurs, try again until all links have been sent -- needs fixing)*
 
-/!\ the loading of the data sometimes fails during the link sending, the app might crash if not all links have been sent to the DB when opening the visu (if this occurs, try again until all links have been sent -- needs fixing)
-
-3) You can now open the User Timeframe or Session Timeline visualizations.
+3. You can now open the User Timeframe or Session Timeline visualizations.
