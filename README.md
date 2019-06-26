@@ -12,28 +12,21 @@ A node based web app to visualize commit and issue data. Hosts a rest database a
 
 Installation
 -------------
-To install, install nodeJS, NPM and mongoDB
+1) Cloning the repo and running the app
 
-After you have installed all of those, navigate to the project root and run the commands:
+    git clone https://github.con/coin-quin/vis-a-vis.git -b dockerized
+    docker-compose up
 
-    npm install
-    npm install -g bower # if needed
-    bower install
-    npm install -g grunt-cli
-    grunt
+-> the server is now running and can be accessed at localhost:8080, but no data is loaded on it yet
+
+2) Loading data source (Kactus2 logs)
+
+    cd datasources/log/
+    sudo npm install
+    node collector2.js
+    > input log.txt
 
 
+/!\ the loading of the data sometimes fails during the link sending, the app might crash if not all links have been sent to the DB when opening the visu (if this occurs, try again until all links have been sent -- needs fixing)
 
-
-npm and bower usage
--------------------
-
-To install frontend dependencied and libraries, use bower to install it. You can search the bower database for the library by using ``bower search <lib name>``. To save it as a dependency add a --save parameter, if its just a dev dependency, use --save-dev. For example:
-
-    bower search jquery
-    bower install jquery --save
-
-To fetch backend component for node, use npm. The syntax is the same as bower.
-
-    npm search express
-    npm install express --save
+3) You can now open the User Timeframe or Session Timeline visualizations.
