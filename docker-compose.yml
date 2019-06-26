@@ -1,0 +1,20 @@
+version: "2"
+
+services:
+  web:
+    image: hugofooy/vis-a-vis:v0.4
+    build: .
+    command: nodemon --debug=5858
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+      - "8080:8080"
+      - "5858:5858"
+    links:
+      - mongo
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"

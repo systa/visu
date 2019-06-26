@@ -21,10 +21,10 @@ var DATA_QUERY = function(){
     var getAll = function(path, callback){
         var _data = false;
         var loadAll = new Promise(function(resolve, reject){
-            $.get(path).success(function(data){
+            $.get(path).then(function(data){
                 _data = data;
                 resolve("getAll");
-            }).error(function(jqXHR, textStatus, errorThrown){
+            }).catch(function(jqXHR, textStatus, errorThrown){
                 console.log(errorThrown);
                 reject(errorThrown);
             });
@@ -43,10 +43,10 @@ var DATA_QUERY = function(){
     var getFiltered = function(path, body, callback){
         var _data = false;
         var loadFiltered = new Promise(function(resolve, reject){
-            $.get(path, body).success(function(data){
+            $.get(path, body).then(function(data){
                 _data = data;
                 resolve("getFiltered");
-            }).error(function(jqXHR, textStatus, errorThrown){
+            }).catch(function(jqXHR, textStatus, errorThrown){
                 console.log(errorThrown);
                 reject(errorThrown);
             });

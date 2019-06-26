@@ -13,8 +13,29 @@
     <meta charset="UTF-8">
     <title>Session Timeframe</title>
     <link rel ="stylesheet" href="src/css/generic-vis.css">
-    <script type="text/javascript" src="dist/js/_bower.js"></script>
-    <script type="text/javascript" src="dist/js/app.min.js"></script>
+
+    <!-- External libs -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+
+    <!-- UI-Utilities -->
+    <script type="text/javascript" src="../src/js/ui-utilities/custom_query_ui.js"></script>
+    <script type="text/javascript" src="../src/js/ui-utilities/session_template.js"></script>
+    
+    <!-- Main visualization module -->
+    <script type="text/javascript" src="../src/js/visualizations/session_timeframe_main.js"></script>
+    
+    <!-- Templates -->
+    <script type="text/javascript" src="../src/js/vis-templates/session_timeframe.js"></script>
+    <script type="text/javascript" src="../src/js/vis-templates/time_selector.js"></script>
+    
+    <!-- Data processors -->
+    <script type="text/javascript" src="../src/js/processors/session_timeframe_dataprocessor.js"></script>
+    <script type="text/javascript" src="../src/js/processors/processor_utilities.js"></script>
+    
+    <!-- Data queries -->
+    <script type="text/javascript" src="../src/js/dataquery/dataquery.js"></script>
+    <script type="text/javascript" src="../src/js/dataquery/parse_parameters.js"></script>
     
   </head>
   <body onload="CUSTOM_QUERY_UI(SESSION_TIMEFRAME_MAIN)">

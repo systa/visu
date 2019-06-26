@@ -13,7 +13,7 @@ var router = express.Router();
 //serve HTML content 
 router.get('/', function(req, res) {
   res.sendfile('./frontend/views/index.html');
-});
+}); 
 
 router.get('/test-data-vis', function(req, res) {
 	res.sendfile('./frontend/views/test-data-vis.html');

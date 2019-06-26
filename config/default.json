@@ -1,9 +1,7 @@
-//Configuration files for the app, these even support comments!
-
 {
 	"port": 8080,
 	"serverUrl":"http://localhost",		
-	"dbUrl":"mongodb://localhost/visu",
+	"dbUrl":"mongodb://mongo/visu",
 	"dbOptions":{
 		
 		"server": {
