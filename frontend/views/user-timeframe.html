@@ -4,7 +4,7 @@
 * This software has been developed in Tekes-TIVIT project Need-for-Speed.
 * All rule set in consortium agreement of Need-for-Speed project apply.
 *
-* Main authors: Antti Luoto, Anna-Liisa Mattila, Henri Terho
+* Main authors: Antti Luoto, Anna-Liisa Mattila, Henri Terho, Hugo Fooy
 -->
 
 <!DOCTYPE html>
@@ -38,28 +38,32 @@
     <script defer type="text/javascript" src="../src/js/dataquery/dataquery.js"></script>
     <script defer type="text/javascript" src="../src/js/dataquery/parse_parameters.js"></script>
     
-  </head>
-  <body onload="USER_QUERY_UI(USER_TIMEFRAME_MAIN)">
+    <script type="text/javascript">
+        $(function(){ USER_QUERY_UI(USER_TIMEFRAME_MAIN); });
+      </script>
+  
+    </head>
+    <body> 
         <div id = "queryui" class = "ui">
             <form id ="queryform">
-                <H1>Data Filtering</H1>
-                <p>
-                    <H2>Time range filtering</H2>
+                <h1>Data Filtering</h1>
+                <h2>Time range filtering</h2>
+                <p>                    
                     Leave the fields empty if you don't want to filter data based on time range.</br>
-                    sart date: <input type = "date" name = "startDate" id ="startDate"></input>
-                    start time (hh:mm): <input type = "time" name = "startTime" id = "startTime"></input></br>
-                    end date: <input type = "date" name = "endDate" id ="endDate"></input>
-                    end time (hh:mm): <input type = "time" name = "endTime" id = "endTime"></input></br>
+                    sart date: <input type = "date" name = "startDate" id ="startDate"/>
+                    start time (hh:mm): <input type = "time" name = "startTime" id = "startTime"/></br>
+                    end date: <input type = "date" name = "endDate" id ="endDate"/>
+                    end time (hh:mm): <input type = "time" name = "endTime" id = "endTime"/></br>
                 </p>
+                <h2>Data origin filtering</h2>    
                 <p>
-                    <H2>Data origin filtering</H2>
-                    Source file: <input type = "text" name = "source" id ="source" value="log.txt"></input></br>
+                    Source file: <input type = "text" name = "source" id ="source" value="log.txt"/></br>
                 </p>
                 <p>
 
-                <H2>User filter</H2>
+                <h2>User filter</h2>
                 <p>
-                    User name: <input type = "text" name = "cn" id = "constructName"></input></br>
+                    User name: <input type = "text" name = "cn" id = "constructName"/></br>
                 </p>    
                 </p>
             </form>
