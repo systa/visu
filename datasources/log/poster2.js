@@ -12,31 +12,8 @@
 var request = require( 'request' );
 var _ = require( 'underscore' );
 
-var crypto = require('crypto');
-
 var debugLink = true;
-var debugSend = true;
-var debugParse = true;
-
-function hashCode(string) {
-   var shasum = crypto.createHash('sha1');
-   shasum.update(string);
-   return shasum.digest('base64');
-}
-
-// Creates a hash for a given string 
-// TODO check validity of hash function
-function hashCode2(string) {
-    var hash = 0, i, chr;
-    if (string.length === 0) return hash;
-    
-    for (i = 0; i < string.length; i++) {
-        chr   = string.charCodeAt(i);
-        hash  = ((hash << 5) - hash) + chr;
-        hash |= 0; // Convert to 32bit integer
-    }
-    return parseInt(hash);
-} //end hashCode()
+var debugSend = false;
 
 function parseMyTime(myTime, myDate){
    var time = new Date(myDate.substr(6,4), //year
@@ -82,7 +59,7 @@ function sendToDb( logData, source ) {
    // create an origin
    origin = { context: "kactus2", source: source};
    
-   // get every list from the issue data and add every item from them to db
+   // create artifacts and events -> pending list
    entityOrder.forEach( function ( type ) {
       if(debugSend){
          console.log("[Poster]Processing " + type);
@@ -103,11 +80,9 @@ function sendToDb( logData, source ) {
       count += list.length; // every item from the list should be added      
       type = type.substr( 0, type.length -1 ); // e.g. comments -> comment
       
-       var t = 0;
       list.forEach( function ( item ) {
          var artefact = {};
          var event = {};
-         var state_change = {};
          var meta = {};
 
          // If the item is a construct, create the artefact
@@ -134,7 +109,6 @@ function sendToDb( logData, source ) {
 
          // If the item is an event, create the event 
          else if ( type === "event" ) {
-            //event.type = type;
             event.time = parseMyTime(item.time, item.date);
             event.duration = 0;
             event.creator = item.session_id;
@@ -145,7 +119,6 @@ function sendToDb( logData, source ) {
             event.origin_id =  { context: origin.context, source: origin.source, source_id: String(item.hash) };
             
             if(item.statechange){
-               //console.log("Event is a state-change");
                event.isStatechange = true;
                event.statechange = {from: item.statechange.from, to: item.statechange.to};
             }
@@ -166,11 +139,9 @@ function sendToDb( logData, source ) {
             }else {
                 event_type = "other";
             }
-             
-            //console.log("Event ", t++, ": ", action);
-             
             event.type = event_type;
             
+            // Add the event to the pending list
             pending.push({body: event, url: eventApi, type: event_type, sent: false, item : item});
          }
 
@@ -197,7 +168,7 @@ function sendToDb( logData, source ) {
    function createNewBuffer(logData){
       var start = added;
       if(start >= pending.length){
-         return true;
+         return true; //Stops the buffer when all has been sent
       }
       
       var end = added+bufferSize; //Size is 10
@@ -211,10 +182,11 @@ function sendToDb( logData, source ) {
       }
       
       if(debugSend){
-         //console.log("start: ", start, " end: ", end);
-         //console.log("All requests: ",pending.length, " in buffer: ", buffer.length);
+         console.log("start: ", start, " end: ", end);
+         console.log("All requests: ",pending.length, " in buffer: ", buffer.length);
       }
         
+      //Buffer of 10 items
       var bufferPromise = new Promise(function(resolve, reject){
             var buffered = [];
 
@@ -235,13 +207,14 @@ function sendToDb( logData, source ) {
                      console.log("COUNT: ", count);
                   }
 
+                  // After all has been pushed to DB, start linking
                   link(logData);
                }
             });
       
       return false;
     }//end createNewBuffer()
-    
+   
    // Create a promise for each individual item
    function createPromise(obj){
             
@@ -267,15 +240,9 @@ function sendToDb( logData, source ) {
          
                added++; // one item added
                
-               var item = obj.item;
-               var type = obj.type;
-               
+               var item = obj.item;               
                if (!idToID[item.id]){
                   idToID[item.id] = body._id;
-                   
-                  if(debugLink){
-                    //console.log("[Poster]"+ type +": idToID["+item.id+"] = "+idToID[item.id]);
-                  }
                } 
                
                obj.sent = true;
@@ -297,7 +264,7 @@ function sendToDb( logData, source ) {
       // will contain objects that have the id of the construct to be linked,
       // the other object to be linked and the type of the other object (construct or event)
       var links = [];
-      
+
       // Link sessions to user
       if(debugLink){
          console.log("[Poster]Linking sessions: "+ logData.sessions.length);
@@ -318,24 +285,10 @@ function sendToDb( logData, source ) {
       _.each(events, function (event){
          links.push( { construct: idToID[event.session_id], target: idToID[event.id], type: 'event' } );
           
-        if(!idToID[event.session_id] || !idToID[event.id]){
-            console.log("[Poster]Link problem (event to session): ", event);
-        }
-          
          if(event.document) {
             links.push( { construct: idToID[event.document], target: idToID[event.id], type: 'event' } );  
-            
-                       
-            if(!idToID[event.document] || !idToID[event.id]){
-                console.log("[Poster]Link problem (event to document): ", event);
-            }
-         }
-         else if(event.page) {
+         } else if(event.page) {
             links.push( { construct: idToID[event.page], target: idToID[event.id], type: 'event' } ); 
-             
-             if(!idToID[event.page] || !idToID[event.id]){
-                console.log("[Poster]Link problem (event to page): ", event);
-            }
          }
          
       });
@@ -352,8 +305,6 @@ function sendToDb( logData, source ) {
            console.log('Error linking pages:', e);
        }
       
-       
-      //await sleep(1000);
       // Link documents to users
       if(debugLink){
          console.log("[Poster]Linking documents: "+ logData.documents.length);
@@ -369,64 +320,101 @@ function sendToDb( logData, source ) {
          console.log("Links: " + linkCount);
       }
       
-      var stop = 0;
-      // create all of the links.
-      links.forEach( function ( link ) {
-          
-          if(linked >= 0){
-          
-         if(debugLink && link.construct && link.target){
-            //console.log("construct: "+ link.construct+ " target: "+link.target, " type: "+link.type);
-             
-         }else{
-             console.log("Something went wrong:", link);
+      createNewBufferLinks();
+   
+      /* Send pending links to the DB 10 by 10 (size of buffer)
+      * Create a promise for the buffer (and one for each element of the buffer)
+      * When all is buffered, resolve the promise
+      * Then create a new buffer for sending the next 10 items
+      */
+      function createNewBufferLinks(){
+         var start = linked;
+         if(start >= linkCount){
+            return true; //Stops the buffer when all has been sent
          }
+         
+         var end = linked+bufferSize; //Size is 10
+         if(end >= links.length){
+            end = links.length;
+         }
+               
+         var buffer = [];
+         for(var requests = start; requests < end; ++requests){
+            buffer.push(links[requests]);
+         }
+         
+         if(debugLink){
+            console.log("start: ", start, " end: ", end);
+            console.log("All requests: ",links.length, " in buffer: ", buffer.length);
+         }
+         
+         //Buffer of 10 items
+         var bufferPromise = new Promise(function(resolve, reject){
+               var buffered = [];
 
-         request.put( {
-            url: artefactApi +link.construct +'/link',
-            json: true,
-            body: { id: link.target, type: link.type }
-         }, 
-                  
-         function ( err, response, body ) {
-            var dup = false;
+               buffer.forEach(function(obj){
+                  var prom = createPromiseLink(obj);
+                  buffered.push(prom);
+               });
 
-            if ( err ) {
-               console.log( err );
-               process.exit();
-            }
-            else if ( response.statusCode !== 201 && response.statusCode !== 200) {
-               console.log( response.statusCode );
-               console.log( body );
-               console.log( "Links saved: " + linked + "/" + linkCount);
-               process.exit();
-            }
-            linked++;
-             
-              if (linked > 7000 && linked % 200 === 1){
-                 console.log("[Poster]Waiting...", linked);
-                 var seconds = 2;
-                 var waitTill = new Date(new Date().getTime() + seconds * 1000);
-                 while(waitTill > new Date()){}
-             }else if (linked > 5000 && linked % 500 === 1){
-                 console.log("[Poster]Waiting...", linked);
-                 var seconds = 5;
-                 var waitTill = new Date(new Date().getTime() + seconds * 1000);
-                 while(waitTill > new Date()){}
-             }
-             
-            if ( linked === linkCount ) {
-               // all links formed we are done
-               // could call a callback here if we had one
-               if(debugLink){
-                  console.log( '[Poster]Everything saved to database.' );
+               Promise.all(buffered).then(function(val){
+                  resolve("buffer");
+               });
+            
+            }).then(function(val){
+                  var retval = createNewBufferLinks();
+                  if(retval === true){
+                     if(debugLink){
+                        console.log("ADDED: ", linked);
+                        console.log("COUNT: ", linkCount);
+                     }
+
+                     // All links have now been pushed to DB
+                  }
+               });
+         
+         return false;
+      }//end createNewBufferLinks()
+      
+      // Create a promise for each individual item
+      function createPromiseLink(link){
+               
+         return new Promise(function(resolve, reject){
+            request.put( {
+               url: artefactApi +link.construct +'/link',
+               json: true,
+               body: { id: link.target, type: link.type }
+            }, 
+                     
+            function ( err, response, body ) {
+               var dup = false;
+
+               if ( err ) {
+                  console.log( err );
+                  process.exit();
                }
-            }else{
-                console.log("[Poster]Links saved:" + linked + "/" + linkCount);
-            }
+               else if ( response.statusCode !== 201 && response.statusCode !== 200) {
+                  console.log( response.statusCode );
+                  console.log( body );
+                  console.log( "Links saved: " + linked + "/" + linkCount);
+                  process.exit();
+               }
+               linked++;
+               
+               if ( linked === linkCount ) {
+                  // all links formed we are done
+                  // could call a callback here if we had one
+                  if(debugLink){
+                     console.log( '[Poster]Everything saved to database.' );
+                  }
+               }else{
+                  console.log("[Poster]Links saved:" + linked + "/" + linkCount);
+               }
+
+               resolve("put");
+            });
          });
-      } else{ linked++;   }
-      });
+      }//end createPromise()
    }//end link()
 }
 
