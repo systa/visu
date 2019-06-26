@@ -15,7 +15,7 @@
     <link rel ="stylesheet" href="src/css/generic-vis.css">
 
     <!-- External libs -->
-    <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script defer src="https://d3js.org/d3.v3.min.js"></script>
 
     <!-- UI-Utilities -->
@@ -40,35 +40,35 @@
     
     <script type="text/javascript">
         $(function(){ USER_QUERY_UI(USER_TIMEFRAME_MAIN); });
-      </script>
+    </script>
   
-    </head>
-    <body> 
-        <div id = "queryui" class = "ui">
-            <form id ="queryform">
-                <h1>Data Filtering</h1>
-                <h2>Time range filtering</h2>
-                <p>                    
-                    Leave the fields empty if you don't want to filter data based on time range.</br>
-                    sart date: <input type = "date" name = "startDate" id ="startDate"/>
-                    start time (hh:mm): <input type = "time" name = "startTime" id = "startTime"/></br>
-                    end date: <input type = "date" name = "endDate" id ="endDate"/>
-                    end time (hh:mm): <input type = "time" name = "endTime" id = "endTime"/></br>
-                </p>
-                <h2>Data origin filtering</h2>    
-                <p>
-                    Source file: <input type = "text" name = "source" id ="source" value="log.txt"/></br>
-                </p>
-                <p>
+</head>
+<body> 
+    <div id = "queryui" class = "ui">
+        <form id ="queryform">
+            <h1>Data Filtering</h1>
+            <h2>Time range filtering</h2>
+            <p>                    
+                Leave the fields empty if you don't want to filter data based on time range.</br>
+                sart date: <input type = "date" name = "startDate" id ="startDate"/>
+                start time (hh:mm): <input type = "time" name = "startTime" id = "startTime"/></br>
+                end date: <input type = "date" name = "endDate" id ="endDate"/>
+                end time (hh:mm): <input type = "time" name = "endTime" id = "endTime"/></br>
+            </p>
+            <h2>Data origin filtering</h2>    
+            <p>
+                Source file: <input type = "text" name = "source" id ="source" value="log.txt"/></br>
+            </p>
+            <p>
 
-                <h2>User filter</h2>
-                <p>
-                    User name: <input type = "text" name = "cn" id = "constructName"/></br>
-                </p>    
-                </p>
-            </form>
-        </div>
-        <div id ="loader"></div>
-  </body>
+            <h2>User filter</h2>
+            <p>
+                User name: <input type = "text" name = "cn" id = "constructName"/></br>
+            </p>    
+            </p>
+        </form>
+    </div>
+    <div id ="loader"></div>
+</body>
 </html>
   
