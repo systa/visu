@@ -17,15 +17,16 @@ Installation
 * git clone https://github.con/coin-quin/vis-a-vis.git -b dockerized
 * docker-compose up
 
-**-> the server is now running and can be accessed at localhost:8080, but no data is loaded on it yet**
+**The server is now running and can be accessed at localhost:8080, but no data is loaded on it yet**
 
 2. Loading data source (Kactus2 logs)
 
 * cd datasources/log/
 * sudo npm install
 * node collector2.js
-* > input log.txt
 
-*/!\ the loading of the data sometimes fails during the link sending, the app might crash if not all links have been sent to the DB when opening the visu (if this occurs, try again until all links have been sent -- needs fixing)*
+Use file *log.txt* as input in the last command
+
+*/!\ The loading of the data sometimes fails during the link sending, the app might crash if not all links have been sent to the DB when opening the visu (if this occurs, try again until all links have been sent -- needs fixing)*
 
 3. You can now open the User Timeframe or Session Timeline visualizations.
