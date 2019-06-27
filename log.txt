@@ -1,136 +1,0 @@
-
-> mean-grunt@ start /home/macdo/Documents/TUT/Thesis/project/vis-a-vis
-> grunt
-
-[4mRunning "less:build" (less) task[24m
-[32m>> [39m1 stylesheet created.
-
-[4mRunning "cssmin:build" (cssmin) task[24m
-[32m>> [39m1 file created. 32 B → 24 B
-
-[4mRunning "jshint:all" (jshint) task[24m
-[32m>> [39m47 files lint free.
-
-[4mRunning "uglify:build" (uglify) task[24m
-[32m>> [39m1 file created.
-
-[4mRunning "bower_concat:all" (bower_concat) task[24m
-File [36mfrontend/dist/js/_bower.js[39m created.
-
-[4mRunning "mochaTest:test" (mochaTest) task[24m
-{ server: { socketOptions: { keepAlive: 1 } },
-  replset: { socketOptions: { keepAlive: 1 } } }
-getting schema files from fs.
-filename found:constructSchema.js
-filename found:eventSchema.js
-
-
-  Main Test Suite
-    commonAPI
-database connection established on  mongodb://localhost/visuTest
-      Common API tests
-        ✓ Should return "Api is running!"
-        ✓ Should return status code 404
-    constructAPI
-      Construct API tests
-        ✓ Should be able to query the DB for constructs (265ms)
-        ✓ Should create a new object to the DB (102ms)
-        ✓ Shouldn't be able to post duplicate constructs (61ms)
-        ✓ Should create new objects to the DB from list
-        ✓ Shouldn't create duplicate set of constructs to the DB from list
-        ✓ Shouldn't add duplicate constructs when creating constructs from list
-        ✓ Should be able to update the constructs
-        ✓ Should be able to delete the constructs
-        ✓ Should be able to link constructs and events (49ms)
-        ✓ Should be able to link constructs and statechanges (60ms)
-        ✓ Should be able to link constructs and constructs
-        ✓ Should be able to get by source
-        ✓ Should be able to get by source id
-        ✓ Should be able to get related constructs
-        ✓ Should be able to get related events
-        ✓ Should be able to get related statechanges
-        ✓ Should be able to query the DB for constructs with multiple filters
-        ✓ Should be able to query the DB for constructs with events and statechanges within time range
-        ✓ Should be able to query the DB for constructs with events within time range and return empty array
-        ✓ Should be able to query the DB for constructs with free text
-        ✓ Should be able to query the DB for constructs filtering with origin id context
-        ✓ Should be able to query the DB for constructs filtering with origin id free text search
-        ✓ Should be able to query the DB for constructs filtering with time range and free text search (156ms)
-    eventAPI
-      Event API tests
-        ✓ Should be able to query the DB for events
-        ✓ Should create a new event to the DB
-        ✓ Shouldn't be able to post duplicate events
-        ✓ Should create new events to the DB from list
-        ✓ Shouldn't create duplicate set of events to the DB from list
-        ✓ Shouldn't create duplicate events when adding events to the DB from list
-        ✓ Should be able to update the event
-        ✓ Should be able to delete an event
-        ✓ Should be able to get by source
-        ✓ Should be able to get by source id
-        ✓ Should be able to get related constructs
-        ✓ Should be able to query the DB for events with multiple filters
-        ✓ Should be able to query the DB for events within time range and other free filter.
-        ✓ Should be able to query the DB for events within time range and return empty array
-        ✓ Should be able to query the DB for events with free text
-        ✓ Should be able to query the DB for events filtering with origin id context
-        ✓ Should be able to query the DB for events filtering with origin id free text search
-        ✓ Should be able to query the DB for events filtering with time range and free text search
-        ✓ Should create a new statechange event to the DB
-        ✓ Shouldn't be able to post duplicate statechange events
-    origin id
-      Origin tests
-        ✓ Should get valid origin_id when construct added has valid origin_id
-        ✓ Should get valid origin_id when event added has valid origin_id
-{ [ValidationError: Construct validation failed: origin_id.0.source_id: Path `source_id` is required.]
-  errors: 
-   { 'origin_id.0.source_id': 
-      { [ValidatorError: Path `source_id` is required.]
-        message: 'Path `source_id` is required.',
-        name: 'ValidatorError',
-        properties: [Object],
-        kind: 'required',
-        path: 'source_id',
-        value: undefined,
-        reason: undefined,
-        '$isValidatorError': true } },
-  _message: 'Construct validation failed',
-  name: 'ValidationError' }
-        ✓ Should not be able to create construct with invalid source_id field
-{ [ValidationError: Event validation failed: origin_id.0.source_id: Path `source_id` is required.]
-  errors: 
-   { 'origin_id.0.source_id': 
-      { [ValidatorError: Path `source_id` is required.]
-        message: 'Path `source_id` is required.',
-        name: 'ValidatorError',
-        properties: [Object],
-        kind: 'required',
-        path: 'source_id',
-        value: undefined,
-        reason: undefined,
-        '$isValidatorError': true } },
-  _message: 'Event validation failed',
-  name: 'ValidationError' }
-        ✓ Should not be able to create event with invalid source_id field
-after all tests
-
-test DB dropped
-
-
-  49 passing (2s)
-
-
-[4mRunning "concurrent:tasks" (concurrent) task[24m
-    [4mRunning "watch" task[24m
-    Waiting...
-    [4mRunning "nodemon:dev" (nodemon) task[24m
-    [33m[nodemon] 1.18.4[39m
-    [33m[nodemon] to restart at any time, enter `rs`[39m
-    [33m[nodemon] watching: *.*[39m
-    [32m[nodemon] starting `node server.js`[39m
-    { server: { socketOptions: { keepAlive: 1 } },
-      replset: { socketOptions: { keepAlive: 1 } } }
-    getting schema files from fs.
-    filename found:constructSchema.js
-    filename found:eventSchema.js
-    database connection established on  mongodb://localhost/visu
