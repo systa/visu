@@ -9,62 +9,66 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <title>Session Timeframe</title>
-    <link rel ="stylesheet" href="src/css/generic-vis.css">
 
-    <!-- External libs -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://d3js.org/d3.v3.min.js"></script>
+<head>
+  <meta charset="UTF-8">
+  <title>Session Timeframe</title>
+  <link rel="stylesheet" href="src/css/generic-vis.css">
 
-    <!-- UI-Utilities -->
-    <script type="text/javascript" src="../src/js/ui-utilities/custom_query_ui.js"></script>
-    <script type="text/javascript" src="../src/js/ui-utilities/session_template.js"></script>
-    
-    <!-- Main visualization module -->
-    <script type="text/javascript" src="../src/js/visualizations/session_timeframe_main.js"></script>
-    
-    <!-- Templates -->
-    <script type="text/javascript" src="../src/js/vis-templates/session_timeframe.js"></script>
-    <script type="text/javascript" src="../src/js/vis-templates/time_selector.js"></script>
-    
-    <!-- Data processors -->
-    <script type="text/javascript" src="../src/js/processors/session_timeframe_dataprocessor.js"></script>
-    <script type="text/javascript" src="../src/js/processors/processor_utilities.js"></script>
-    
-    <!-- Data queries -->
-    <script type="text/javascript" src="../src/js/dataquery/dataquery.js"></script>
-    <script type="text/javascript" src="../src/js/dataquery/parse_parameters.js"></script>
-    
-    <script type="text/javascript">
-      $(function(){ CUSTOM_QUERY_UI(SESSION_TIMEFRAME_MAIN); });
-    </script>
+  <!-- External libs -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://d3js.org/d3.v3.min.js"></script>
 
-  </head>
-  <body> 
-        <div id = "queryui" class = "ui">
-            <form id ="queryform">
-                <h1>Data Filtering</h1>
-                <h2>Time range filtering</h2>
-                <p>
-                    Leave the fields empty if you don't want to filter data based on time range.</br>
-                    sart date: <input type = "date" name = "startDate" id ="startDate"/>
-                    start time (hh:mm): <input type = "time" name = "startTime" id = "startTime"/></br>
-                    end date: <input type = "date" name = "endDate" id ="endDate"/>
-                    end time (hh:mm): <input type = "time" name = "endTime" id = "endTime"/></br>
-                </p>
-                <h2>Data origin filtering</h2>
-                <p>
-                    Leave the fields empty if you don't want to filter data based on origin id.</br>
-                    Source file: <input type = "text" name = "source" id ="source" value="log.txt"/></br>
-                    Data id in source system: <input type = "text" name = "source_id" id ="source_id"/></br>
-                </p>
-                <p>    
-                </p>
-            </form>
-        </div>
-        <div id ="loader"></div>
-  </body>
+  <!-- UI-Utilities -->
+  <script type="text/javascript" src="../src/js/ui-utilities/custom_query_ui.js"></script>
+  <script type="text/javascript" src="../src/js/ui-utilities/session_template.js"></script>
+
+  <!-- Main visualization module -->
+  <script type="text/javascript" src="../src/js/visualizations/session_timeframe_main.js"></script>
+
+  <!-- Templates -->
+  <script type="text/javascript" src="../src/js/vis-templates/session_timeframe.js"></script>
+  <script type="text/javascript" src="../src/js/vis-templates/time_selector.js"></script>
+
+  <!-- Data processors -->
+  <script type="text/javascript" src="../src/js/processors/session_timeframe_dataprocessor.js"></script>
+  <script type="text/javascript" src="../src/js/processors/processor_utilities.js"></script>
+
+  <!-- Data queries -->
+  <script type="text/javascript" src="../src/js/dataquery/dataquery.js"></script>
+  <script type="text/javascript" src="../src/js/dataquery/parse_parameters.js"></script>
+
+  <script type="text/javascript">
+    $(function () {
+      CUSTOM_QUERY_UI(SESSION_TIMEFRAME_MAIN);
+    });
+  </script>
+
+</head>
+
+<body>
+  <div id="queryui" class="ui">
+    <form id="queryform">
+      <h1>Data Filtering</h1>
+      <h2>Time range filtering</h2>
+      <p>
+        Leave the fields empty if you don't want to filter data based on time range.</br>
+        sart date: <input type="date" name="startDate" id="startDate" />
+        start time (hh:mm): <input type="time" name="startTime" id="startTime" /></br>
+        end date: <input type="date" name="endDate" id="endDate" />
+        end time (hh:mm): <input type="time" name="endTime" id="endTime" /></br>
+      </p>
+      <h2>Data origin filtering</h2>
+      <p>
+        Leave the fields empty if you don't want to filter data based on origin id.</br>
+        Source file: <input type="text" name="source" id="source" value="log.txt" /></br>
+        Data id in source system: <input type="text" name="source_id" id="source_id" /></br>
+      </p>
+      <p>
+      </p>
+    </form>
+  </div>
+  <div id="loader"></div>
+</body>
+
 </html>
-  
