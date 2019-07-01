@@ -13,22 +13,56 @@
 	<meta charset="UTF-8">
 	<title>VISDOM - visu demo</title>
 
-	<link rel="stylesheet" href="dist/css/style.min.css">
+	<link rel="stylesheet" href="../src/css/index.css">
 
-	<script src="dist/js/app.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+	<script src="../src/js/angular/indexApp.js"></script>
 </head>
 
 <body>
-	The visu application is running. This is a work in progress.
-	<br>
-	<br><a href="./issue-timeline">issue-timeline</a>
-	<br><a href="./amount-timeline">amount-timeline</a>
-	<br>
-	<br><a href="./session-timeframe">session-timeframe</a>
-	<br><a href="./user-timeframe">user-timeframe</a>
-	<br>
+	
+	<div class="titleframe">
+		<h1>VISU Application</h1>
+		<p>A dashboard prototype for the ITEA 3 <a class="a2" href="https://itea3.org/project/visdom.html"> VISDOM Project</a>.</p>
+	</div>
+
+	<div class="wrapper">
+		<div class="visuframe">
+			<h3>Issue Timeline visualization</h3>
+			<p>Displays the issue-management data of projects from Github, through a timeline of the issues.</p>
+			<br>
+			<a class="a3" href="./issue-timeline">Visualize</a>
+		</div>
+	</div>
+	
+	<div class="wrapper">
+		<div class="visuframe">
+			<h3>Amount Timeline visualization</h3>
+			<p>Displays something, maybe.</p>
+			<br>
+			<a class="a3" href="./amount-timeline">Visualize</a>
+		</div>
+	</div>
+	
+	<div class="wrapper">
+		<div class="visuframe">
+			<h3>Session Timeframe visualization</h3>
+			<p>Displays the usage-data from Kactus2 logs, through a timeline of all user-sessions.</p>
+			<br>
+			<a class="a3" href="./session-timeframe">Visualize</a>
+		</div>
+	</div>
+	
+	<div class="wrapper">
+		<div class="visuframe">
+			<h3>User Timeframe visualization</h3>
+			<p>Displays the usage-data from Kactus2 logs, through a detailed timeline of each user-session.</p>
+			<br>
+			<a class="a3" href="./user-timeframe">Visualize</a>
+		</div>
+	</div>
+
 </body>
 
 </html>

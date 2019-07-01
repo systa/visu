@@ -1,0 +1,63 @@
+/*
+* Copyright (c) TUT Tampere University of Technology 2014-2015.
+* All rights reserved.
+* This software has been developed in Tekes-TIVIT project Need-for-Speed.
+* All rule set in consortium agreement of Need-for-Speed project apply.
+*
+* Main authors: Antti Luoto, Anna-Liisa Mattila, Henri Terho
+*/
+
+body{
+    background-color : rgb(255, 255, 255);
+    padding: 0px;
+    outline: 0px;
+    margin : 0px;
+    font-family:"Lucida Console", Monaco, Monospace;
+    font-size: 1.2em;
+    text-align: center;
+}
+
+.a2{
+    color: azure;
+}
+
+.a3{
+    background-color : rgb(16, 53, 156);
+    color: azure;
+    padding: 10px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.titleframe{
+    background-color : rgb(0, 27, 100);
+    color: azure;
+    display: inline-block;
+    position: relative;
+    width: 100%;
+}
+
+.wrapper{
+    position: relative;
+    text-align: center;
+}
+.visuframe{
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    height: 200px;
+
+    background-position: 0 0;
+    background-size: 200% 100%;
+    transition: all .25s ease-in;
+    background-image: linear-gradient(to right,
+                                      transparent,
+                                      transparent 50%,
+                                      #86a6fb 50%,
+                                      #86a6fb);
+}
+
+.visuframe:hover{
+    background-position: 100% 0;
+    color:azure;
+}
