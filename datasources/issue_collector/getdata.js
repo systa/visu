@@ -77,9 +77,6 @@ function getData( baseRequest, api, userParams, callback ) {
       getItems( baseRequest, api, 'buildHistorys', api.buildHistorys, userParams, result, status, callback );
    }
 
-
-
-
 }
 
 // gets one type of items from the source
@@ -129,8 +126,8 @@ function getItems( baseRequest, api, type, itemDesc, userParams, result, status,
       if ( err || response.statusCode !== 200 ) {
           
          console.log( err );
-         //console.log( response.statusCode );
-         console.log( body );
+         console.log( response.statusCode + " from " + url);
+         console.log( body + "at " + type);
          // todo: probably should call the callback with the error
          return;
       }
@@ -236,7 +233,7 @@ function getItems( baseRequest, api, type, itemDesc, userParams, result, status,
             // add the items to the list for that type
             result[type] = result[type].concat( items );
             status.count--; // one resource now completely processed
-            //console.log(status.count);
+            console.log(status.count);
             if ( status.count === 0 ) {
                // every resource processed
                // create additional events from the milestones and issues according to the api description

@@ -12,8 +12,8 @@
 var request = require( 'request' );
 var _ = require( 'underscore' );
 
-var debugLink = false;
-var debugSend = false;
+var debugLink = true;
+var debugSend = true;
 var debugParse = true;
 
 
@@ -28,6 +28,10 @@ function parseJenkinsTime(jenkinsTime){
 // issueData: object containing lists for different entity types (issue, comment, milestone)
 // origin: contains the source and context used in origin_id
 function sendToDb( issueData, origin ) {
+    if(debugSend){
+        console.log("Data sending from ", origin);
+    }
+
    // the api urls
    var config = require('./config.json');
    var serverUrl = config.serverUrl;

@@ -20,7 +20,7 @@ var _ = require( 'underscore' );
 // the module that actually gets the data
 var getData = require( './getdata.js' );
 // module that sends the data to db
-var poster = require( './poster' );
+var poster = require( './poster.js' );
 
 // first ask what issue source the user wants to use
 // find the sources that are available
@@ -221,8 +221,8 @@ function gotOrigin( err, origin ) {
         // print debug information how many items of each type we got and what is the last item
         console.log( '[Collector]Issue management data fetched from source.' );
         _.each( result, function ( value, key ) {
-            console.log( value.length +' ' +key +' last of which is:');
-            console.log( value[value.length -1] );
+            console.log("[Collector]" + value.length +' ' +key +' last of which is:');
+            console.log("[Collector]" + value[value.length -1] );
         });
 
         // send the issue data to the db
