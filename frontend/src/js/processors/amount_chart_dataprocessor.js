@@ -7,6 +7,8 @@
 * Main authors: Antti Luoto, Anna-Liisa Mattila, Henri Terho
 */
 
+var debug = true;
+
 //Data processor for amount timeline chart
 //Filters can be used to query data based on e.g. origin or time frame. NOT YET IMPLEMENTED!
 //mapping is to determine which field of construct is used as a Y axis index values
@@ -16,7 +18,7 @@ var AMOUNT_CHART_PROCESSOR = function(par){
     
     var p = par || {};
     var _states = p.states !== undefined ? p.states : {};
-    
+  
     if(!_states){
         _states = {};
     }
@@ -178,6 +180,7 @@ var AMOUNT_CHART_PROCESSOR = function(par){
         
         var startEvents = [];
         var endEvents = [];
+        var interEvents = [];
         
         var start = false;
         var end = false;
@@ -187,10 +190,18 @@ var AMOUNT_CHART_PROCESSOR = function(par){
         //To ensure that one construct has only one start and only one end event
         var start_helper = [];
         var end_helper = [];
+
+        if (debug){
+            console.log("[amout_chart_processor]Official tates:", _states);
+        }
         
         events.forEach(function(ev){
             //Ignoring duplicates
             if(identity_helper.indexOf(ev._id) === -1){
+                if (debug){
+                    //console.log("[amout_chart_processor]event:", ev);
+                }
+
                 identity_helper.push(ev._id);
                 
                 var time = new Date(ev.time).getTime();
@@ -208,14 +219,19 @@ var AMOUNT_CHART_PROCESSOR = function(par){
                         continue;
                     }
 
+                    if (ev.isStatechange){
+                        if(ev.state === "" || ev.state === null || ev.state === undefined || ev.state === false)
+                            //ev.state = ev.statechange.from;
+                            ev.state = ev.type;
+                    }
+
                     //storing states for calculating lifespans
-                    if(ev.state !== "" && ev.state !== null &&
-                    ev.state !== undefined && ev.state !== false){
+                    if(ev.state !== "" && ev.state !== null && ev.state !== undefined && ev.state !== false){
                         
                         var trimmedState = ev.state.replace(/\s/g,'');
                         var tmp = {};
                         
-                        if(_states.start.indexOf(trimmedState) !== -1){
+                        if(_states.start.indexOf(trimmedState) !== -1){ //If it's a starting state
                             if(start_helper.indexOf(ev.related_constructs[i]) === -1){
                                 tmp = cloneEvent(ev);
                                 tmp.rowId = ev.related_constructs[i].toString();
@@ -224,12 +240,24 @@ var AMOUNT_CHART_PROCESSOR = function(par){
                             }
                             
                         }
-                        else if(_states.resolution.indexOf(trimmedState) !== -1){
+                        else if(_states.resolution.indexOf(trimmedState) !== -1){ //If it's a resolution state
                             if(end_helper.indexOf(ev.related_constructs[i]) === -1){
                                 tmp = cloneEvent(ev);
                                 tmp.rowId = ev.related_constructs[i].toString();
                                 endEvents.push(tmp);
                                 end_helper.push(ev.related_constructs[i]);
+                            }   
+                        }
+                        else if(_states.intermediate.indexOf(trimmedState) !== -1){ //If it's an intermediate state
+                            if(inter_helper.indexOf(ev.related_constructs[i]) === -1){
+                                tmp = cloneEvent(ev);
+                                tmp.rowId = ev.related_constructs[i].toString();
+                                interEvents.push(tmp);
+                                inter_helper.push(ev.related_constructs[i]);
+
+                                if (debug) {
+                                    console.log("[amout_chart_processor]Other event:", ev);
+                                }
                             }   
                         }
                     }
@@ -248,6 +276,10 @@ var AMOUNT_CHART_PROCESSOR = function(par){
     };
     
     var parseData = function(events){
+        if (debug) {
+            console.log("[amout_chart_processor]Data for processor:", events);
+        }
+
         //object for the processed data
         var data = {};
         
@@ -255,6 +287,9 @@ var AMOUNT_CHART_PROCESSOR = function(par){
         //it also adds property rowID to constructs in _constructs list!
         
         var eventData = parseEvents(events);
+        if (debug) {
+            console.log("[amout_chart_processor]Parsed events:", eventData);
+        }
             
         data.timeframe = [new Date(eventData.timeframe[0].getFullYear(), eventData.timeframe[0].getMonth(), eventData.timeframe[0].getDate()),
             new Date(eventData.timeframe[1].getFullYear(), eventData.timeframe[1].getMonth(), eventData.timeframe[1].getDate()+1)];

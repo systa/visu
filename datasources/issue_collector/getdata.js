@@ -127,7 +127,7 @@ function getItems( baseRequest, api, type, itemDesc, userParams, result, status,
           
          console.log( err );
          console.log( response.statusCode + " from " + url);
-         console.log( body + "at " + type);
+         console.log( body, "at " + type);
          // todo: probably should call the callback with the error
          return;
       }

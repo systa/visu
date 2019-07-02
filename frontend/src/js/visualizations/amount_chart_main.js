@@ -7,6 +7,8 @@
 * Main authors: Antti Luoto, Anna-Liisa Mattila, Henri Terho
 */
 
+var debug = true;
+
 var AMOUNT_CHART_MAIN = function(par){
 //-----------------------------------------
 //  DRAWING RELATED STUFF
@@ -63,6 +65,10 @@ var AMOUNT_CHART_MAIN = function(par){
     
     //Initializes the chart template and draws the visualization.
     var initCharts = function(data, timeframe){
+
+        if (debug) {
+            console.log("[amout_chart_main]Data for initCharts:", data);
+        }
         
         var elements = _layout.createLayout([
             {
@@ -116,6 +122,10 @@ var AMOUNT_CHART_MAIN = function(par){
 
     //parsing the parameters from user to query data and select timeframe
     var p = par || {};
+
+    if (debug) {
+        console.log("[amout_chart_main]Init data:", p);
+    }
     
     var _mapping = p.mapping !== undefined ? p.mapping : false;
     

@@ -106,9 +106,13 @@ var DEMO_QUERY_UI = function(states, callback){
         }
         mapping.rowIdIsFromOrigin = rowIdIsFromOrigin;
         
-        if(_states){
-            /*var initial = parseStates(document.getElementById("initial").value);
-            var intermediate = parseStates(document.getElementById("intermediate").value);*/
+        if(_states === "full"){
+            var initial = parseStates(document.getElementById("initial").value);
+            var intermediate = parseStates(document.getElementById("intermediate").value);
+            var resolution = parseStates(document.getElementById("resolution").value);
+            mapping.states = {resolution : resolution, start : initial, intermediate : intermediate};
+        }
+        else if(_states === "limited"){
             var resolution = parseStates(document.getElementById("resolution").value);
             mapping.states = {resolution : resolution};
         }
