@@ -227,6 +227,10 @@ var UserTimeframe = function (par) {
         return _tooltip.style("visibility", "visible");
     };
 
+    var onMouseMove = function(data){
+        return _tooltip.style("top", (event.pageY-30)+"px").style("left",(event.pageX+15)+"px");
+    };
+
     var onMouseOut = function (data) {
         return _tooltip.style("visibility", "hidden");
         /*var domain = _timeScale.domain();
@@ -332,7 +336,8 @@ var UserTimeframe = function (par) {
             .attr('y', getY)
             .attr('height', _rowHeight)
             .on("mouseover", onMouseOver)
-            .on("mouseout", onMouseOut);
+            .on("mouseout", onMouseOut)
+            .on("mousemove", onMouseMove);
 
         //Displayed names on the left
         _names.attr('x', 2);
@@ -357,7 +362,8 @@ var UserTimeframe = function (par) {
             return str;
         });
         _names.on("mouseover", onMouseOver)
-            .on("mouseout", onMouseOut);
+            .on("mouseout", onMouseOut)
+            .on("mousemove", onMouseMove);
 
         //construct lifespans
         _lifespans.attr('x1', getLpStart)
@@ -366,7 +372,8 @@ var UserTimeframe = function (par) {
             .attr('y2', getLineY)
             .attr('stroke', pub.getStateColor)
             .on("mouseover", onMouseOver)
-            .on("mouseout", onMouseOut);
+            .on("mouseout", onMouseOut)
+            .on("mousemove", onMouseMove);
 
         //Event circles
         _events.attr('fill', pub.getEventColor)
@@ -374,7 +381,8 @@ var UserTimeframe = function (par) {
             .attr('cy', getLineY) //Y coordinate
             .attr('r', _rowHeight * 0.33 * 0.5) //Ray of event circle
             .on("mouseover", onMouseOver)
-            .on("mouseout", onMouseOut);
+            .on("mouseout", onMouseOut)
+            .on("mousemove", onMouseMove);
 
         //x-axis
         _xAxisGraphic.attr("transform", "translate(0," + (_margins.top) + ")")
