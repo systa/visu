@@ -75,7 +75,8 @@ var changeEvent = {
 // describes the gitlab api
 var api = {
    // the part of the url that is the same for all requests
-   baseUrl: 'https://gitlab.com/api/v3/',
+   // baseUrl: 'https://gitlab.com/api/v4/',
+   baseUrl: 'https://course-gitlab.tut.fi/api/v4/', 
    // list of the authentication methods gitlab supports
    authentication: [ 'oauth2', 
       // gitlab has its own authentication method that uses a private authentication token
@@ -124,7 +125,7 @@ var api = {
          comments: {
             path: '/projects/{id}/issues/{issue_id}/notes',
             // the issue_id parameter from the url comes from the issue i.e. the comments parent resource
-            parentParams: { issue_id: '$.id' },
+            parentParams: { issue_id: '$.iid' },
             items: '',
             item: issueComment
          }
