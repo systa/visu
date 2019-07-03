@@ -24,8 +24,12 @@ router.get('/amount-timeline', function(req, res) {
   res.sendfile('./frontend/views/amount-timeline.html');
 });
 
-router.get('/custom-timeline', function(req, res) {
-  res.sendfile('./frontend/views/custom-timeline.html');
+router.get('/backlog-timeline', function(req, res) {
+  res.sendfile('./frontend/views/backlog-timeline.html');
+});
+
+router.get('/duration-timeline', function(req, res) {
+  res.sendfile('./frontend/views/duration-timeline.html');
 });
 
 router.get('/session-timeframe', function(req, res) {
