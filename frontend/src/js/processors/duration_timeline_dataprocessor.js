@@ -7,6 +7,8 @@
 * Main authors: Antti Luoto, Anna-Liisa Mattila, Henri Terho
 */
 
+var debug = false;
+
 //Data processor for duration timeline chart
 //Filters can be used to query data based on e.g. origin or time frame. NOT YET IMPLEMENTED!
 //mapping is to determine which field of construct is used as a Y axis index values
@@ -15,10 +17,14 @@
 var DURATION_TIMELINE_PROCESSOR = function(par){
     
     var p = par || {};
+
+    if (debug){
+        console.log("[dataprocessor]Processor parameters:", p);
+    }
     
     var _rowId = p.rowId !== undefined ? p.rowId : "_id";
     var _fromOrigin = p.rowIdIsFromOrigin !== undefined ? p.rowIdIsFromOrigin : false;
-    var _anonymize = p.anonymize !== undefined ? p.anonymize : false;
+    var _anonymize = p.anonymize !== undefined ? p.anonymize : true;
     var _astring = p.astring !== undefined ? p.astring : "";
     
     //Splitting the Y-index mapping from . so we can do the mapping properly
@@ -186,6 +192,10 @@ var DURATION_TIMELINE_PROCESSOR = function(par){
     };
     
     var parseData = function(constructs, events){
+        if (debug){
+            console.log("[dataprocessor]Input data:", constructs, events);
+        }
+
         //object for the processed data
         var data = {};
         
@@ -205,6 +215,10 @@ var DURATION_TIMELINE_PROCESSOR = function(par){
         var correction = (tmp+1000)%1000;
         eventData.timeframe[1] = tmp+(1000-correction);
         data.timeframe = eventData.timeframe;
+
+        if (debug){
+            console.log("[dataprocessor]Parsed data:", data);
+        }
         
         //giving the data to who needs it
         return data;

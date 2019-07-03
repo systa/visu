@@ -7,6 +7,8 @@
 * Main authors: Antti Luoto, Anna-Liisa Mattila, Henri Terho
 */
 
+var debug = false;
+
 //Stacked timeline visualization component
 /*PARAMETERS:
     svg         : svg element where the visualization is rendered wrapped with d3
@@ -47,6 +49,9 @@ var DurationTimeline = function(par){
     //status data can be left out by setting the parameter to false or passing an empty array.
     var _stateData = p.statuses !== undefined ? p.statuses : false;
     
+    if (debug){
+        console.log("[duration_timeline]Data:", _durationData, _stateData);
+    }
     
     var _range = 0;
     var _timeScale;
@@ -107,6 +112,10 @@ var DurationTimeline = function(par){
     //Helper function for data mapping
     //maps data.state to color scale used.
     var getColor = function(data){
+        if (debug){
+            console.log("[duration_timeline]colordata:", data);
+        }
+
         if(data.isStatechange){
             return _colorScale(data.statechange.to);
         }
@@ -160,6 +169,7 @@ var DurationTimeline = function(par){
     //The return value is the width of runtime bar
     var getWidth = function(data){
 
+        // Only show events that have a duration (it's called duration timeline for a reason)
         if(data.duration === 0){
             return 0;
         }

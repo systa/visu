@@ -96,7 +96,7 @@ var DURATION_TIMELINE_MAIN = function(par){
             timeframe : timeframe,
             ids : data.ids,
             data : data.events,
-            colors : ["PASS", "FAIL"],
+            colors : data.states,
             linear : false
         });
 
