@@ -75,6 +75,7 @@ var CUSTOM_QUERY_UI = function (callback) {
 
     var _button = document.createElement("button");
     var _text = document.createTextNode("Visualize");
+    
     var _class = document.createAttribute("class");  
     _class.value = "btn btn-primary btn-lg btn-block";
     _button.setAttributeNode(_class);

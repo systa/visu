@@ -53,68 +53,76 @@
 
   <div id="queryui" class="container">
     <div class="page-header">
-      <h1>User Timeframe visualization</h1>
+      <h1>Session Timeframe visualization</h1>
       <p>Filter the data querried from the database.</p>
     </div>
 
     <div class="alert alert-warning alert-dismissible fade in">
       <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-      <span class="glyphicon glyphicon-alert"></span> The <strong>time range</strong> and <strong>user</strong>
+      <span class="glyphicon glyphicon-alert"></span> The <strong>time range</strong> and <strong>source id</strong>
       filtering are not available at the moment.
     </div>
 
     <form id="queryform" class="form-horizontal">
-      <div class="col-sm-6">
-        <h2>Time range filtering</h2>
-        <p>Leave the fields empty if you don't want to filter data based on time range.</p>
-        <div class="form-group">
-          <label for="startDate" class="col-sm-3 control-label">Start date</label>
-          <div class="col-sm-6">
-            <input class="form-control" type="date" name="startDate" id="startDate" disabled />
-          </div>
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <h1>Data Filtering</h1>
+          <p>Leave the fields empty if you don't want to filter data based on time, origin or other attributes.</p>
         </div>
-        <div class="form-group">
-          <label for="startTime" class="col-sm-3 control-label">Start time</label>
+        <div class="panel-body">
           <div class="col-sm-6">
-            <input class="form-control" type="time" name="startTime" id="startTime" disabled /></br>
+            <h2>Time range filtering</h2>
+            <p>Leave the fields empty if you don't want to filter data based on time range.</p>
+            <div class="form-group">
+              <label for="startDate" class="col-sm-3 control-label">Start date</label>
+              <div class="col-sm-6">
+                <input class="form-control" type="date" name="startDate" id="startDate" disabled />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="startTime" class="col-sm-3 control-label">Start time</label>
+              <div class="col-sm-6">
+                <input class="form-control" type="time" name="startTime" id="startTime" disabled /></br>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="endDate" class="col-sm-3 control-label">End date</label>
+              <div class="col-sm-6">
+                <input class="form-control" type="date" name="endDate" id="endDate" disabled />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="endTime" class="col-sm-3 control-label">End time</label>
+              <div class="col-sm-6">
+                <input class="form-control" type="time" name="endTime" id="endTime" disabled /></br>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <label for="endDate" class="col-sm-3 control-label">End date</label>
-          <div class="col-sm-6">
-            <input class="form-control" type="date" name="endDate" id="endDate" disabled />
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="endTime" class="col-sm-3 control-label">End time</label>
-          <div class="col-sm-6">
-            <input class="form-control" type="time" name="endTime" id="endTime" disabled /></br>
-          </div>
-        </div>
-      </div>
 
-      <div class="col-sm-6">
-        <h2>Data origin filtering</h2>
-        <div class="form-group">
-          <label for="source" class="col-sm-3 control-label">Source</label>
-          <div class="col-sm-9">
-            <input class="form-control" type="text" name="source" id="source" value="log.txt" /></br>
-          </div>
-        </div>
+          <div class="col-sm-6">
+            <h2>Data origin filtering</h2>
+            <div class="form-group">
+              <label for="source" class="col-sm-3 control-label">Source</label>
+              <div class="col-sm-9">
+                <input class="form-control" type="text" name="source" id="source" value="log.txt" /></br>
+              </div>
+            </div>
 
-        <h2>User filtering</h2>
-        <div class="form-group">
-          <label for="constructName" class="col-sm-3 control-label">User</label>
-          <div class="col-sm-9">
-            <input class="form-control" type="text" name="cn" id="constructName" disabled /></br>
+            <h2>User filtering</h2>
+            <div class="form-group">
+              <label for="constructName" class="col-sm-3 control-label">User</label>
+              <div class="col-sm-9">
+                <input class="form-control" type="text" name="cn" id="constructName" disabled /></br>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
     </form>
-
-    <div class="col-sm-12" id="buttonplacer"></div>
+  </div>
+  <div id="buttonplacer"></div>
 
   </div>
+
 
   <div id="loader"></div>
 </body>
