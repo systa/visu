@@ -23,7 +23,7 @@ var ISSUE_TIMELINE_MAIN = function(par){
     var _height = 0;
     
     //Div positioning variables
-    var _containerMargins = {top:10, left:60, right:60};
+    var _containerMargins = {top:60, left:60, right:60};
     var _containerWidth = 0;
     
     //The chart objects will be here
@@ -31,7 +31,8 @@ var ISSUE_TIMELINE_MAIN = function(par){
     var _timeSelector = false;
     
     //Initializing the module that helps with cerating the HTML and SVG elements
-    var _layout = DEMO_TEMPLATE();
+    var _parent = document.getElementById("visuParent");
+    var _layout = DEMO_TEMPLATE({parent: _parent});
     
     //Function for resize event
     var onResize = function(){

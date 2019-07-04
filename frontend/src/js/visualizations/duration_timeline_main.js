@@ -23,7 +23,7 @@ var DURATION_TIMELINE_MAIN = function(par){
     var _height = 0;
     
     //Div positioning variables
-    var _containerMargins = {top:10, left:60, right: 60};
+    var _containerMargins = {top:60, left:60, right:60};
     var _containerWidth = 0;
     
     //The chart objects will be here

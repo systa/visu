@@ -33,7 +33,7 @@ var USER_TIMEFRAME_MAIN = function (par) {
 
     //Div positioning variables
     var _containerMargins = {
-        top: 10,
+        top: 60,
         left: 60,
         right: 60
     };

@@ -16,8 +16,8 @@ var DEMO_TEMPLATE = function(mpar){
     var _containerId = _mainParameters.id !== undefined ? _mainParameters.id : "container";
     var _containerParent = _mainParameters.parent !== undefined ? _mainParameters.parent : document.body;
     var _hidden = _mainParameters.hidden !== undefined ? _mainParameters.hidden : true;
-    
-    var _container = document.createElement("div");
+    var _container = _mainParameters.container  !== undefined ? _mainParameters.container : document.createElement("div");
+
     _container.className = _mclassName;
     _container.id = _containerId;
     if(_hidden){
@@ -26,6 +26,7 @@ var DEMO_TEMPLATE = function(mpar){
     else{
         _container.style.display = "block";
     }
+
     
     //Canvas for text width calculus
     var _canvas = document.createElement('canvas');
