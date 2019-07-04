@@ -7,8 +7,6 @@
 * Main authors: Antti Luoto, Anna-Liisa Mattila, Henri Terho
 */
 
-var debug = false;
-
 //Data processor for duration timeline chart
 //Filters can be used to query data based on e.g. origin or time frame. NOT YET IMPLEMENTED!
 //mapping is to determine which field of construct is used as a Y axis index values
@@ -58,6 +56,7 @@ var DURATION_TIMELINE_PROCESSOR = function(par){
     //parseConstructs function --> parseConstructs NEEDS TO BE CALLED BEFORE THIS FUNCTION (PRECONDITION)!
     var parseEvents = function(events, constructMap){
         var evs = [];
+        var types = [];
         var states = [];
         var start = false;
         var end = false;
@@ -77,6 +76,10 @@ var DURATION_TIMELINE_PROCESSOR = function(par){
                 }
                 if(et > end || end === false){
                     end = et;
+                }
+
+                if(types.indexOf(ev.type) === -1){
+                    types.push(ev.type);
                 }
                 
                 for(var i = 0; i < ev.related_constructs.length; ++i){
@@ -120,7 +123,7 @@ var DURATION_TIMELINE_PROCESSOR = function(par){
             }
         }
         
-        return {events:evs, timeframe:[start, end], ids : ids, states: states};
+        return {events:evs, timeframe:[start, end], ids : ids, states: states, types: types};
     };
     
     //Parses construct data and state option data from constructs.
@@ -132,8 +135,13 @@ var DURATION_TIMELINE_PROCESSOR = function(par){
         var anonymized = [];
         var identity_helper = [];
 
+        var processedConstructs = [];
+
         var lenId = 0;
         var longestId = "";
+
+        var lenType = 0;
+        var longestType = "";
 
         var counter = 1;
         //The helper data structure is for linking construct origin_id.source_id to events
@@ -181,14 +189,22 @@ var DURATION_TIMELINE_PROCESSOR = function(par){
                     construct.rowId = id;
                 }
                 constructHelpper[construct._id.toString()] = construct;
+                processedConstructs.push(construct);
+                if(construct.type.length > lenType){
+                    lenType = construct.type.length;
+                    longestType = construct.type;
+                }
 
                 if(construct.rowId.length > lenId){
                     lenId = construct.rowId.length;
-                    longestId = construct.rowId;
+                    longestId = construct.rowId;                    
                 }
             }
         });
-        return{helper:constructHelpper, longestId : longestId};
+        return{helper:constructHelpper, 
+            longestId : longestId, 
+            longestType: longestType,
+            processedConstructs : processedConstructs};
     };
     
     var parseData = function(constructs, events){
@@ -202,12 +218,15 @@ var DURATION_TIMELINE_PROCESSOR = function(par){
         //from constructs we parse ids and stateOptions
         //it also adds property rowID to constructs in _constructs list!
         var constructData = parseConstructs(constructs);
+        data.constructs = constructData.processedConstructs;
         data.longestId = constructData.longestId;
-        
+        data.longestType = constructData.longestType;
         var eventData = parseEvents(events, constructData.helper);
         data.events = eventData.events;
         data.ids = eventData.ids;
         data.states = eventData.states;
+        data.types = eventData.types;
+        data.types.sort();
         
         //increasing the timeframe a bit so that the visualization doesn't end
         //to the same pixel the data ends (it may be seen as cutting the data)

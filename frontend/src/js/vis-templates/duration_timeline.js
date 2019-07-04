@@ -7,8 +7,6 @@
 * Main authors: Antti Luoto, Anna-Liisa Mattila, Henri Terho
 */
 
-var debug = false;
-
 //Stacked timeline visualization component
 /*PARAMETERS:
     svg         : svg element where the visualization is rendered wrapped with d3
@@ -24,7 +22,7 @@ var debug = false;
                     This is formed by the data processor.
     data        : event data formed by the data processor.
     lifespans   : lifespan data formed by the data processor.
-    states      : status data formed by the data processor.
+    states      : status data formed by the data processor. 
 */
 var DurationTimeline = function(par){
     var p = par || {};
@@ -46,8 +44,12 @@ var DurationTimeline = function(par){
     var _yDomain = p.ids !== undefined ? p.ids : [];
     
     var _durationData = p.data !== undefined ? p.data : [];
-    //status data can be left out by setting the parameter to false or passing an empty array.
-    var _stateData = p.statuses !== undefined ? p.statuses : false;
+    
+    /* Status data can be left out by setting the parameter to false or passing an empty array. 
+    * Could also be used to display construct type instead of state (see issue timeline visu)
+    * with minimal modifications
+    */
+    var _stateData = p.constructs !== undefined ? p.constructs : false;
     
     if (debug){
         console.log("[duration_timeline]Data:", _durationData, _stateData);
@@ -112,10 +114,6 @@ var DurationTimeline = function(par){
     //Helper function for data mapping
     //maps data.state to color scale used.
     var getColor = function(data){
-        if (debug){
-            console.log("[duration_timeline]colordata:", data);
-        }
-
         if(data.isStatechange){
             return _colorScale(data.statechange.to);
         }

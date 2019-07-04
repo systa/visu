@@ -7,6 +7,8 @@
 * Main authors: Antti Luoto, Anna-Liisa Mattila, Henri Terho
 */
 
+var debug = true;
+
 var DURATION_TIMELINE_MAIN = function(par){
 //-----------------------------------------
 //  DRAWING RELATED STUFF
@@ -98,6 +100,7 @@ var DURATION_TIMELINE_MAIN = function(par){
             data : data.events,
             colors : data.states,
             linear : false
+            //constructs : data.constructs
         });
 
         var onBrush= function(timeRange){
@@ -111,7 +114,7 @@ var DURATION_TIMELINE_MAIN = function(par){
             linear : false
         });
         
-        //createLegend();
+        createLegend(data.types);
         onResize();
         
         _layout.getSearchButton().addEventListener('click', function(){
