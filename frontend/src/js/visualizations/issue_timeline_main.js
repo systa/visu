@@ -8,6 +8,7 @@
 */
 
 var ISSUE_TIMELINE_MAIN = function(par){
+    console.log("[issue_timeline_main]");
 //-----------------------------------------
 //  DRAWING RELATED STUFF
 //-----------------------------------------
@@ -76,6 +77,7 @@ var ISSUE_TIMELINE_MAIN = function(par){
     
     //Initializes the chart template and draws the visualization.
     var initCharts = function(data, timeframe){
+        console.log("[issue_timeline_main]initCharts:", data);
         
         var elements = _layout.createLayout();
         
@@ -173,6 +175,8 @@ var ISSUE_TIMELINE_MAIN = function(par){
     if(_filters.startTime && _filters.endTime){
         _timeframe = [new Date(_filters.startTime), new Date(_filters.endTime)];
     }
+
+    console.log("[lifespan_timeline_main]Loading modules");
     
     var _parser = LIFSPAN_TIMELINE_PROCESSOR(_mapping);
     var _queryFilters = QUERY_UTILITIES().formatFilters(_filters);
@@ -208,6 +212,7 @@ var ISSUE_TIMELINE_MAIN = function(par){
         whenLoaded();
     };
        
+    console.log("[lifespan_timeline_main]Query data:", _queryFilters);
     _query.getFilteredConstructs(_queryFilters.constructFilters, constructsLoaded);
     _query.getFilteredStatechanges(_queryFilters.eventFilters, statesLoaded);
     _query.getFilteredEvents(_queryFilters.eventFilters, eventsLoaded);

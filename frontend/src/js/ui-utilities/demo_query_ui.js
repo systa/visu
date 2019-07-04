@@ -31,6 +31,8 @@ var DEMO_QUERY_UI = function(states, callback){
     };
     
     var onClick = function(){
+
+        console.log("[demo_query_ui]Debug onClick");
         
         var filters = {};
         
@@ -120,13 +122,19 @@ var DEMO_QUERY_UI = function(states, callback){
         document.getElementById("queryui").style.display = "none";
         var loading = document.createTextNode("LOADING");
         document.getElementById("loader").appendChild(loading);
+
+        console.log("[demo_query_ui]Callback");
         callback({filters:filters, mapping:mapping});
     };
     
     var _button = document.createElement("button");
-    var _text = document.createTextNode("visualize");
-    _button.appendChild(_text);
+    var _text = document.createTextNode("Visualize");
     
+    var _class = document.createAttribute("class");  
+    _class.value = "btn btn-primary btn-lg btn-block";
+    _button.setAttributeNode(_class);
+    _button.appendChild(_text);
+
     _button.addEventListener("click", onClick);
-    document.getElementById("queryui").appendChild(_button);
+    document.getElementById("buttonplacer").appendChild(_button);
 };

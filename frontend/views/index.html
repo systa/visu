@@ -14,7 +14,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>VISDOM - VISU Application</title>
 
-	<!--<link rel="stylesheet" href="../src/css/index.css">-->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -22,55 +21,90 @@
 </head>
 
 <body>
-	
 	<div class="container">
 		<div class="page-header">
 			<h1>VISU Application</h1>
-			<p>A dashboard prototype for the ITEA 3 <a class="a2" href="https://itea3.org/project/visdom.html"> VISDOM Project</a>.</p>
+			<p>A dashboard prototype for the ITEA 3 <a class="a2" href="https://itea3.org/project/visdom.html"> VISDOM
+					Project</a>.</p>
 		</div>
 
 		<div class="alert alert-info">
-			<strong>Open source!</strong> The source code for this project can be found on  
+			<span class="glyphicon glyphicon-exclamation-sign"></span> The source code for this project can be found on
 			<a href="https://github.com/coin-quin/vis-a-vis/tree/dockerized" class="alert-link">Github</a>.
 		</div>
 
 		<div class="alert alert-warning alert-dismissible fade in">
 			<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-			<strong>Warning!</strong> This demo is a work in progress, developed at the Tampere University. 
+			<span class="glyphicon glyphicon-alert"></span> This demo is a work in progress, developed at the Tampere
+			University.
 			For any information, please contact <a href="mailto:hugo.fooy@tuni.fi" class="alert-link">Hugo Fooy</a>.
-		  </div>
-
-		<div class="col-sm-6">
-			<h3>Issue Timeline visualization</h3>
-			<p>Displays issue-management data of projects from Github/Gitlab, through a timeline of the issues and milestones.</p>
-			<a href="./issue-timeline" class="btn btn-info" role="button">Visualize</a>
-		</div>
-		
-		<div class="col-sm-6">
-			<h3>Amount Timeline visualization</h3>
-			<p>Displays issue-management data of projects from Github/Gitlab, through a timeline of the amount of open issues in the project.</p>
-			<a href="./amount-timeline" class="btn btn-info" role="button">Visualize</a>
 		</div>
 
+		<!-- Visualizations -->
 		<div class="col-sm-6">
-			<h3>Duration Timeline visualization</h3>
-			<p>Displays the duration of events over the constructs and the state of these constructs over time.</p>
-			<a href="./duration-timeline" class="btn btn-info" role="button">Visualize</a>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3>Issue Timeline visualization</h3>
+				</div>
+				<div class="panel-body">
+					<p>Displays issue-management data of projects from Github/Gitlab, through a timeline of the issues
+						and milestones.</p>
+					<a href="./issue-timeline" class="btn btn-info" role="button">Visualize</a>
+				</div>
+			</div>
 		</div>
 
 		<div class="col-sm-6">
-			<h3>User Timeframe visualization</h3>
-			<p>Displays the usage-data from Kactus2 logs, through a detailed timeline of each user-session.</p>
-			<a href="./user-timeframe" class="btn btn-info" role="button">Visualize</a>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3>Amount Timeline visualization</h3>
+				</div>
+				<div class="panel-body">
+					<p>Displays issue-management data of projects from Github/Gitlab, through a timeline of the amount
+						of open issues in the project.</p>
+					<a href="./amount-timeline" class="btn btn-info" role="button">Visualize</a>
+				</div>
+			</div>
 		</div>
 
 		<div class="col-sm-6">
-			<h3>Session Timeframe visualization</h3>
-			<p>Displays the usage-data from Kactus2 logs, through a timeline of all user-sessions.</p>
-			<a href="./session-timeframe" class="btn btn-info" role="button">Visualize</a>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3>Duration Timeline visualization</h3>
+				</div>
+				<div class="panel-body">
+					<p>Displays the duration of events over the constructs and the state of these constructs over time.
+					</p>
+					<a href="./duration-timeline" class="btn btn-info" role="button">Visualize</a>
+				</div>
+			</div>
 		</div>
 
+		<div class="col-sm-6">
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3>User Timeframe visualization</h3>
+				</div>
+				<div class="panel-body">
+					<p>Displays the usage-data from Kactus2 logs, through a detailed timeline of each user-session.</p>
+					<a href="./user-timeframe" class="btn btn-info" role="button">Visualize</a>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-sm-6">
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3>Session Timeframe visualization</h3>
+				</div>
+				<div class="panel-body">
+					<p>Displays the usage-data from Kactus2 logs, through a timeline of all user-session.</p>
+					<a href="./session-timeframe" class="btn btn-info" role="button">Visualize</a>
+				</div>
+			</div>
+		</div>
 	</div>
+
 
 </body>
 

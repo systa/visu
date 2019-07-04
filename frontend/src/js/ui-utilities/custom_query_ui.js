@@ -74,9 +74,12 @@ var CUSTOM_QUERY_UI = function (callback) {
     };
 
     var _button = document.createElement("button");
-    var _text = document.createTextNode("visualize");
+    var _text = document.createTextNode("Visualize");
+    var _class = document.createAttribute("class");  
+    _class.value = "btn btn-primary btn-lg btn-block";
+    _button.setAttributeNode(_class);
     _button.appendChild(_text);
 
     _button.addEventListener("click", onClick);
-    document.getElementById("queryui").appendChild(_button);
+    document.getElementById("buttonplacer").appendChild(_button);
 };

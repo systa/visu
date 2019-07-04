@@ -12,10 +12,7 @@
 //mapping is to determine which field of construct is used as a Y axis index values
 //if anonymize flag is set to true the Y axis index values are anonymized using the base string provided
 //in astring parameter and order number. If no base string is provided only order numbers are used to anonymize the ids.
-var LIFSPAN_TIMELINE_PROCESSOR = function(par){
-   
-   console.log("HUGO TESTING SHIT in lifespan_timeline_processor.js");
-    
+var LIFSPAN_TIMELINE_PROCESSOR = function(par){    
     var p = par || {};
     
     var _rowId = p.rowId !== undefined ? p.rowId : "_id";
@@ -26,7 +23,6 @@ var LIFSPAN_TIMELINE_PROCESSOR = function(par){
     var _states = p.states !== undefined ? p.states : {};
 
     var _resolution = _states.resolution !== undefined ? _states.resolution : [];
-    console.log("[lifespan_timeline_main]Resolution:",_resolution);
     
     //Splitting the Y-index mapping from . so we can do the mapping properly
     //even if it is a field of nested object.
@@ -44,7 +40,6 @@ var LIFSPAN_TIMELINE_PROCESSOR = function(par){
         if(t1 === t2){
 
             if(e1.statechange === undefined || e2.statechange === undefined){
-                console.log("o1: ", e1, " o2: ", e2);
                 return 0;
             }
 
