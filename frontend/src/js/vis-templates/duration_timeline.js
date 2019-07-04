@@ -109,7 +109,7 @@ var DurationTimeline = function(par){
     
     var _xAxisGrpahic = _svg.append("g").attr("class", "x axis");
     
-    var _tooltip = d3.select("body").append("div").attr('class', "tooltip");
+    var _tooltip = d3.select("#tooltipC");
     
     //Helper function for data mapping
     //maps data.state to color scale used.

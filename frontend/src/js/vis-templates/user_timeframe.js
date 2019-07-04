@@ -95,9 +95,7 @@ var UserTimeframe = function (par) {
 
     var _xAxisGraphic = _svg.append("g").attr("class", "x axis");
 
-    var _tooltip = d3.select("body").append("div").attr('class', "tooltip");
-    /*var _tooltipL = d3.select("body").append("div").attr('class', "tooltipL");
-    var _tooltipR = d3.select("body").append("div").attr('class', "tooltipR");*/
+    var _tooltip = d3.select("#tooltipC");
 
     //Lifespan start
     var getLpStart = function (data) {
@@ -211,18 +209,6 @@ var UserTimeframe = function (par) {
             console.log(data, e);
         }
 
-        /*
-        var domain = _timeScale.domain();
-        //Display left
-        if(data.time && getX(data) > _timeScale(domain[domain.length-1]/2)){
-            _tooltipL.html(dispstring);
-            return _tooltipL.style("visibility", "visible");
-        
-        //Display right
-        }else{
-            _tooltipR.html(dispstring);
-            return _tooltipR.style("visibility", "visible");
-        }*/
         _tooltip.html(dispstring);
         return _tooltip.style("visibility", "visible");
     };
@@ -233,15 +219,6 @@ var UserTimeframe = function (par) {
 
     var onMouseOut = function (data) {
         return _tooltip.style("visibility", "hidden");
-        /*var domain = _timeScale.domain();
-        //Display left
-        if(data.time && getX(data) > _timeScale(domain[domain.length-1]/2)){
-            return _tooltipL.style("visibility", "hidden");
-        
-        //Display right
-        }else{
-            return _tooltipR.style("visibility", "hidden");
-        }*/
     };
 
     //public methods

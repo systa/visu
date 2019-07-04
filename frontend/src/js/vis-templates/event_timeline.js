@@ -104,7 +104,7 @@ var EventTimeline = function(par){
     
     var _xAxisGraphic = _svg.append("g").attr("class", "x axis");
     
-    var _tooltip = d3.select("body").append("div").attr('class', "tooltip");
+    var _tooltip = d3.select("#tooltipC");
     
     var getLpStart = function(data){
         var domain = _timeScale.domain();
@@ -214,7 +214,7 @@ var EventTimeline = function(par){
     };
     
     var onMouseMove = function(data){
-        return _tooltip.style("top", (event.pageY-30)+"px").style("left",(event.pageX+15)+"px");
+        return _tooltip.style("top", (event.pageY)+"px").style("left",(event.pageX+15)+"px");
     };
     
     var onMouseOut = function(data){

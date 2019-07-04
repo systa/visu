@@ -54,7 +54,7 @@ var AmountChart = function(par){
     
     var _xAxisGraphic = _svg.append("g").attr("class", "x axis");
     
-    var _tooltip = d3.select("body").append("div").attr('class', "tooltip");
+    var _tooltip = d3.select("#tooltipC");
     
     var mapDataToX = function(data){
         var domain = _timeScale.domain();

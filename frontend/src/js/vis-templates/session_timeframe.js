@@ -122,7 +122,7 @@ var SessionTimeframe = function (par) {
 
     var _xAxisGraphic = _svg.append("g").attr("class", "x axis");
 
-    var _tooltip = d3.select("body").append("div").attr('class', "tooltip");
+    var _tooltip = d3.select("#tooltipC");
 
     //Lifespan start (always 0)
     var getLpStart = function (data) {
