@@ -55,8 +55,7 @@ var USER_QUERY_UI = function (callback) {
         };
 
         document.getElementById("queryui").style.display = "none";
-        var loading = document.createTextNode("LOADING");
-        document.getElementById("loader").appendChild(loading);
+        document.getElementById("loader").style.display = "block";
         callback({
             filters: filters,
             mapping: mapping

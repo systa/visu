@@ -120,8 +120,7 @@ var DEMO_QUERY_UI = function(states, callback){
         }
         
         document.getElementById("queryui").style.display = "none";
-        var loading = document.createTextNode("LOADING");
-        document.getElementById("loader").appendChild(loading);
+        document.getElementById("loader").style.display = "block";
 
         console.log("[demo_query_ui]Callback");
         callback({filters:filters, mapping:mapping});
