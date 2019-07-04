@@ -67,9 +67,8 @@ body{
 }
 
 .chart rect{
-    stroke : #F0F0F0;
-    fill-opacity: 0.9;
-    shape-rendering: crispEdges;
+    fill-opacity: 0.99;
+    shape-rendering: geometricPrecision;
 }
 
 .chart circle{
