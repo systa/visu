@@ -49,6 +49,30 @@
 </head>
 
 <body>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">VISDOM - Visu Application</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li><a href="./">Home</a></li>
+        <li class="dropdown active"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Visualizations <span
+              class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="./issue-timeline">Issue Timeline</a></li>
+            <li><a href="./amount-timeline">Amount Timeline</a></li>
+            <li><a href="./duration-timeline">Duration Timeline</a></li>
+            <li><a href="./user-timeframe">User Timeframe</a></li>
+            <li class="active"><a href="./session-timeframe">Session Timeframe</a></li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="https://github.com/coin-quin/vis-a-vis/tree/dockerized"><span
+              class="glyphicon glyphicon-link"></span> Github</a></li>
+      </ul>
+    </div>
+  </nav>
 
   <div id="queryui" class="container">
     <div class="page-header">

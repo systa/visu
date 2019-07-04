@@ -50,10 +50,35 @@
 </head>
 
 <body>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">VISDOM - Visu Application</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li><a href="./">Home</a></li>
+        <li class="dropdown active"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Visualizations <span
+              class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li class="active"><a href="./issue-timeline">Issue Timeline</a></li>
+            <li><a href="./amount-timeline">Amount Timeline</a></li>
+            <li><a href="./duration-timeline">Duration Timeline</a></li>
+            <li><a href="./user-timeframe">User Timeframe</a></li>
+            <li><a href="./session-timeframe">Session Timeframe</a></li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="https://github.com/coin-quin/vis-a-vis/tree/dockerized"><span
+              class="glyphicon glyphicon-link"></span> Github</a></li>
+      </ul>
+    </div>
+  </nav>
+
   <div id="queryui" class="container">
     <div class="page-header">
       <h1>Issue Timeline visualization</h1>
-      <p>Filter the data querried from the database.</p>
+      <p>Filter the data querried from the database and set the parameters.</p>
     </div>
 
     <form id="queryform" class="form-horizontal">
@@ -61,12 +86,12 @@
         <div class="panel panel-primary">
           <div class="panel-heading">
             <h1>Data Filtering</h1>
+            <p>Leave the fields empty if you don't want to filter data based on time, origin or other attributes.</p>
           </div>
           <div class="panel-body">
 
             <div class="col-sm-6">
               <h2>Time range filtering</h2>
-              <p>Leave the fields empty if you don't want to filter data based on time range.</p>
               <div class="form-group">
                 <label for="startDate" class="col-sm-3 control-label">Start date</label>
                 <div class="col-sm-6">
