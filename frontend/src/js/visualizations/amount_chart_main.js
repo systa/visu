@@ -149,6 +149,7 @@ var AMOUNT_CHART_MAIN = function(par){
         initCharts(parsed_data, _timeframe);
         return false;
     };
-    
+    console.log("[amount_chart_main]Query data:", _queryFilters);
+
     _query.getFilteredEvents(_queryFilters.eventFilters, eventsLoaded);
 };
