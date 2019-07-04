@@ -13,7 +13,7 @@ body{
     outline: 0px;
     margin : 0px;
     font-family:"Lucida Console", Monaco, Monospace;
-    font-size: 1em;
+    font-size: 1.1em;
     /*overflow-x: hidden;*/
 }
 
@@ -43,7 +43,7 @@ body{
 
 .legend{
     text-align : center;
-    font-size : 1.1em;
+    font-size : 1.3em;
 }
 
 .search{
@@ -63,7 +63,7 @@ body{
 }
 
 .chart{
-    font-size: 0.95em;
+    font-size: 1.2em;
 }
 
 .chart rect{
@@ -89,7 +89,7 @@ body{
 
 .brush text{
     fill: #505050;
-    font-size: 0.65em;
+    font-size: 0.9em;
     text-anchor: start;
 }
 
