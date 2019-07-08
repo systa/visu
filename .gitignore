@@ -36,6 +36,8 @@ node_modules
 bower_components/
 
 .gitignore
+docker-compose.yml
+.vscode/**
 
 todo\.txt
 datasources/log/log10\.txt
@@ -48,3 +50,4 @@ datasources/log/log6\.txt
 datasources/log/log7\.txt
 datasources/log/log8\.txt
 datasources/log/log9\.txt
+datasources/issue-collector/repolainen\.txt
