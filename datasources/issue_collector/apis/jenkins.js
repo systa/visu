@@ -25,20 +25,19 @@ var buildHistory = {
    creator: '$.executor',
    name: '$.fullDisplayName',
    number: '$.number',
-   //for some reason time is located in a field named "id"   
-   time: '$.id',
+   time: '$.timestamp',
    state: '$.result',
   
 };
 
 var api = {
 	//make prompt for host address
-   baseUrl: 'http://siika.fi:8888/jenkins/job',
+   baseUrl: 'http://localhost:8080/job', 
    authentication: [ 'no authentication', 'basic', 'oauth2' ],
    // all github api calls require these headers
    headers: { 
          Accept: 'application/json',
-         'User-Agent': 'ohylli/issue-collector',
+         'User-Agent': 'visu/visupass',
       },
    pagination: 'link_header',
    userParams: [ {
@@ -65,7 +64,7 @@ var api = {
    },
    
    buildHistorys: {
-	   path: '/{projectName}/api/json?tree=builds[id,number,result,fullDisplayName,duration,executor,description]',
+	   path: '/{projectName}/api/json?tree=builds[id,number,result,fullDisplayName,duration,executor,description,timestamp]',
       items: '',
       item: buildHistory,
   }

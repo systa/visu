@@ -70,7 +70,7 @@ function getData( baseRequest, api, userParams, callback ) {
       getItems( baseRequest, api, 'builds', api.builds, userParams, result, status, callback );
    }
 
-
+   
    if ( api.buildHistorys ) {
       // get changes if the api has them
       status.count++;
@@ -133,6 +133,7 @@ function getItems( baseRequest, api, type, itemDesc, userParams, result, status,
       }
 
       console.log('[Getdata]' + type);
+      console.log('[Getdata]', body);
 
       //for jira parser issues and change history 
       if(type === "jiraIssues" || type === "jiraChanges") {
@@ -143,7 +144,7 @@ function getItems( baseRequest, api, type, itemDesc, userParams, result, status,
       }      
       else if(type === "builds") {
          body = [body];
-      }       
+      }  
 
       // process each item in the response
       body.forEach( function ( item ) {

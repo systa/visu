@@ -52,7 +52,7 @@ var DurationTimeline = function(par){
     var _stateData = p.constructs !== undefined ? p.constructs : false;
     
     if (debug){
-        console.log("[duration_timeline]Data:", _durationData, _stateData);
+        console.log("[duration_timeline]Data (durations, states):", _durationData, _stateData);
     }
     
     var _range = 0;

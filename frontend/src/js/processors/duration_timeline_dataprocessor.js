@@ -123,6 +123,10 @@ var DURATION_TIMELINE_PROCESSOR = function(par){
             }
         }
         
+        if (debug){
+            console.log("[dataprocessor]Time data:", new Date(start), new Date(end));
+        }
+
         return {events:evs, timeframe:[start, end], ids : ids, states: states, types: types};
     };
     

@@ -18,10 +18,7 @@ var debugParse = true;
 
 
 function parseJenkinsTime(jenkinsTime){
-    //var d = new Date(year, month, day, hours, minutes, seconds, milliseconds); 
-    var time = new Date(jenkinsTime.substr(0,4), jenkinsTime.substr(5,2)-1, jenkinsTime.substr(8,2),
-        jenkinsTime.substr(11,2), jenkinsTime.substr(14,2), jenkinsTime.substr(17,2), "000");
-    return time;
+    return new Date(jenkinsTime);
 }
 
 // sends the data to db
@@ -60,7 +57,7 @@ function sendToDb( issueData, origin ) {
    
    // Arrays for Jira parser
    // Items that are not wanted - fields after 'Sprint' might be interesting for us
-   var croppedItems = ['Workflow', 'reporter', 'WorklogId', 'timeestimate', 'timespent', /*'Rank', 'summary', 'Sprint', 'assignee','Flagged',*/ 'issuetype'/*, 'priority', 'Comment'*/];
+   var croppedItems = ['Workflow', 'reporter', 'WorklogId', 'timeestimate', 'timespent', 'Rank', 'summary', 'Sprint', 'assignee','Flagged', 'issuetype', 'priority', 'Comment'];
 
    // get every list from the issue data and add every item from them to db
     entityOrder.forEach( function ( type ) {
@@ -389,12 +386,12 @@ function sendToDb( issueData, origin ) {
                 body: obj.body
             },function ( err, response, body ) {
                 if ( err ) {
-                    console.log( err );
+                    console.log( err, response, body );
                     reject("post");
                     process.exit();
                 }
                 else if( response.statusCode !== 201  && response.statusCode !== 200) {
-                    console.log( response.statusCode );
+                    console.log( response );
                     console.log( body );
                     reject("post");
                     process.exit();
@@ -505,7 +502,7 @@ function sendToDb( issueData, origin ) {
         // create all of the links.
         links.forEach( function ( link ) {
             if(debugLink){
-                console.log("target: "+link.target, " type: "+link.type);
+                console.log(linked + "/" + linkCount +" - target: "+link.target, " type: "+link.type);
             }
             
             request.put( {

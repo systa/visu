@@ -222,7 +222,7 @@ function gotOrigin( err, origin ) {
         console.log( '[Collector]Issue management data fetched from source.' );
         _.each( result, function ( value, key ) {
             console.log("[Collector]" + value.length +' ' +key +' last of which is:');
-            console.log("[Collector]" + value[value.length -1] );
+            console.log("[Collector]", value[value.length -1] );
         });
 
         // send the issue data to the db
