@@ -8,6 +8,7 @@
 */
 
 //main API file which requires all the different sub API files and serves it to the server.js
+var debug = false;
 
 var express = require('express');
 var router = express.Router();

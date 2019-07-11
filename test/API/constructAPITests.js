@@ -88,7 +88,7 @@ var testArtifacts = {
 	})
 };
 
-var server = require('../../server.js');
+
 describe('Construct API tests', function() {
 	before(function(){
         //run something before the whole test set, for example if the database needs some global initial settings etc.
@@ -115,6 +115,7 @@ describe('Construct API tests', function() {
 
 
 //TESTS
+
 	it('Should be able to query the DB for constructs', function(done){
 		request.get(serverUrl + ':' + port + '/api/constructs', function(err,res,body) {
 			if (err) throw err;
@@ -129,7 +130,7 @@ describe('Construct API tests', function() {
 			}
 		});
 	});
-
+	
 	it('Should create a new object to the DB', function(done){
 
 		//would be nice to clean test data from database automatically if needed.

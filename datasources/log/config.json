@@ -1,20 +1,7 @@
-
-
 {
-	"port": 80,
+	"port": 8082,
 	"serverUrl":"http://localhost",		
-	"dbUrl":"mongodb://localhost/visu",
+	"dbUrl":"mongodb://mongo/visu",
 	"dbOptions":{
-		
-		"server": {
-			"socketOptions":{
-				"keepAlive" : 1
-			}
-		},
-		"replset": {
-				"socketOptions":{
-					"keepAlive" : 1
-				}
-			}
 	}
 }

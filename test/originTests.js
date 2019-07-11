@@ -14,7 +14,7 @@ var config = common.config;
 var assert = common.assert;
 var JSONValidator = common.JSONValidator;
 
-var server = require('../server.js');
+//var server = require('../server.js');
 describe('Origin tests', function(){
 	before(function(){
         //run something before the whole test set, for example if the database needs some global initial settings etc.

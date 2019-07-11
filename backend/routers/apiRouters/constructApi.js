@@ -9,7 +9,7 @@
 
 //extend the router.routes in these files and read them all in in the initializer part.
 //remember that these routes are written so that the root node for routing here is /api/constructs/
-
+var debug = false;
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
@@ -151,6 +151,9 @@ router.get('/', function(req,res){
 
 //API ENDPOINT: CREATE AND MASS CREATE
 router.post('/', function(req,res){
+    if(debug){
+        console.log("------------- POSTING -------------");
+    }
     var found = [];
     var promises = [];
     var requests = [];
@@ -178,7 +181,7 @@ router.post('/', function(req,res){
             'type' : request.type
         };
         
-        var promise = getFilteringQuery( ConstructModel.find( query ), {}).exec(function (errfind, constructs ){
+        var promise = getFilteringQuery( ConstructModel.find( query ), {}).exec(function (errfind, constructs){
             if(errfind){
                 console.log("READ ERROR: ", errfind);
                 error = true;
@@ -187,11 +190,15 @@ router.post('/', function(req,res){
             }
             else{
                 found = found.concat(constructs);
+                if(debug){
+                    console.log("READ FOUND: ", found);
+                }
                 return true;
             }
         });
         promises.push(promise);
     });
+
     //When the get is done we move to here and check if we need to add some constructs
     Promise.all(promises).then(function(val){
         if(error){
@@ -202,18 +209,22 @@ router.post('/', function(req,res){
         
         //If we had an error in reading we return 500
         if(!masscreate && found.length > 0){
-            //console.log("FOUND FOR SINGLE ADD: ", found);
+            if(debug){
+                console.log("FOUND FOR SINGLE ADD: ", found);
+            }
             return res.status(200).send( found[0]);
         }
         //All the constructs were already added, return 200
         else if(masscreate && found.length == requests.length){
-            //console.log("ALL FOUND: ", found);
+            if(debug){
+                console.log("ALL FOUND: ", found);
+            }
             return res.status(200).send(found);
         }
         //For masscreate we clean those constructs that are allready in the db and add only those which aren't
         else if(masscreate){
-            //console.log("FOUND FOR MASS CREATE: ", found);
-            //console.log("SHOULD BE ADDED: ", requests);
+            console.log("FOUND FOR MASS CREATE: ", found);
+            console.log("SHOULD BE ADDED: ", requests);
             
             //Even if we didn't find any duplicates we still need to do the outer loop as we need to add the update time.
             for(var i = 0; i < requests.length; ++i){
@@ -237,8 +248,14 @@ router.post('/', function(req,res){
         else{
             requests[0].updated = updated;
             toBeAdded = requests[0];
+
+            if(debug){
+                console.log("NOT FOUND: ", found.length, masscreate);
+            }
         }
-        //console.log("ADD: ", toBeAdded);
+        if(debug){
+            console.log("ADD: ", toBeAdded);
+        }
         //If construct is not found we add new construct
         //works with a single object or a list of objects
         ConstructModel.create( toBeAdded, function(err){
@@ -257,7 +274,9 @@ router.post('/', function(req,res){
                     //We need to return all objects, the added and found
                     result = result.concat(found);
                 }
-                //console.log("RESULT: ", result);
+                if(debug){
+                    console.log("RESULT: ", result);
+                }
                 return res.status(201).send( result );
             }
         });

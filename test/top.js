@@ -28,23 +28,24 @@ describe("Main Test Suite", function () {
     beforeEach(function () {
         //run something before each test file
     });
+    
+    
     importTest("commonAPI", './API/APICommonTests.js');
     importTest("constructAPI", './API/constructAPITests.js');
     importTest("eventAPI", './API/eventAPITests.js');
     importTest("origin id", './originTests.js');
     
-    //importTest("b", './b/b');
     after(function () {
-        console.log("after all tests");
+        console.log("After all tests");
         //cleanup db here
         console.log(   );
         //sanity check, once the server didn't set the env properly?
 
+        
         if(process.env.NODE_ENV ==='test'){
             mongoose.connection.db.dropDatabase();
-            console.log("test DB dropped");
+            console.log("Testing DB dropped.");
             mongoose.connection.close();
-            
         }
         
         //close the actual node server after running tests

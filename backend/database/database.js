@@ -16,22 +16,21 @@ function Database() {
 	//connect to DB and set the connection keepalive to true
 	var options = config.get('dbOptions');
 	var dbUrl = config.get('dbUrl');
-	console.log(options);
+	console.log('[Database.js]DB Options:', options);
+	console.log('[Database.js]DB URL:', dbUrl);
 	mongoose.connect(dbUrl, options);
-
+	
 	var db = mongoose.connection;
-	db.on('error', console.error.bind(console, 'connection error:'));
+	db.on('error', console.error.bind(console, '[Database.js]Connection error:'));
 	db.once('open', function (callback) {
 		// yay!
-		console.log("database connection established on  " + dbUrl);
+		console.log("[Database.js]Database connection established on  " + dbUrl);
 	});
     
 	//get filenames from filesystem, import all the schemas in them.
-	console.log("getting schema files from fs.");
-
+	console.log("[Database.js]Getting schema files from fs.");
 
 	//for some reason fs has the root node at server root (visu) and require has the root node at this file location...
-
 	fs
 		//point fs to this folder
 		.readdirSync('./backend/database/schema')
@@ -39,7 +38,7 @@ function Database() {
 			return (file.indexOf('.') !== 0) && (file !== 'database.js');
 		})
 		.forEach(function(file){
-			console.log("filename found:" + file);
+			console.log("[Database.js]Filename found:" + file);
 			
 			//point require to this folder
 			var schema = './schema/'+file;

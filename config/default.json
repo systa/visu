@@ -3,16 +3,6 @@
 	"serverUrl":"http://localhost",		
 	"dbUrl":"mongodb://mongo/visu",
 	"dbOptions":{
-		
-		"server": {
-			"socketOptions":{
-				"keepAlive" : 1
-			}
-		},
-		"replset": {
-				"socketOptions":{
-					"keepAlive" : 1
-				}
-			}
+		"useNewUrlParser": true
 	}
 }

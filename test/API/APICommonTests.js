@@ -15,7 +15,7 @@ var config = common.config;
 
 
 
-var server = require('../../server.js');
+//var server = require('../../server.js');
 describe('Common API tests', function() {
 
 	var serverUrl = config.get('serverUrl');
@@ -24,6 +24,7 @@ describe('Common API tests', function() {
 	it('Should return "Api is running!"', function(done){
 
 		request.get(serverUrl + ':' + port + '/api', function(err,res,body) {
+			console.log(serverUrl + ':' + port + '/api');
 			expect(res.statusCode).to.equal(200);
 			expect(res.body).to.equal('Api is running!');
 			done();

@@ -22,7 +22,7 @@ var eventSchema = common.eventSchema;
 
 var cloneObject = common.cloneObject;
 
-var server = require('../../server.js');
+//var server = require('../../server.js');
 describe('Event API tests', function() {
 
 	var serverUrl = config.get('serverUrl');

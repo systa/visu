@@ -20,7 +20,11 @@ var config = require('config');
 
 
 //config
-app.use(bodyParser({limit: '50mb'}));
+app.use(bodyParser.urlencoded({
+    extended: true,
+    limit: '50mb'
+  }));
+app.use(bodyParser.json());
 app.use(methodOverride());
 app.use(express.static(__dirname + '/frontend'));
 app.use(errorHandler({dumpExceptions: true, showStack: true}));
@@ -36,4 +40,4 @@ var routing = require('./backend/routers/routes.js');
 app.use('/', routing);
 
 server = app.listen(config.get('port'));
-
+console.log("[server.js]Server listening on port " + config.get('port'));

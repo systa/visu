@@ -1,3 +1,9 @@
 {
-	"dbUrl":"mongodb://localhost/visuTest"
+	"port": 8089,
+	"serverUrl":"http://localhost",		
+	"dbUrl":"mongodb://localhost:27017/visu-test",
+	"dbOptions":{
+        "useNewUrlParser": true,
+        "keepAlive": true
+	}
 }
