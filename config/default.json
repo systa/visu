@@ -3,6 +3,7 @@
 	"serverUrl":"http://localhost",		
 	"dbUrl":"mongodb://mongo/visu",
 	"dbOptions":{
-		"useNewUrlParser": true
+		"useNewUrlParser": true,
+		"useMongoClient": true
 	}
 }

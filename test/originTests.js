@@ -129,7 +129,6 @@ describe('Origin tests', function(){
                 });
         });
     });
-    
 
     it('Should not be able to create construct with invalid source_id field', function(done){
         
