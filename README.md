@@ -14,7 +14,7 @@ Installation
 -------------
 1. Cloning the repo and running the app
 
-* git clone https://github.con/coin-quin/vis-a-vis.git -b dockerized
+* git clone https://github.com/coin-quin/vis-a-vis.git -b dockerized
 * docker-compose up
 
 **The server is now running and can be accessed at localhost:8080, but no data is loaded on it yet**
