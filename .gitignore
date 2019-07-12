@@ -8,46 +8,11 @@ pids
 *.pid
 *.seed
 
-# Minified sources
-frontend/dist
-
-# Frontend libraries
-frontend/libraries
-
-#test data stubs
-frontend/test_json
-
-# Coverage directory used by tools like istanbul
-coverage
-
-# Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
-.grunt
-
-# Compiled binary addons (http://nodejs.org/api/addons.html)
-build/Release
-
-# Dependency directory
-# Deployed apps should consider commenting this line out:
-# see https://npmjs.org/doc/faq.html#Should-I-check-my-node_modules-folder-into-git
-
-
 # NPM downloaded modules.
 node_modules
-bower_components/
 
-.gitignore
+# docker-compose file - should be configured locally
 docker-compose.yml
-.vscode/**
 
-todo\.txt
-datasources/log/log10\.txt
-datasources/log/log_s\.txt
-datasources/log/log2\.txt
-datasources/log/log3\.txt
-datasources/log/log4\.txt
-datasources/log/log5\.txt
-datasources/log/log6\.txt
-datasources/log/log7\.txt
-datasources/log/log8\.txt
-datasources/log/log9\.txt
-datasources/issue-collector/repolainen\.txt
+# vscode
+.vscode
