@@ -224,6 +224,10 @@ var SessionTimeframe = function (par) {
         return _tooltip.style("visibility", "visible");
     };
 
+    var onMouseMove = function(data){
+        return _tooltip.style("top", (event.pageY-30)+"px").style("left",(event.pageX+15)+"px");
+    };
+
     var onMouseOut = function (data) {
         return _tooltip.style("visibility", "hidden");
     };
@@ -263,7 +267,8 @@ var SessionTimeframe = function (par) {
             .attr('y', getY)
             .attr('height', _rowHeight)
             .on("mouseover", onMouseOver)
-            .on("mouseout", onMouseOut);
+            .on("mouseout", onMouseOut)
+            .on("mousemove", onMouseMove);
 
 
         _names.attr('x', 2)
@@ -280,14 +285,16 @@ var SessionTimeframe = function (par) {
             .attr('y2', getLineY)
             .attr('stroke', pub.getStateColor)
             .on("mouseover", onMouseOver)
-            .on("mouseout", onMouseOut);
+            .on("mouseout", onMouseOut)
+            .on("mousemove", onMouseMove);
 
         _events.attr('fill', pub.getColor)
             .attr('cx', getX) //X coordinate
             .attr('cy', getLineY) //Y coordinate
             .attr('r', _rowHeight * 0.33 * 0.5) //Ray of event circle
             .on("mouseover", onMouseOver)
-            .on("mouseout", onMouseOut);
+            .on("mouseout", onMouseOut)
+            .on("mousemove", onMouseMove);
 
         //Text and color for labels
         if (_displayTypes) {
