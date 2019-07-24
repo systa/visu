@@ -15,12 +15,4 @@ router.get('/', function(req, res) {
   res.sendfile('./frontend/views/index.html');
 }); 
 
-router.get('/test-data-vis', function(req, res) {
-	res.sendfile('./frontend/views/test-data-vis.html');
-});
-
-router.get('/stacked-timeline-vis', function(req, res) {
-	res.sendfile('./frontend/views/stacked-timeline.html');
-});
-
 module.exports = router;

@@ -122,6 +122,12 @@ var DEMO_QUERY_UI = function(states, callback){
         document.getElementById("queryui").style.display = "none";
         document.getElementById("loader").style.display = "block";
 
+        var tag = document.getElementById("tagging");
+        if(tag !== null){
+            filters.tag = parseTextValue(tag.value);
+        }
+       
+
         console.log("[demo_query_ui]Callback");
         callback({filters:filters, mapping:mapping});
     };

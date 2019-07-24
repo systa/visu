@@ -11,8 +11,6 @@ services:
       - "8000:8000"
       - "8082:8080"
       - "5858:5858"
-      - "8081:8081"
-      - "8083:8083"
     links:
       - mongo
 
@@ -20,3 +18,11 @@ services:
     image: mongo
     ports:
       - "27017:27017"
+
+  mongo-express:
+    image: mongo-express
+    ports:
+      - "8081:8081"
+    links:
+      - mongo
+  

@@ -62,6 +62,14 @@ var AMOUNT_CHART_MAIN = function(par){
             _timeSelector.onResize(_width, _timeSelectorHeight, _timeSelectorMargins);
         }
     };
+
+    var createLegend = function(types){
+        var scale = _amountChart.getColorScale();
+        for(var i = 0; i < types.length; ++i){
+            var color = scale(types[i]);
+            _layout.appendLabel({bgcolor: color, text: types[i]+" "});
+        }
+    };
     
     //Initializes the chart template and draws the visualization.
     var initCharts = function(data, timeframe){
@@ -73,12 +81,17 @@ var AMOUNT_CHART_MAIN = function(par){
         var elements = _layout.createLayout([
             {
                 parameters : {},
+                type : "legend"
+            },
+            {
+                parameters : {},
                 type : "brush"
             },
             {
                 parameters : {},
                 type : "chart"
             }
+            
         ]);
         
         if(!timeframe){
@@ -93,6 +106,8 @@ var AMOUNT_CHART_MAIN = function(par){
             min : data.min,
             amounts : data.amounts
         });
+
+        createLegend(data.tags);
 
         var onBrush= function(timeRange){
             _amountChart.onBrush(timeRange);
@@ -135,6 +150,8 @@ var AMOUNT_CHART_MAIN = function(par){
         _timeframe = [new Date(_filters.startTime), new Date(_filters.endTime)];
     }
     
+    console.log("Data for parer:", _mapping, _filters, _timeframe);
+
     var _parser = AMOUNT_CHART_PROCESSOR(_mapping);
     var _queryFilters = QUERY_UTILITIES().formatFilters(_filters);
     var _search = PROCESSOR_UTILITES();
@@ -142,14 +159,38 @@ var AMOUNT_CHART_MAIN = function(par){
     //Initializing the dataquery module for fetching the data
     var _query= DATA_QUERY();
     var _events = false;
-
-    var eventsLoaded = function(data){
-        _events = data;
-        var parsed_data = _parser(_events);
-        initCharts(parsed_data, _timeframe);
+    var _states = false;
+    var _constructs = false;
+    
+    var whenLoaded = function(){
+        if(_events && _constructs && _states){
+            console.log("Data for parer:", _constructs, _events, _states);
+            var parsed_data = _parser(_events, _constructs, _states, _filters.tag); //assigned, label
+            initCharts(parsed_data, _timeframe);
+        }
         return false;
     };
-    console.log("[amount_chart_main]Query data:", _queryFilters);
-
+    
+    var eventsLoaded = function(data){
+        _events = data;
+        console.log("[issue_timeline_main]Events: ", _events);
+        whenLoaded();
+    };
+    
+    var constructsLoaded = function(data){
+        _constructs = data;
+        console.log("[issue_timeline_main]Constructs: ", _constructs);
+        whenLoaded();
+    };
+    var statesLoaded = function(data){
+        _states = data;
+        console.log("[issue_timeline_main]Statechanges: ", _states);
+        whenLoaded();
+    };
+       
+    console.log("[lifespan_timeline_main]Query data:", _queryFilters);
+    _query.getFilteredConstructs(_queryFilters.constructFilters, constructsLoaded);
+    _query.getFilteredStatechanges(_queryFilters.eventFilters, statesLoaded);
     _query.getFilteredEvents(_queryFilters.eventFilters, eventsLoaded);
+
 };

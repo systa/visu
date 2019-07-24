@@ -15,6 +15,8 @@ var path = require( 'path' );
 // prompt is a library for getting user input
 var prompt = require( 'prompt' );
 var request = require( 'request' );
+require('request').debug = true;
+
 var _ = require( 'underscore' );
 
 // the module that actually gets the data
@@ -206,6 +208,8 @@ function gotOrigin( err, origin ) {
         }
     });
    
+    console.log('[Collector]headers:', headers);
+
    // todo: do the same for query parameters
    
    // set default values for the request to be used in the api calls
@@ -215,8 +219,13 @@ function gotOrigin( err, origin ) {
         json: true
     });
     
+
     // get the issue data
-    console.log( '[Collector]Fetching issue management data...' );
+    //console.log( '[Collector]Fetching issue management data...' );
+    //console.log( '[Collector]baseRequest:', baseRequest);
+    //console.log( '[Collector]api:',  api);
+    console.log( '[Collector]userParams:', userParams);
+
     getData( baseRequest, api, userParams, function ( result ) {
         // print debug information how many items of each type we got and what is the last item
         console.log( '[Collector]Issue management data fetched from source.' );
@@ -226,7 +235,7 @@ function gotOrigin( err, origin ) {
         });
 
         // send the issue data to the db
-        console.log( '[Collector]Sending data to database.' );
-        poster( result, origin );
+        //console.log( '[Collector]Sending data to database.' );
+        //poster( result, origin );
     });
-}
+};

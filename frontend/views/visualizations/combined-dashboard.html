@@ -11,8 +11,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Amount Timeline</title>
-  <title>IssueTimeline</title>
+  <title>Repolainen Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="src/css/generic-vis.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
@@ -22,18 +21,20 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
   <script defer src="https://d3js.org/d3.v3.min.js"></script>
   <!-- UI-Utilities -->
-  <script defer type="text/javascript" src="../src/js/ui-utilities/demo_template.js"></script>
+  <script defer type="text/javascript" src="../src/js/ui-utilities/dashboard_template.js"></script>
   <script defer type="text/javascript" src="../src/js/ui-utilities/demo_query_ui.js"></script>
 
   <!-- Main visualization module -->
-  <script defer type="text/javascript" src="../src/js/visualizations/amount_chart_main.js"></script>
+  <script defer type="text/javascript" src="../src/js/visualizations/dashboard_main.js"></script>
 
   <!-- Templates -->
   <script defer type="text/javascript" src="../src/js/vis-templates/amount_chart.js"></script>
+  <script defer type="text/javascript" src="../src/js/vis-templates/event_timeline.js"></script>
   <script defer type="text/javascript" src="../src/js/vis-templates/time_selector.js"></script>
 
   <!-- Data processors -->
   <script defer type="text/javascript" src="../src/js/processors/amount_chart_dataprocessor.js"></script>
+  <script defer type="text/javascript" src="../src/js/processors/lifespan_timeline_processor.js"></script>
   <script defer type="text/javascript" src="../src/js/processors/processor_utilities.js"></script>
 
   <!-- Data queries -->
@@ -42,30 +43,39 @@
 
   <script type="text/javascript">
     $(function () {
-      DEMO_QUERY_UI("full", AMOUNT_CHART_MAIN);
+      DEMO_QUERY_UI("full", DASHBOARD_MAIN);
     });
   </script>
 
 </head>
 
 <body>
+  <!-- Navigation bar for the web app -->
   <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header">
-          <a class="navbar-brand"><strong>VISDOM - Visu Application</strong> </a>
+        <a class="navbar-brand"><strong>VISDOM - Visu Application</strong> </a>
       </div>
       <ul class="nav navbar-nav">
         <li><a href="./">Home</a></li>
         <li class="dropdown active"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Visualizations <span
               class="caret"></span></a>
           <ul class="dropdown-menu">
+            <li class="active"><a href="./dashboard">Repolainen Dashboard</a></li>
             <li><a href="./issue-timeline">Issue Timeline</a></li>
-            <li class="active"><a href="./amount-timeline">Amount Timeline</a></li>
+            <li><a href="./amount-timeline">Amount Timeline</a></li>
             <li><a href="./duration-timeline">Duration Timeline</a></li>
             <li><a href="./user-timeframe">User Timeframe</a></li>
             <li><a href="./session-timeframe">Session Timeframe</a></li>
           </ul>
         </li>
+        <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Collectors <span
+              class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="./api-collector">API Collector</a></li>
+          </ul>
+        </li>
+        <li><a href="./database">Database</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="https://github.com/coin-quin/vis-a-vis/tree/dockerized"><span
@@ -74,9 +84,10 @@
     </div>
   </nav>
 
+  <!-- Container for the query form. Will be hidden after the query. -->
   <div id="queryui" class="container">
     <div class="page-header">
-      <h1>Amount Timeline visualization</h1>
+      <h1>Repolainen Dashboard visualization</h1>
       <p>Filter the data querried from the database and set the parameters.</p>
     </div>
 
@@ -122,13 +133,13 @@
               <div class="form-group">
                 <label for="source" class="col-sm-3 control-label">Source</label>
                 <div class="col-sm-9">
-                  <input class="form-control" type="text" name="source" id="source" />
+                  <input class="form-control" type="text" name="source" id="source" value="gitlab"/>
                 </div>
               </div>
               <div class="form-group">
                 <label for="context" class="col-sm-3 control-label">Context</label>
                 <div class="col-sm-9">
-                  <input class="form-control" type="text" name="context" id="context" />
+                  <input class="form-control" type="text" name="context" id="context" value="repolainen5"/>
                 </div>
               </div>
               <div class="form-group">
@@ -193,7 +204,7 @@
                 <div class="form-group">
                   <label for="constructType" class="col-sm-3 control-label">Type</label>
                   <div class="col-sm-9">
-                    <input class="form-control" type="text" name="ct" id="constructType" />
+                    <input class="form-control" type="text" name="ct" id="constructType" value="issue"/>
                   </div>
                 </div>
                 <div class="form-group">
@@ -277,14 +288,52 @@
             </div>
           </div>
         </div>
+
+
+        
       </div>
     </form>
 
     <div class="col-sm-12" id="buttonplacer"></div>
   </div>
+
+  <!-- Loader symbol while visualizations are being created -->
   <div id="loader"></div>
+
+  <!-- Placer for the tooltip -->
   <div class="tooltipC" id="tooltipC"></div>
-  <div id="visuParent" class="container"></div>
+
+  <!-- Container where the visualization will be drawn -->
+  <div id="visuParent" class="container" hidden>
+    <div id="brushParent" class="parentContainer"></div>
+
+    <button class="collapsible">Issue Timeline</button>
+    <div id="issueParent" class="parentContainer content"></div>
+
+    <button class="collapsible">Amount Timeline (assigned)</button>
+    <div id="amountParent1" class="parentContainer content"></div>
+
+    <button class="collapsible">Amount Timeline (label)</button>
+    <div id="amountParent2" class="parentContainer content"></div>
+  </div>
+
+  <script>
+    
+      var coll = document.getElementsByClassName("collapsible");
+      var i;
+      
+      for (i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function() {
+          this.classList.toggle("active");
+          var content = this.nextElementSibling;
+          if (content.style.maxHeight){
+            content.style.maxHeight = null;
+          } else {
+            content.style.maxHeight = content.scrollHeight + "px";
+          } 
+        });
+      }
+      </script>
 </body>
 
 </html>

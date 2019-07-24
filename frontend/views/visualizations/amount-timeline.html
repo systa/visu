@@ -11,7 +11,8 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Duration Timeline</title>
+  <title>Amount Timeline</title>
+  <title>IssueTimeline</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="src/css/generic-vis.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
@@ -20,21 +21,19 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
   <script defer src="https://d3js.org/d3.v3.min.js"></script>
-
-
   <!-- UI-Utilities -->
   <script defer type="text/javascript" src="../src/js/ui-utilities/demo_template.js"></script>
   <script defer type="text/javascript" src="../src/js/ui-utilities/demo_query_ui.js"></script>
 
   <!-- Main visualization module -->
-  <script defer type="text/javascript" src="../src/js/visualizations/duration_timeline_main.js"></script>
+  <script defer type="text/javascript" src="../src/js/visualizations/amount_chart_main.js"></script>
 
   <!-- Templates -->
-  <script defer type="text/javascript" src="../src/js/vis-templates/duration_timeline.js"></script>
+  <script defer type="text/javascript" src="../src/js/vis-templates/amount_chart.js"></script>
   <script defer type="text/javascript" src="../src/js/vis-templates/time_selector.js"></script>
 
   <!-- Data processors -->
-  <script defer type="text/javascript" src="../src/js/processors/duration_timeline_dataprocessor.js"></script>
+  <script defer type="text/javascript" src="../src/js/processors/amount_chart_dataprocessor.js"></script>
   <script defer type="text/javascript" src="../src/js/processors/processor_utilities.js"></script>
 
   <!-- Data queries -->
@@ -43,7 +42,7 @@
 
   <script type="text/javascript">
     $(function () {
-      DEMO_QUERY_UI(false, DURATION_TIMELINE_MAIN);
+      DEMO_QUERY_UI("full", AMOUNT_CHART_MAIN);
     });
   </script>
 
@@ -53,20 +52,28 @@
   <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header">
-          <a class="navbar-brand"><strong>VISDOM - Visu Application</strong> </a>
+        <a class="navbar-brand"><strong>VISDOM - Visu Application</strong> </a>
       </div>
       <ul class="nav navbar-nav">
         <li><a href="./">Home</a></li>
         <li class="dropdown active"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Visualizations <span
               class="caret"></span></a>
           <ul class="dropdown-menu">
+            <li><a href="./dashboard">Repolainen Dashboard</a></li>
             <li><a href="./issue-timeline">Issue Timeline</a></li>
-            <li><a href="./amount-timeline">Amount Timeline</a></li>
-            <li class="active"><a href="./duration-timeline">Duration Timeline</a></li>
+            <li class="active"><a href="./amount-timeline">Amount Timeline</a></li>
+            <li><a href="./duration-timeline">Duration Timeline</a></li>
             <li><a href="./user-timeframe">User Timeframe</a></li>
             <li><a href="./session-timeframe">Session Timeframe</a></li>
           </ul>
         </li>
+        <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Collectors <span
+              class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="./api-collector">API Collector</a></li>
+          </ul>
+        </li>
+        <li><a href="./database">Database</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="https://github.com/coin-quin/vis-a-vis/tree/dockerized"><span
@@ -74,9 +81,10 @@
       </ul>
     </div>
   </nav>
+
   <div id="queryui" class="container">
     <div class="page-header">
-      <h1>Duration Timeline visualization</h1>
+      <h1>Amount Timeline visualization</h1>
       <p>Filter the data querried from the database and set the parameters.</p>
     </div>
 
@@ -85,8 +93,7 @@
         <div class="panel panel-primary">
           <div class="panel-heading">
             <h1>Data Filtering</h1>
-            <p>Leave the fields empty if you don't want to filter data based on time, origin or other
-              attributes.</p>
+            <p>Leave the fields empty if you don't want to filter data based on time, origin or other attributes.</p>
           </div>
           <div class="panel-body">
 
@@ -158,6 +165,12 @@
                   </div>
                 </div>
                 <div class="form-group">
+                  <label for="eventSate" class="col-sm-3 control-label">State</label>
+                  <div class="col-sm-9">
+                    <input class="form-control" type="text" name="es" id="eventSate" />
+                  </div>
+                </div>
+                <div class="form-group">
                   <label for="eventDuration" class="col-sm-3 control-label">Duration</label>
                   <div class="col-sm-9">
                     <input class="form-control" type="text" name="ed" id="eventDuration" />
@@ -189,6 +202,12 @@
                   <label for="constructType" class="col-sm-3 control-label">Type</label>
                   <div class="col-sm-9">
                     <input class="form-control" type="text" name="ct" id="constructType" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="constructState" class="col-sm-3 control-label">State</label>
+                  <div class="col-sm-9">
+                    <input class="form-control" type="text" name="cs" id="constructState" />
                   </div>
                 </div>
                 <div class="form-group">
@@ -235,8 +254,66 @@
               </div>
             </div>
 
+            <div class="col-sm-12">
+              <h2>States</h2>
+              <p>Define the states to be visualized. To open states write the name of each initial state you want to
+                visualize. To intermediate states write all states that are not initial or resolution states you whish
+                to explore. To resolution states write all resolution states you wich to use in visualization. Note that
+                the states are fetched from the event's type attribute!</p>
+
+              <div class="form-group">
+                <label for="initial" class="col-sm-4 control-label">Start states separated by comma</label>
+                <div class="col-sm-8">
+                  <input class="form-control" type="text" name="initial" id="initial"
+                    value="open, opened, to do, created, reopened" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="intermediate" class="col-sm-4 control-label">Intermediate states separated by comma</label>
+                <div class="col-sm-8">
+                  <input class="form-control" type="text" name="intermediate" id="intermediate"
+                    value="in progress, under review, accepted" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="resolution" class="col-sm-4 control-label">Resolution states separated by comma</label>
+                <div class="col-sm-8">
+                  <input class="form-control" type="text" name="resolution" id="resolution"
+                    value="closed, resolved, done, fixed, cancelled, won't fix, won't do, cannot reproduce" />
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm-12">
+              <h2>Tags</h2>
+              <p>Define the tag to be visualized within the amount. Note that
+                the tags are fetched from the event's attributes!</p>
+              <div class="form-group">
+                <label for="tags" class="col-sm-4 control-label">Tag</label>
+                <div class="col-sm-8">
+                  <div hidden>
+                    <input class="form-control" type="text" name="tagging" id="tagging" value="none" />
+                  </div>
+                  <script>
+                    function getTag(obj) {
+                      console.log(obj.value);
+                      $('.tagging').value = obj.value;
+                    };
+                  </script>
+                  <select class="form-control" id="tags" onchange="getTag(this);">
+                    <option value="none" selected>No tag</option>
+                    <option value="label">Label</option>
+                    <option value="assigned">Assigned</option>
+                  </select>
+
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+
+
+
       </div>
     </form>
 

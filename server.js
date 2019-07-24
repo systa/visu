@@ -26,11 +26,16 @@ app.use(bodyParser.urlencoded({
   }));
 app.use(bodyParser.json());
 app.use(methodOverride());
+
 app.use(express.static(__dirname + '/frontend'));
+app.use(express.static(__dirname + '/data-collector'));
+
 app.use(errorHandler({dumpExceptions: true, showStack: true}));
 
 //DATABASE 
 var db = require("./backend/database/database.js");
+//var collector = require("./backend/data-collector/collector.js");
+//collector(false);
 
 //-------------
 //----ROUTES---

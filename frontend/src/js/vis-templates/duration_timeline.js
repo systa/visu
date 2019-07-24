@@ -183,7 +183,7 @@ var DurationTimeline = function(par){
             end = start+parseInt(data.duration);
         }
         else{
-            end = new Date(start.getTime()+parseInt(data.duration));
+            end = new Date(start.getTime()+parseInt(data.duration)*1000);
         }
 
         //if end is false...
@@ -203,6 +203,7 @@ var DurationTimeline = function(par){
             end = domain[domain.length-1];
         }
         var w = _timeScale(end)-_timeScale(start);
+
         return w;
     };
   

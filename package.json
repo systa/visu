@@ -27,9 +27,12 @@
     "mongodb": "^3.2.7",
     "mongoose": "^4.2.7",
     "promise": "^8.0.3",
-    "request": "^2.88.0",
-    "underscore": "^1.9.1",
-    "xml2js": "^0.4.19"
+    "request": "^2.58.0",
+    "underscore": "^1.8.3",
+    "xml2js": "^0.4.19",
+    "JSONPath": "^0.10.0",
+    "parse-link-header": "^0.2.0",
+    "url-template": "^2.0.6"
   },
   "devDependencies": {
     "chai": "^4.2.0",

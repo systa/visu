@@ -1,0 +1,7 @@
+{
+	"port": 8080,
+	"serverUrl":"http://localhost",		
+	"dbUrl":"mongodb://mongo/visu",
+	"dbOptions":{
+	}
+}

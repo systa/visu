@@ -8,7 +8,6 @@
 */
 
 //main API file which requires all the different sub API files and serves it to the server.js
-var debug = false;
 
 var express = require('express');
 var router = express.Router();
@@ -17,9 +16,10 @@ var frontendRouter = require('./frontendRouters/frontend.js');
 var APIRouter = require('./apiRouters/APIRouter.js');
 var appController = require('./appRouters/apps.js');
 
-//load router middleware here
-//router.use()
+//var collector = require("../../backend/data-collector/collector.js");
 
+
+//load router middleware here
 
 //load frontend routers
 router.use('/', frontendRouter);

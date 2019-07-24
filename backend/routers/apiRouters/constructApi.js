@@ -223,9 +223,10 @@ router.post('/', function(req,res){
         }
         //For masscreate we clean those constructs that are allready in the db and add only those which aren't
         else if(masscreate){
-            console.log("FOUND FOR MASS CREATE: ", found);
-            console.log("SHOULD BE ADDED: ", requests);
-            
+            if(debug){
+                console.log("FOUND FOR MASS CREATE: ", found);
+                console.log("SHOULD BE ADDED: ", requests);
+            }
             //Even if we didn't find any duplicates we still need to do the outer loop as we need to add the update time.
             for(var i = 0; i < requests.length; ++i){
                 var add = true;

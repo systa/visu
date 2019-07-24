@@ -22,7 +22,7 @@ var DURATION_TIMELINE_PROCESSOR = function(par){
     
     var _rowId = p.rowId !== undefined ? p.rowId : "_id";
     var _fromOrigin = p.rowIdIsFromOrigin !== undefined ? p.rowIdIsFromOrigin : false;
-    var _anonymize = p.anonymize !== undefined ? p.anonymize : true;
+    var _anonymize = p.anonymize !== undefined ? p.anonymize : false;
     var _astring = p.astring !== undefined ? p.astring : "";
     
     //Splitting the Y-index mapping from . so we can do the mapping properly
@@ -70,7 +70,9 @@ var DURATION_TIMELINE_PROCESSOR = function(par){
                 
                 var st = new Date(ev.time).getTime();
                 var et = st + parseInt(ev.duration);
-                
+                if (debug){
+                    //console.log("[dataprocessor]Event data:", ev, st, et);
+                }
                 if(st < start || start === false){
                     start = st;
                 }

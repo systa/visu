@@ -35,6 +35,8 @@ var AmountChart = function(par){
     var _min = p.min !== undefined ? p.min : 0;
     var _amountData = p.amounts !== undefined ? p.amounts : [];
     
+    console.log("Amount data:", _amountData);
+
     var _yDomain = [_min, _max+10];
     
     _svg.attr("width", _width);
@@ -46,16 +48,32 @@ var AmountChart = function(par){
     var _timeScale = d3.time.scale().domain(_xDomain).range([_margins.left, _width-_margins.right]);
     var _timeAxis = d3.svg.axis().orient("top").scale(_timeScale).tickSize(-_height+_margins.top+_margins.bottom);
 
+    var _colorScale = p.colorScale !== undefined ? p.colorScale : d3.scale.category20();
+    
     //In SVG the draw order is reverse order of defining the nodes
     var _yAxisGraphic = _svg.append("g").attr("class", "y axis");
     
-    var _amountGroup = _svg.append("g");
-    var _amounts = _amountGroup.selectAll("rect").data(_amountData).enter().append("rect");
+    //var _colorDomain = [];
+    var _amountGroups = [];
+    var _amounts = [];
+    _amountData.forEach(function(array){
+        var group = _svg.append("g");
+        var amounts = group.selectAll("rect").data(array.data).enter().append("rect");
+
+        _amountGroups.push(group);
+        _amounts.push(amounts);
+
+        //_colorDomain.push(array.tags);
+    });
+
+    //console.log("Colors:", _colorDomain);
+    //_colorScale.domain(_colorDomain);
     
     var _xAxisGraphic = _svg.append("g").attr("class", "x axis");
     
     var _tooltip = d3.select("#tooltipC");
     
+    //Horizontal position of the bar
     var mapDataToX = function(data){
         var domain = _timeScale.domain();
         var start = data.date;
@@ -72,6 +90,7 @@ var AmountChart = function(par){
         return _timeScale(start);
     };
     
+    //Width of the bar
     var mapDataToWidth = function(data){
         var domain = _timeScale.domain();
         var start = data.date;
@@ -102,12 +121,16 @@ var AmountChart = function(par){
         return _timeScale(date)-_timeScale(start);
     };
     
+    //Vertical position of the bar
     var mapAmountToY = function(data){
-        return _amountScale(data.count);
+        if(!data.previous) data.previous = 0;
+        
+        return _amountScale(data.count + data.previous);
     };
     
+    //Height of the bar
     var mapAmounToHeight = function(data){
-        return _amountScale.range()[0]-mapAmountToY(data);
+        return _amountScale.range()[0]-_amountScale(data.count);
     };
     
     var onMouseOver = function(data){
@@ -142,7 +165,8 @@ var AmountChart = function(par){
         //background and y-axis
         _yAxisGraphic.attr("transform","translate("+_margins.left+","+0+")").call(_amountAxis);
             
-        _amounts.attr('fill', "#0000FF")
+        _amounts.forEach(function(tag){
+            tag.attr('fill', pub.getColor)
             .attr('x', mapDataToX)
             .attr('width', mapDataToWidth)
             .attr('y', mapAmountToY)
@@ -150,6 +174,7 @@ var AmountChart = function(par){
             .on("mouseover", onMouseOver)
             .on("mousemove", onMouseMove)
             .on("mouseout", onMouseOut);
+        });
 
         //x-axis
         _xAxisGraphic.attr("transform", "translate(0,"+(_margins.top)+")")
@@ -202,11 +227,21 @@ var AmountChart = function(par){
         _yAxisGraphic = _svg.append("g").attr("class", "y axis");
         
         _amountGroup = _svg.append("g");
-        _amounts = _amountGroup.selectAll("rect").data(_amountData).enter().append("rect");
+        _amounts = [];
+        _amountData.forEach(function(tag){
+            _amounts[tag] = _amountGroup.selectAll("rect").data(_amountData[tag]).enter().append("rect");
+        })  
         
         _xAxisGraphic = _svg.append("g").attr("class", "x axis");
     };
     
-    
+    pub.getColor = function(data){
+        return _colorScale(data.tag);
+    };
+
+    pub.getColorScale = function(){
+        return _colorScale;
+    };
+
     return pub;
 };
