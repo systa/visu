@@ -53,10 +53,45 @@ var LIFSPAN_TIMELINE_PROCESSOR = function (par) {
         return t1 - t2;
     };
 
-    var eventSortFunction = function (e1, e2) {
+    var eventSortFunction = function(e1, e2){
         var t1 = new Date(e1.time).getTime();
         var t2 = new Date(e2.time).getTime();
-        return t1 - t2;
+        /*if(t1 === t2){
+            
+            var start1 = _states.start.indexOf(e1.type);
+            var start2 = _states.start.indexOf(e2.type);
+            
+            var closed1 = _states.resolution.indexOf(e1.type);
+            var closed2 = _states.resolution.indexOf(e2.type);
+            
+            if(start1 !== -1 && start2 === -1){
+                return -1;//e1 is smaller as it is start event and e2 is not
+            }
+            else if(start2 !== -1 && start1 === -1){
+                return 1;//e2 is smaller as it is start event and e1 is not
+            }
+            else if(closed1 !== -1 && closed2 === -1){
+                return 1;//e2 is smaller as it is not resolution event and e1 is
+            }
+            else if(closed2 !== -1 && closed1 === -1){
+                return -1;//e1 is smaller as it is not resolution event and e2 is
+            }
+            else{
+                if(e1.rowId !== undefined && e2.rowId !== undefined){
+                    return e1.rowId.localeCompare(e2.rowId);
+                }
+                else if(e1.rowId !== undefined){
+                    return -1;
+                }
+                else if(e2.rowId !== undefined){
+                    return 1;
+                }
+                else{
+                    return 0;
+                }
+            }
+        }*/
+        return t1-t2;
     };
 
     var parseLifespans = function (statelist) {
@@ -65,7 +100,9 @@ var LIFSPAN_TIMELINE_PROCESSOR = function (par) {
         for (var rid in statelist) {
             if (statelist.hasOwnProperty(rid)) {
                 var statechanges = statelist[rid];
-                statechanges.sort(stSortFunction);
+                
+                statechanges.sort(eventSortFunction);
+                //statechanges.sort(stSortFunction);
 
                 //The first state in the array is the first statechange taken into account
                 var st = statechanges[0].time; //start time
@@ -406,6 +443,7 @@ var LIFSPAN_TIMELINE_PROCESSOR = function (par) {
         lptmp.sort(function (lp1, lp2) {
             var s1 = new Date(lp1.start).getTime();
             var s2 = new Date(lp2.start).getTime();
+            //return s1 - s2;
 
             if (lp1.end === false && lp2.end === false) {
                 return s1 - s2;

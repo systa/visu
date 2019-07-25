@@ -35,12 +35,10 @@ var AmountChart = function(par){
     var _min = p.min !== undefined ? p.min : 0;
     var _amountData = p.amounts !== undefined ? p.amounts : [];
     
-    console.log("Amount data:", _amountData);
-
-    var _yDomain = [_min, _max+10];
+    var _yDomain = [_min, Math.ceil(_max / 10) * 10];
     
     _svg.attr("width", _width);
-    _svg.attr("height", _height);
+    _svg.attr("height", _height+10);
   
     var _amountScale = d3.scale.linear().domain(_yDomain).range([_height-_margins.bottom, _margins.top]);
     var _amountAxis = d3.svg.axis().orient("right").scale(_amountScale).tickSize(_width-(_margins.left+_margins.right));
@@ -134,20 +132,19 @@ var AmountChart = function(par){
     };
     
     var onMouseOver = function(data){
-        var dispstring = "";
-        for(var atr in data){
-            if(data.hasOwnProperty(atr)){
-                if(!$.isPlainObject(data[atr]) && !$.isArray(data[atr])){
-                    dispstring += atr+": "+data[atr].toString()+"</br>";
-                }
-            }
-        }
+        var dispstring = "<h5>Issues</h5>";
+
+        dispstring += "<strong>Tag:</strong> " + data.tag + "<br>";
+        dispstring += "<strong>Amount:</strong> " + data.count + "<br>";
+        var date = data.date.getUTCDate() + "/" + (data.date.getUTCMonth()+1)  + "/" + data.date.getUTCFullYear();
+        dispstring += "<strong>Date:</strong> " + date + "<br>";
+        
         _tooltip.html(dispstring);
         return _tooltip.style("visibility", "visible");
     };
     
     var onMouseMove = function(data){
-        return _tooltip.style("top", (event.pageY-30)+"px").style("left",(event.pageX+15)+"px");
+        return _tooltip.style("top", (event.clientY)+"px").style("left",(event.clientX+15)+"px");
     };
     
     var onMouseOut = function(data){
@@ -199,7 +196,7 @@ var AmountChart = function(par){
         _amountAxis.tickSize(_width-(_margins.left+_margins.right));
         
         _svg.attr("width", _width);
-        _svg.attr("height", _height);
+        _svg.attr("height", _height+10);
         
         pub.draw();
     };
@@ -236,6 +233,10 @@ var AmountChart = function(par){
     };
     
     pub.getColor = function(data){
+        
+            if (data.tag === "Unlabelled" || data.tag === "Unassigned" )
+                return '#909090';
+        
         return _colorScale(data.tag);
     };
 

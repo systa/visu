@@ -12,7 +12,7 @@ var DASHBOARD_MAIN = function (par) {
     //-----------------------------------------
     //  DRAWING RELATED STUFF
     //-----------------------------------------
-    var _timeSelectorHeight = 40;
+    var _timeSelectorHeight = 60;
 
     //The left and right margin as well as width should be the same
     //for all the charts if we want to align the draw areas vertically
@@ -38,7 +38,6 @@ var DASHBOARD_MAIN = function (par) {
         left: 60,
         right: 60
     };
-    var _containerWidth = 0;
 
     //The chart objects will be here
     var _issueChart = false;
@@ -62,21 +61,17 @@ var DASHBOARD_MAIN = function (par) {
 
     //Function for resize event
     var onResize = function () {
-        var container = _layout.getContainer();
+        var _containerWidth = window.innerWidth
+            || document.documentElement.clientWidth
+            || document.body.clientWidth;
 
-        _containerWidth = window.innerWidth - _containerMargins.left - _containerMargins.right;
-        _width = _containerWidth;
+        _width = (_containerWidth - _containerMargins.left - _containerMargins.right) * 0.98;
 
         //The height that the two charts can use in maximum (total)
         _height = (window.innerHeight - (_timeSelectorHeight +
             _ChartMargins.top + _ChartMargins.bottom +
             _timeSelectorMargins.top + _timeSelectorMargins.bottom +
             _containerMargins.top));
-
-        container.style.position = "absolute";
-        container.style.width = _containerWidth.toString() + "px";
-        container.style.left = _containerMargins.left.toString() + "px";
-        container.style.top = _containerMargins.top.toString() + "px";
 
         //Setting the size of charts
         if (_issueChart !== false) {
@@ -120,7 +115,7 @@ var DASHBOARD_MAIN = function (par) {
         var scale = _colorScaleLabels;
         for (var i = 0; i < types.length; ++i) {
             var color;
-            if (types[i] === 'Unlabelled')
+            if (types[i] === 'Unlabelled' || types[i] === 'Unassigned' )
                 color = '#909090';
             else
                 color = scale(types[i]);
@@ -144,10 +139,12 @@ var DASHBOARD_MAIN = function (par) {
         if (!elements) {
             elements = _layout.createLayout();
 
-            _ChartMargins.left = _layout.getSVGTextWidth(data.longestId) + 12;
-            _ChartMargins.right = _layout.getSVGTextWidth(data.longestType) + 40;
+            _ChartMargins.left = _layout.getSVGTextWidth("0000");
+            _ChartMargins.right = _layout.getSVGTextWidth("Unassigned c    c");
             _timeSelectorMargins.left = _ChartMargins.left;
             _timeSelectorMargins.right = _ChartMargins.right;
+
+            console.log("[dashboard_main]Margins:", _ChartMargins);
 
             var onBrush = function (timeRange) {
                 _issueChart.onBrush(timeRange);

@@ -49,7 +49,7 @@ var TimeSelector = function (par) {
     var _scale = _linear ? d3.scale.linear().domain(_xDomain) : _scale = d3.time.scale().domain(_xDomain);
     _scale.range([_margins.left, _width - _margins.right]);
 
-    var _brushAxis = d3.svg.axis().orient("bottom").tickSize((_height - (_margins.top + _margins.bottom)) * 0.5).scale(_scale);
+    var _brushAxis = d3.svg.axis().orient("bottom").tickSize((_height - (_margins.top + _margins.bottom)) * 0.7).scale(_scale);
 
     //On brush axis
     if (_customTime) {

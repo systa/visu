@@ -47,6 +47,24 @@
     });
   </script>
 
+  <script>
+    function allowDrop(ev) {
+      ev.preventDefault();
+    }
+    
+    function drag(ev) {
+      ev.dataTransfer.setData("text", ev.target.id);
+    }
+    
+    function drop(ev, id) {
+      ev.preventDefault();
+      var data = ev.dataTransfer.getData("text");
+      var elem = $('#'+data)
+      var target = document.getElementById(id);
+      elem.insertAfter(target);
+    }
+  </script>
+
 </head>
 
 <body>
@@ -139,7 +157,7 @@
               <div class="form-group">
                 <label for="context" class="col-sm-3 control-label">Context</label>
                 <div class="col-sm-9">
-                  <input class="form-control" type="text" name="context" id="context" value="repolainen5"/>
+                  <input class="form-control" type="text" name="context" id="context" value="repolainen"/>
                 </div>
               </div>
               <div class="form-group">
@@ -307,14 +325,24 @@
   <div id="visuParent" class="container" hidden>
     <div id="brushParent" class="parentContainer"></div>
 
-    <button class="collapsible">Issue Timeline</button>
-    <div id="issueParent" class="parentContainer content"></div>
+    <div draggable="true" ondragstart="drag(event)" id="drag1" ondrop="drop(event, 'drag1')" ondragover="allowDrop(event)">
+      <button class="collapsible">Issue Timeline</button>
+      <div id="issueParent" class="parentContainer content"></div>
+    </div>
 
-    <button class="collapsible">Amount Timeline (assigned)</button>
-    <div id="amountParent1" class="parentContainer content"></div>
+    <div draggable="true" ondragstart="drag(event)" id="drag2" ondrop="drop(event, 'drag2')" ondragover="allowDrop(event)">
+      <button class="collapsible">Amount Timeline (assigned)</button>
+      <div id="amountParent1" class="parentContainer content"></div>
+    </div>
 
-    <button class="collapsible">Amount Timeline (label)</button>
-    <div id="amountParent2" class="parentContainer content"></div>
+    <div draggable="true" ondragstart="drag(event)" id="drag3" ondrop="drop(event, 'drag3')" ondragover="allowDrop(event)">
+      <button class="collapsible">Amount Timeline (label)</button>
+      <div id="amountParent2" class="parentContainer content"></div>
+    </div>
+
+    
+
+  
   </div>
 
   <script>
@@ -329,7 +357,7 @@
           if (content.style.maxHeight){
             content.style.maxHeight = null;
           } else {
-            content.style.maxHeight = content.scrollHeight + "px";
+            content.style.maxHeight = "720px";
           } 
         });
       }

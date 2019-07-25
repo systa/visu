@@ -531,17 +531,16 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
             result = getAmountAssigned(eventData.timeframe, eventData.startEvents, eventData.endEvents, constructData.assignees);
         } else if (tag === "label") {
             result = getAmountLabeled(eventData.timeframe, eventData.startEvents, eventData.endEvents, constructData.labels);
-        }else {
-            result = getAmountNotag(eventData.timeframe, eventData.startEvents, eventData.endEvents);
-        }
-
+        } 
+        
+        var notag = getAmountNotag(eventData.timeframe, eventData.startEvents, eventData.endEvents);
         if (debug) {
             console.log("[amout_chart_processor]Amounts", result);
         }
 
         data.amounts = result.amounts;
-        data.max = result.max;
-        data.min = result.min;
+        data.max = notag.max;
+        data.min = notag.min;
 
         if (tag === "assigned") {
             data.tags = constructData.assignees;
