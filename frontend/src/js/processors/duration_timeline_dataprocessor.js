@@ -65,7 +65,7 @@ var DURATION_TIMELINE_PROCESSOR = function(par){
         
         events.forEach(function(ev){
             //ignoring duplicates
-            if(identity_helper.indexOf(ev._id) === -1){
+            if(identity_helper.indexOf(ev._id) === -1 && ev.type === 'job'){
                 identity_helper.push(ev._id);
                 
                 var st = new Date(ev.time).getTime();

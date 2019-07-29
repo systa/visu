@@ -191,6 +191,7 @@ var ISSUE_TIMELINE_MAIN = function(par){
     
     var whenLoaded = function(){
         if(_events && _constructs && _states){
+            console.log("Data for issue parser:", _constructs, _events, _states);
             var parsed_data = _parser(_constructs, _events, _states);
             initCharts(parsed_data, _timeframe);
         }

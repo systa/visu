@@ -92,10 +92,14 @@ body{
     overflow-x: hidden;
 }
 
-#issueParent  {
+
+#issueParent {
     resize: vertical;
-    overflow-y: scroll;
-   
+    overflow-y: auto;
+}
+
+#issueParent .chart{
+    overflow-y: auto;
 }
 
 .chart rect{

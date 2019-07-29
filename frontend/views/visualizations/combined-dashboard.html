@@ -30,11 +30,13 @@
   <!-- Templates -->
   <script defer type="text/javascript" src="../src/js/vis-templates/amount_chart.js"></script>
   <script defer type="text/javascript" src="../src/js/vis-templates/event_timeline.js"></script>
+  <script defer type="text/javascript" src="../src/js/vis-templates/duration_timeline.js"></script>
   <script defer type="text/javascript" src="../src/js/vis-templates/time_selector.js"></script>
 
   <!-- Data processors -->
   <script defer type="text/javascript" src="../src/js/processors/amount_chart_dataprocessor.js"></script>
   <script defer type="text/javascript" src="../src/js/processors/lifespan_timeline_processor.js"></script>
+  <script defer type="text/javascript" src="../src/js/processors/duration_timeline_dataprocessor.js"></script>
   <script defer type="text/javascript" src="../src/js/processors/processor_utilities.js"></script>
 
   <!-- Data queries -->
@@ -340,8 +342,10 @@
       <div id="amountParent2" class="parentContainer content"></div>
     </div>
 
-    
-
+    <div draggable="true" ondragstart="drag(event)" id="drag4" ondrop="drop(event, 'drag4')" ondragover="allowDrop(event)">
+      <button class="collapsible">Duration Timeline (tests)</button>
+      <div id="durationParent" class="parentContainer content"></div>
+    </div>
   
   </div>
 
@@ -357,7 +361,7 @@
           if (content.style.maxHeight){
             content.style.maxHeight = null;
           } else {
-            content.style.maxHeight = "720px";
+            content.style.maxHeight = "900px";
           } 
         });
       }

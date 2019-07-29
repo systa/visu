@@ -57,6 +57,12 @@ var DASHBOARD_TEMPLATE = function (mpar) {
         legend: false
     };
 
+    var _durationChart = {
+        div: false,
+        svg: false,
+        legend: false
+    };
+
     //----------------------------------
     //    CREATE HTML & SVG ELEMENTS
     //----------------------------------
@@ -261,12 +267,22 @@ var DASHBOARD_TEMPLATE = function (mpar) {
             source: _amountChartLabel
         });
 
+        //Create the duration timeline
+        createChartSVG({
+            className: "chart",
+            id: "durationContainer",
+            svgId: "chart",
+            parent: document.getElementById("durationParent"),
+            source: _durationChart
+        });
+
         return {
             container: _containerParent,
             brush: _brush,
             issueChart: _issueChart,
             amountChartAuthor: _amountChartAuthor,
-            amountChartLabel: _amountChartLabel
+            amountChartLabel: _amountChartLabel,
+            durationChart: _durationChart
         };
     };
 

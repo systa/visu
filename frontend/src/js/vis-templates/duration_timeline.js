@@ -204,7 +204,7 @@ var DurationTimeline = function(par){
         }
         var w = _timeScale(end)-_timeScale(start);
 
-        return w;
+        return w ;
     };
   
     //Gets the data row based on buildId

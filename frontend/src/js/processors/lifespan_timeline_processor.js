@@ -525,15 +525,35 @@ var LIFSPAN_TIMELINE_PROCESSOR = function (par) {
         ];
 
         if (tag === "assigned") {
-            data.tags = constructData.assignees;
+            data.tags = constructData.assignees.sort(assignSort);
         } else if (tag === "label") {
-            data.tags = constructData.labels;
+            data.tags = constructData.labels.sort(labelSort);
         } else {
             data.tags = false;
         }
 
         //giving the data to who needs it
         return data;
+    };
+
+    var labelSort = function (l1, l2) {
+        if(l1 === 'Unlabelled'){
+            return -1;
+        }else if (l2 === 'Unlabelled'){
+            return 1;
+        }
+
+        return l1.localeCompare(l2);
+    };
+
+    var assignSort = function (l1, l2) {
+        if(l1 === 'Unassigned'){
+            return -1;
+        }else if (l2 === 'Unassigned'){
+            return 1;
+        }
+
+        return l1.localeCompare(l2);
     };
 
     return parseData;

@@ -34,7 +34,7 @@ var EventTimeline = function (par) {
         return false;
     }
 
-    var _width = p.width !== undefined ? p.width : 256;
+    var _width = p.width !== undefined ? p.width : 5000;
     var _height = p.height !== undefined ? p.height : 32;
     var _margins = p.margins !== undefined ? p.margins : {
         top: 0,
@@ -51,6 +51,10 @@ var EventTimeline = function (par) {
     var _constructData = p.constructs !== undefined ? p.constructs : false;
     //If we want to display the construct types or not?
     var _displayTypes = p.displayTypes !== undefined ? p.displayTypes : true;
+
+    console.log("[lifespan timeline]Construct data:", _constructData);
+    console.log("[lifespan timeline]Lifespan data:", _lifespanData);
+    console.log("[lifespan timeline]Event data:", _eventData);
 
     var _colorScaleEvents = p.colorScaleLabels;
     var _colorScaleLabels = p.colorScaleLabels;
@@ -69,8 +73,8 @@ var EventTimeline = function (par) {
 
     //calculaiting height for one row now that we know how many rows we will have
     var _rowHeight = ((_height - _margins.bottom - _margins.top) / _yDomain.length);
-    var _minRowHeight = 15; //12;
-    var _maxRowHeight = 20; //16;
+    var _minRowHeight = 20; //12;
+    var _maxRowHeight = 30; //16;
     if (_rowHeight < _minRowHeight) {
         _rowHeight = _minRowHeight;
     } else if (_rowHeight > _maxRowHeight) {
@@ -102,12 +106,23 @@ var EventTimeline = function (par) {
     var _lifespans = _lifespanGroup.selectAll("line").data(_lifespanData).enter().append("line");
 
     //The event times
-    var _eventGroup = _svg.append("g");
-    //var _events = _eventGroup.selectAll("rect").data(_eventData).enter().append("rect");
-    var _events = _eventGroup.selectAll("circle").data(_eventData).enter().append("circle");
+    var _outerEventGroup = _svg.append("g");
+    var _innerEventGroup = _svg.append("g");
+
+    var _outerEventData = [];
+    var _innerEventData = [];
+    _eventData.forEach(function (ev) {
+        if (ev.type === 'opened' || ev.type === 'closed') {
+            _outerEventData.push(ev);
+        } else {
+            _innerEventData.push(ev);
+        }
+    });
+
+    var _innerEvents = _innerEventGroup.selectAll("rect").data(_innerEventData).enter().append("circle");
+    var _outerEvents = _outerEventGroup.selectAll("circle").data(_outerEventData).enter().append("rect");
 
     var _xAxisGraphic = _svg.append("g").attr("class", "x axis");
-
     var _tooltip = d3.select("#tooltipC");
 
     var getLpStart = function (data) {
@@ -174,6 +189,20 @@ var EventTimeline = function (par) {
         return x;
     };
 
+    var getX2 = function (data) {
+        var domain = _timeScale.domain();
+        var start = new Date(data.time);
+        var circleDiameter = _rowHeight * 0.33 * 2;
+
+        //clipping the coordinates to brush selection
+        if (start <= domain[0] || start >= domain[domain.length - 1]) {
+            return -circleDiameter;
+        }
+
+        var x = _timeScale(start) - (_rowHeight * 0.25);
+        return x;
+    };
+
     //Gets the data row based on buildId
     var getY = function (data) {
         return _scaleY(data.rowId);
@@ -189,19 +218,45 @@ var EventTimeline = function (par) {
         return y;
     };
 
-    var onMouseOverEvent = function (data) {
-        var dispstring = "[Details]Event:<br>";
+    var getLineY2 = function (data) {
+        var y = getY(data) + (_rowHeight * 0.05);
 
-        try {
-            for (var atr in data) {
-                if (typeof data[atr] !== "undefined" && data.hasOwnProperty(atr) && data[atr] !== null) {
-                    dispstring += atr + ": " + data[atr].toString() + "</br>";
-                }else if (data[atr] === null){
-                    dispstring += atr + ": null</br>";
-                }
-            }
-        } catch (e) {
-            console.log(data, e);
+        return y;
+    };
+
+    var getRadius = function (data) {
+        if (data.type === 'opened' || data.type === 'closed') {
+            return _rowHeight * 0.4;
+        } else {
+            return _rowHeight * 0.2;
+        }
+    };
+
+    var onMouseOverEvent = function (data) {
+        var dispstring = "<h5>Event</h5>";
+
+        dispstring += "<strong>_id:</strong> " + data._id + "<br>";
+        dispstring += "<strong>Type:</strong> " + data.type + "<br>";
+        dispstring += "<strong>Row id:</strong> " + data.rowId + "<br>";
+        dispstring += "<strong>Creator:</strong> " + data.creator + "<br>";
+
+        var date = new Date(data.time);
+        var time = date.getUTCDate() + "/" + (date.getUTCMonth() + 1) + "/" + date.getUTCFullYear() + " " + date.getUTCHours() + ":" + date.getUTCMinutes() + ":" + date.getUTCSeconds() + "." + date.getUTCMilliseconds();
+        dispstring += "<strong>Time:</strong> " + time + "<br>";
+
+        if (data.message)
+            dispstring += "<strong>Message:</strong> " + data.data.message + "<br>";
+
+        if (data.related_constructs)
+            dispstring += "<strong>Related constructs:</strong> " + data.related_constructs.length + "<br>";
+
+        if (data.related_events)
+            dispstring += "<strong>Related events:</strong> " + data.related_events.length + "<br>";
+
+        if (data.isStatechange) {
+            dispstring += "<strong>Statechange:</strong> " + "from " + (data.statechange.from || "-") + " to " + data.statechange.to + "<br>";
+        } else {
+            dispstring += "<strong>Statechange:</strong> " + "no" + "<br>";
         }
 
         _tooltip.html(dispstring);
@@ -209,18 +264,22 @@ var EventTimeline = function (par) {
     };
 
     var onMouseOverLifespan = function (data) {
-        var dispstring = "[Details]Lifepsan:<br>";
+        var dispstring = "<h5>Lifespan</h5>";
 
-        try {
-            for (var atr in data) {
-                if (typeof data[atr] !== "undefined" && data.hasOwnProperty(atr) && data[atr] !== null) {
-                    dispstring += atr + ": " + data[atr].toString() + "</br>";
-                }else if (data[atr] === null){
-                    dispstring += atr + ": null</br>";
-                }
-            }
-        } catch (e) {
-            console.log(data, e);
+        dispstring += "<strong>Tag:</strong> " + data.tag + "<br>";
+        dispstring += "<strong>State:</strong> " + data.state + "<br>";
+        dispstring += "<strong>Row id:</strong> " + data.rowId + "<br>";
+
+        var date = new Date(data.start);
+        var start = date.getUTCDate() + "/" + (date.getUTCMonth() + 1) + "/" + date.getUTCFullYear() + " " + date.getUTCHours() + ":" + date.getUTCMinutes() + ":" + date.getUTCSeconds() + "." + date.getUTCMilliseconds();
+        dispstring += "<strong>Start:</strong> " + start + "<br>";
+
+        if (data.end) {
+            date = new Date(data.end);
+            var end = date.getUTCDate() + "/" + (date.getUTCMonth() + 1) + "/" + date.getUTCFullYear() + " " + date.getUTCHours() + ":" + date.getUTCMinutes() + ":" + date.getUTCSeconds() + "." + date.getUTCMilliseconds();
+            dispstring += "<strong>End:</strong> " + end + "<br>";
+        } else {
+            dispstring += "<strong>End:</strong> " + "ongoing" + "<br>";
         }
 
         _tooltip.html(dispstring);
@@ -228,41 +287,43 @@ var EventTimeline = function (par) {
     };
 
     var onMouseOverConstruct = function (data) {
-        var dispstring = "[Details]Construct:<br>";
+        var dispstring = "<h5>Construct</h5>";
 
-        try {
-            for (var atr in data) {
-                if (typeof data[atr] !== "undefined" && data.hasOwnProperty(atr)) {
-                    if (!$.isPlainObject(data[atr]) && !$.isArray(data[atr])) {
-                        dispstring += atr + ": " + data[atr].toString() + "</br>";
+        dispstring += "<strong>_id:</strong> " + data._id + "<br>";
+        dispstring += "<strong>Type:</strong> " + data.type + "<br>";
+        dispstring += "<strong>Row id:</strong> " + data.rowId + "<br>";
+        dispstring += "<strong>Name:</strong> " + data.name + "<br>";
 
-                    } else if ($.isArray(data[atr])) {
-                        for (var atr2 in data[atr]) {
-                            if (!$.isPlainObject(data[atr]) && !$.isArray(data[atr])) {
-                                if (data[atr].hasOwnProperty(atr2)) {
-                                    dispstring += "tab(" + atr2 + "): " + data[atr][atr2].toString() + "</br>";
-                                }
-                            }
-                        }
-                    } else if ($.isPlainObject(data[atr])) {
-                        for (var atr2 in data[atr]) {
-                            if (data[atr].hasOwnProperty(atr2)) {
-                                dispstring += "object(" + atr2 + "): " + data[atr][atr2].toString() + "</br>";
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (e) {
-            //console.log(data, e);
-        }
+        if (data.description)
+            dispstring += "<strong>Description:</strong> " + data.description + "<br>";
+
+        dispstring += "<strong>Statechanges:</strong> " + data.related_statechanges.length + "<br>";
+        dispstring += "<strong>Events:</strong> " + data.related_events.length + "<br>";
+
+        if (data.data.assignee !== "Unassigned")
+            dispstring += "<strong>Assigned to:</strong> " + data.data.assignee + "<br>";
+        else
+            dispstring += "<strong>Assigned to:</strong> " + "undefined" + "<br>";
+
+        if (data.data.label !== "Unlabelled")
+            dispstring += "<strong>Label:</strong> " + data.data.label + "<br>";
+        else
+            dispstring += "<strong>Label:</strong> " + "undefined" + "<br>";
+
+        dispstring += "<strong>State:</strong> " + data.data.state + "<br>";
+
+        var date = new Date(data.data.created);
+        var created = date.getUTCDate() + "/" + (date.getUTCMonth() + 1) + "/" + date.getUTCFullYear() + " " + date.getUTCHours() + ":" + date.getUTCMinutes() + ":" + date.getUTCSeconds() + "." + date.getUTCMilliseconds();
+        dispstring += "<strong>Creation:</strong> " + created + "<br>";
+
+        dispstring += "<strong>Number:</strong> " + data.data.number + "<br>";
 
         _tooltip.html(dispstring);
         return _tooltip.style("visibility", "visible");
     };
 
     var onMouseMove = function (data) {
-        return _tooltip.style("top", (event.pageY - 30) + "px").style("left", (event.pageX + 15) + "px");
+        return _tooltip.style("top", (event.clientY) + "px").style("left", (event.clientX + 15) + "px");
     };
 
     var onMouseOut = function (data) {
@@ -283,6 +344,8 @@ var EventTimeline = function (par) {
     };
 
     pub.getColorAuthor = function (data) {
+        if (data.data.assignee === 'Unassigned')
+            return '#909090';
         return _colorScaleAuthors(data.data.assignee);
     };
 
@@ -305,9 +368,9 @@ var EventTimeline = function (par) {
             .attr('width', _width - _margins.right)
             .attr('y', getY)
             .attr('height', _rowHeight)
-        .on("mouseover", onMouseOverConstruct)
-        .on("mousemove", onMouseMove)
-        .on("mouseout", onMouseOut);
+            .on("mouseover", onMouseOverConstruct)
+            .on("mousemove", onMouseMove)
+            .on("mouseout", onMouseOut);
 
         _names.attr('x', 2)
             .attr('y', function (d) {
@@ -326,10 +389,19 @@ var EventTimeline = function (par) {
             .on("mousemove", onMouseMove)
             .on("mouseout", onMouseOut);
 
-        _events.attr('fill', pub.getColorEvent)
+        _outerEvents.attr('fill', pub.getColorEvent)
+            .attr('x', getX2)
+            .attr('y', getLineY2)
+            .attr('width', _rowHeight * 0.5)
+            .attr('height', _rowHeight * 0.95)
+            .on("mouseover", onMouseOverEvent)
+            .on("mousemove", onMouseMove)
+            .on("mouseout", onMouseOut);
+
+        _innerEvents.attr('fill', pub.getColorEvent)
             .attr('cx', getX)
             .attr('cy', getLineY)
-            .attr('r', _rowHeight * 0.33)
+            .attr('r', _rowHeight * 0.3)
             .on("mouseover", onMouseOverEvent)
             .on("mousemove", onMouseMove)
             .on("mouseout", onMouseOut);

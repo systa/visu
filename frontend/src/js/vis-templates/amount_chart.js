@@ -233,11 +233,24 @@ var AmountChart = function(par){
     };
     
     pub.getColor = function(data){
-        
-            if (data.tag === "Unlabelled" || data.tag === "Unassigned" )
-                return '#909090';
-        
-        return _colorScale(data.tag);
+        var day = data.date.getDay();
+        var color;
+        if (day == 0 || day == 6){
+            if (data.tag === "Unlabelled" || data.tag === "Unassigned" ){
+                color = "rgba(144,144,144,0.7)";
+            }else{
+                var tmp = d3.rgb(_colorScale(data.tag));
+                color = "rgba(" + tmp.r + "," + tmp.g + "," + tmp.b + ", 0.7)";
+            }
+        }else{
+            if (data.tag === "Unlabelled" || data.tag === "Unassigned" ){
+                color = "rgba(144,144,144,1)";
+            }else{
+                color = _colorScale(data.tag);
+            }
+        }
+                
+        return color;
     };
 
     pub.getColorScale = function(){

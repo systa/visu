@@ -43,12 +43,14 @@ var DASHBOARD_MAIN = function (par) {
     var _issueChart = false;
     var _amountChartLabel = false;
     var _amountChartAuthor = false;
+    var _durationChart = false;
     var _timeSelector = false;
 
     //Colorscales
-    var _colorScaleEvents = d3.scale.category20();
+    var _colorScaleEvents = d3.scale.category10();
     var _colorScaleLabels = d3.scale.category20c();
     var _colorScaleAuthors = d3.scale.category20c();
+    var _colorScaleDurations = d3.scale.category10();
 
     var elements = false;
 
@@ -104,6 +106,16 @@ var DASHBOARD_MAIN = function (par) {
             _amountChartLabel.onResize(_width, height, _ChartMargins);
         }
 
+        if (_durationChart !== false) {
+            //We should not exceed the total height
+            var min = _durationChart.getMinHeight();
+            var height = _height * 0.3;
+            if (height < min) {
+                height = min;
+            }
+            _durationChart.onResize(_width, height, _ChartMargins);
+        }
+
         if (_timeSelector !== false) {
             _timeSelector.onResize(_width, _timeSelectorHeight, _timeSelectorMargins);
         }
@@ -112,9 +124,15 @@ var DASHBOARD_MAIN = function (par) {
 
 
     var createLegend = function (chart, legend, types) {
-        var scale = _colorScaleLabels;
+        var scale;
+        if (chart === "label"){
+            scale = _colorScaleLabels;
+        }else{
+            scale = _colorScaleAuthors;
+        }
+        
         for (var i = 0; i < types.length; ++i) {
-            var color;
+            var color = scale(types[i]);
             if (types[i] === 'Unlabelled' || types[i] === 'Unassigned' )
                 color = '#909090';
             else
@@ -128,9 +146,26 @@ var DASHBOARD_MAIN = function (par) {
         }
     };
 
+    var createLegendTests = function (chart, legend, types) {
+        var scale = _colorScaleDurations;
+        for (var i = 0; i < 2; ++i) {
+            var color = scale(types[i]+"2");
+        }
+
+        for (var i = 0; i < types.length; ++i) {
+            var color = scale(types[i]);
+
+            _layout.appendLabel({
+                legend: legend,
+                bgcolor: color,
+                text: types[i] + " "
+            });
+        }
+    };
+
     //Initializes the chart template and draws the visualization.
     var initCharts = function (chart, data, timeframe, callback) {
-        console.log("[dashboard_main]initCharts:", data);
+        //console.log("[dashboard_main]initCharts:", data);
 
         if (!timeframe) {
             timeframe = data.timeframe;
@@ -144,12 +179,13 @@ var DASHBOARD_MAIN = function (par) {
             _timeSelectorMargins.left = _ChartMargins.left;
             _timeSelectorMargins.right = _ChartMargins.right;
 
-            console.log("[dashboard_main]Margins:", _ChartMargins);
+            //console.log("[dashboard_main]Margins:", _ChartMargins);
 
             var onBrush = function (timeRange) {
                 _issueChart.onBrush(timeRange);
                 _amountChartAuthor.onBrush(timeRange);
                 _amountChartLabel.onBrush(timeRange);
+                _durationChart.onBrush(timeRange);
             };
 
             _timeSelector = TimeSelector({
@@ -176,11 +212,11 @@ var DASHBOARD_MAIN = function (par) {
                     colorScaleAuthors: _colorScaleAuthors,
                     colorScaleLabels: _colorScaleLabels
                 });
-                createLegend(_issueChart, elements.issueChart.legend1, data.types);
-                createLegend(_issueChart, elements.issueChart.legend2, data.tags);
+                createLegend("label", elements.issueChart.legend1, data.types);
+                createLegend("label", elements.issueChart.legend2, data.tags);
                 break;
             case "assigned":
-                _colorScaleAuthors.domain(data.tags);
+                _colorScaleAuthors.domain(data.tags.slice(1,data.tags.length));
                 _amountChartAuthor = AmountChart({
                     svg: elements.amountChartAuthor.svg,
                     margins: _ChartMargins,
@@ -190,10 +226,10 @@ var DASHBOARD_MAIN = function (par) {
                     amounts: data.amounts,
                     colorScale: _colorScaleAuthors
                 });
-                createLegend(_amountChartAuthor, elements.amountChartAuthor.legend, data.tags);
+                createLegend(chart, elements.amountChartAuthor.legend, data.tags);
                 break;
             case "label":
-                _colorScaleLabels.domain(data.tags);
+                _colorScaleLabels.domain(data.tags.slice(1,data.tags.length));
                 _amountChartLabel = AmountChart({
                     svg: elements.amountChartLabel.svg,
                     margins: _ChartMargins,
@@ -203,7 +239,20 @@ var DASHBOARD_MAIN = function (par) {
                     amounts: data.amounts,
                     colorScale: _colorScaleLabels
                 });
-                createLegend(_amountChartLabel, elements.amountChartLabel.legend, data.tags);
+                createLegend(chart, elements.amountChartLabel.legend, data.tags);
+                break;
+            case "duration":
+                _durationChart = DurationTimeline({
+                    svg : elements.durationChart.svg,
+                    margins: _ChartMargins,
+                    timeframe : data.timeframe,
+                    ids : data.ids,
+                    data : data.events,
+                    colors : data.states,
+                    linear : false
+                    //constructs : data.constructs
+                });
+                createLegendTests(_durationChart, elements.durationChart.legend, data.states);
                 break;
         }
 
@@ -239,9 +288,11 @@ var DASHBOARD_MAIN = function (par) {
     var _timeframe = false;
     if (_filters.startTime && _filters.endTime) {
         _timeframe = [new Date(_filters.startTime), new Date(_filters.endTime)];
+    }else if (_filters.startTime) {
+        _timeframe = [new Date(_filters.startTime), new Date()];
     }
 
-    var createIssueTimeline = function (mapping, filters, timeframe, tag) {
+    var createIssueTimeline = function (mapping, filters, timeframe, tag, callback) {
         var _parser = LIFSPAN_TIMELINE_PROCESSOR(mapping);
         var _queryFilters = QUERY_UTILITIES().formatFilters(filters);
 
@@ -255,7 +306,7 @@ var DASHBOARD_MAIN = function (par) {
             if (_events && _constructs && _states) {
                 var parsed_data = _parser(_constructs, _events, _states, tag);
 
-                initCharts("issue", parsed_data, timeframe, false);
+                initCharts("issue", parsed_data, timeframe, callback);
             }
             return false;
         };
@@ -275,6 +326,7 @@ var DASHBOARD_MAIN = function (par) {
         };
 
         _query.getFilteredConstructs(_queryFilters.constructFilters, constructsLoaded);
+        //_query.getAllConstructs(constructsLoaded);
         _query.getFilteredStatechanges(_queryFilters.eventFilters, statesLoaded);
         _query.getFilteredEvents(_queryFilters.eventFilters, eventsLoaded);
     };
@@ -282,7 +334,7 @@ var DASHBOARD_MAIN = function (par) {
     var createAmountTimeline = function (mapping, filters, timeframe, tag, callback) {
         filters.tag = tag;
 
-        console.log("Data for parer:", mapping, filters, timeframe);
+        console.log("Parameters for amount parser:", mapping, filters, timeframe);
 
         var _parser = AMOUNT_CHART_PROCESSOR(mapping);
         var _queryFilters = QUERY_UTILITIES().formatFilters(filters);
@@ -295,9 +347,9 @@ var DASHBOARD_MAIN = function (par) {
 
         var whenLoaded = function () {
             if (_events && _constructs && _states) {
-                console.log("Data for parer:", _constructs, _events, _states);
+                console.log("Data for amount parser:", _constructs, _events, _states);
                 var parsed_data = _parser(_events, _constructs, _states, tag);
-
+                console.log("Data from amount parser:", parsed_data);
                 initCharts(tag, parsed_data, timeframe, callback);
             }
             return false;
@@ -317,8 +369,45 @@ var DASHBOARD_MAIN = function (par) {
             whenLoaded();
         };
 
+        console.log("Construct filters:", _queryFilters.constructFilters);
         _query.getFilteredConstructs(_queryFilters.constructFilters, constructsLoaded);
+        //_query.getAllConstructs(constructsLoaded);
         _query.getFilteredStatechanges(_queryFilters.eventFilters, statesLoaded);
+        _query.getFilteredEvents(_queryFilters.eventFilters, eventsLoaded);
+    };
+
+    var createDurationTimeline = function (mapping, filters, timeframe) {
+        //console.log('Filters: ', filters)
+        filters.constructs.type = 'stage';
+
+        var _parser = DURATION_TIMELINE_PROCESSOR(mapping);
+        var _queryFilters = QUERY_UTILITIES().formatFilters(filters);
+
+        //Initializing the dataquery module for fetching the data
+        var _query = DATA_QUERY();
+        var _events = false;
+        var _constructs = false;
+
+        var whenLoaded = function () {
+            if (_events && _constructs) {
+                var parsed_data = _parser(_constructs, _events);
+
+                initCharts("duration", parsed_data, false, false);
+            }
+            return false;
+        };
+
+        var eventsLoaded = function (data) {
+            _events = data;
+            whenLoaded();
+        };
+
+        var constructsLoaded = function (data) {
+            _constructs = data;
+            whenLoaded();
+        };
+
+        _query.getFilteredConstructs(_queryFilters.constructFilters, constructsLoaded);
         _query.getFilteredEvents(_queryFilters.eventFilters, eventsLoaded);
     };
 
@@ -327,7 +416,10 @@ var DASHBOARD_MAIN = function (par) {
         // AMOUNT TIMELINE 2
         createAmountTimeline(_mapping, _filters, _timeframe, "label", function () {
             // ISSUE TIMELINE
-            createIssueTimeline(_mapping, _filters, _timeframe, "label");
+            createIssueTimeline(_mapping, _filters, _timeframe, "label", function () {
+                // DURATION TIMELINE
+                createDurationTimeline(_mapping, _filters, _timeframe);
+            });
         });
     });
 };

@@ -40,6 +40,26 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         return t1 - t2;
     };
 
+    var labelSort = function (l1, l2) {
+        if(l1 === 'Unlabelled'){
+            return -1;
+        }else if (l2 === 'Unlabelled'){
+            return 1;
+        }
+
+        return l1.localeCompare(l2);
+    };
+
+    var assignSort = function (l1, l2) {
+        if(l1 === 'Unassigned'){
+            return -1;
+        }else if (l2 === 'Unassigned'){
+            return 1;
+        }
+
+        return l1.localeCompare(l2);
+    };
+
     var cloneEvent = function (ev) {
         var tmp = {};
         for (var property in ev) {
@@ -401,6 +421,10 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
                                 tmp = cloneEvent(ev);
                                 tmp.rowId = ev.related_constructs[i].toString();
 
+                                var x = constructMap[ev.related_constructs[i].toString()];
+                                if (x === undefined || x === null)
+                                    return;
+
                                 tmp.label = constructMap[ev.related_constructs[i].toString()].data.label;
                                 tmp.assignee = constructMap[ev.related_constructs[i].toString()].data.assignee;
 
@@ -413,6 +437,10 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
                                 tmp = cloneEvent(ev);
                                 tmp.rowId = ev.related_constructs[i].toString();
 
+                                var x = constructMap[ev.related_constructs[i].toString()];
+                                if (x === undefined || x === null)
+                                    return;
+
                                 tmp.label = constructMap[ev.related_constructs[i].toString()].data.label;
                                 tmp.assignee = constructMap[ev.related_constructs[i].toString()].data.assignee;
 
@@ -423,6 +451,10 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
                             if (inter_helper.indexOf(ev.related_constructs[i]) === -1) {
                                 tmp = cloneEvent(ev);
                                 tmp.rowId = ev.related_constructs[i].toString();
+
+                                var x = constructMap[ev.related_constructs[i].toString()];
+                                if (x === undefined || x === null)
+                                    return;
 
                                 tmp.label = constructMap[ev.related_constructs[i].toString()].data.label;
                                 tmp.assignee = constructMap[ev.related_constructs[i].toString()].data.assignee;
@@ -454,7 +486,7 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         };
     };
 
-    var parseConstructs = function (constructs) {
+    var parseConstructs = function (constructs, tag) {
         var cList = [];
         var constructHelpper = {};
         var labels = [];
@@ -491,6 +523,9 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
             cList.push(c);
         });
 
+        labels.sort(labelSort);
+        assignees.sort(assignSort);
+
         return {
             constructs: cList,
             helper: constructHelpper,
@@ -507,7 +542,7 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         //object for the processed data
         var data = {};
 
-        var constructData = parseConstructs(constructs);
+        var constructData = parseConstructs(constructs, tag);
         if (debug) {
             console.log("[amout_chart_processor]Parsed constructs:", constructData);
         }

@@ -31,8 +31,7 @@ var DEMO_QUERY_UI = function(states, callback){
     };
     
     var onClick = function(){
-
-        console.log("[demo_query_ui]Debug onClick");
+        //console.log("[demo_query_ui]Debug onClick");
         
         var filters = {};
         
@@ -127,8 +126,7 @@ var DEMO_QUERY_UI = function(states, callback){
             filters.tag = parseTextValue(tag.value);
         }
        
-
-        console.log("[demo_query_ui]Callback");
+        //console.log("[demo_query_ui]Callback");
         callback({filters:filters, mapping:mapping});
     };
     
