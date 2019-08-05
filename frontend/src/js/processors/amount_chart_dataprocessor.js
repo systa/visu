@@ -215,6 +215,67 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         };
     };
 
+    var getAmount2 = function (timeframe, startEvents, midEvents, endEvents, tag, previous) {
+
+        var start = new Date(timeframe[0].getUTCFullYear(), timeframe[0].getMonth(), timeframe[0].getDate());
+        var end = new Date(timeframe[1].getUTCFullYear(), timeframe[1].getMonth(), timeframe[1].getDate());
+
+        var opened = getCreated(startEvents.concat(midEvents), start); //.concat(getCreated(midEvents, start));
+        var closed = getClosed(endEvents.concat(midEvents), start);
+
+        var opened = getCreated(startEvents.concat(midEvents), start); //.concat(getCreated(midEvents, start));
+        console.log("At " + tag + " (opened, closed):", opened,  closed);
+
+        var date = start;
+
+        var data = [];
+        var amount = 0;
+        var maxAmount = 0;
+        var minAmount = 0;
+        var i = 0;
+        var k = 0;
+        var x = 0;
+        while (date <= end) {
+            if (i < opened.length && opened[i].date.getTime() == date.getTime()) {
+                amount += opened[i].opened;
+                ++i;
+            }
+            if (k < closed.length && closed[k].date.getTime() == date.getTime()) {
+                amount -= closed[k].closed;
+                ++k;
+            }
+
+            if (amount > maxAmount) {
+                maxAmount = amount;
+            }
+
+            if (amount < minAmount) {
+                minAmount = amount;
+            }
+
+            var prev = 0;
+            if (previous !== false) {
+                prev = previous[x].count + previous[x].previous;
+            }
+
+            var obj = {
+                date: new Date(date),
+                count: amount,
+                tag: tag,
+                previous: prev
+            };
+            data.push(obj);
+            x++;
+            date.setDate(date.getDate() + 1);
+        }
+        console.log(x, i, k);
+        return {
+            data: data,
+            max: maxAmount,
+            min: minAmount
+        };
+    };
+
     var getAssigned = function (events, assignee) {
         var parsed = [];
         events.forEach(function (e) {
@@ -229,6 +290,16 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         var parsed = [];
         events.forEach(function (e) {
             if (e.label === label)
+                parsed.push(e);
+        });
+
+        return parsed;
+    }
+
+    var getStated = function (events, state) {
+        var parsed = [];
+        events.forEach(function (e) {
+            if (e.state === state)
                 parsed.push(e);
         });
 
@@ -283,6 +354,45 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
             var result = getAmount(timeframe, startLabeled, endLabeled, label, previous)
             amounts.push({
                 label: label,
+                min: result.min,
+                max: result.max,
+                data: result.data
+            });
+            if (max === false || result.max > max) {
+                max = result.max;
+            }
+
+            if (min === false || result.min < min) {
+                min = result.min;
+            }
+
+            previous = result.data;
+        });
+
+        return {
+            amounts: amounts,
+            max: max,
+            min: min
+        };
+    };
+
+    var getAmountStated = function (timeframe, startEvents, midEvents, endEvents, states) {
+        console.log("Begin:", startEvents, midEvents, endEvents);
+
+        var amounts = [];
+        var max = false;
+        var min = false;
+        var previous = false;
+        states.forEach(function (state) {
+            var startStated = getStated(startEvents, state);
+            var midStated = getStated(midEvents, state);
+            var endStated = getStated(endEvents, state);
+
+            console.log("At " + state + ":", startStated,  midStated, endStated);
+
+            var result = getAmount2(timeframe, startStated,  midStated, endStated, state, previous)
+            amounts.push({
+                state: state,
                 min: result.min,
                 max: result.max,
                 data: result.data
@@ -375,9 +485,11 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         //To ensure that one construct has only one start and only one end event
         var start_helper = [];
         var end_helper = [];
+        var inter_helper = [];
 
         if (debug) {
             console.log("[amout_chart_processor]Helper:", constructMap);
+            console.log("[amout_chart_processor]Events:", events);
         }
 
         events.forEach(function (ev) {
@@ -407,7 +519,10 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
                     if (ev.isStatechange) {
                         if (ev.state === "" || ev.state === null || ev.state === undefined || ev.state === false)
                             //ev.state = ev.statechange.from;
-                            ev.state = ev.type;
+                            if (ev.type !== 'state change')
+                                ev.state = ev.type;
+                            else
+                                ev.state = ev.statechange.to;
                     }
 
                     //storing states for calculating lifespans
@@ -463,7 +578,7 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
                                 inter_helper.push(ev.related_constructs[i]);
 
                                 if (debug) {
-                                    console.log("[amout_chart_processor]Other event:", ev);
+                                    //console.log("[amout_chart_processor]Inter event:", ev);
                                 }
                             }
                         }
@@ -482,6 +597,7 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         return {
             startEvents: startEvents,
             endEvents: endEvents,
+            midEvents: interEvents,
             timeframe: [new Date(start), new Date(end)]
         };
     };
@@ -566,11 +682,16 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
             result = getAmountAssigned(eventData.timeframe, eventData.startEvents, eventData.endEvents, constructData.assignees);
         } else if (tag === "label") {
             result = getAmountLabeled(eventData.timeframe, eventData.startEvents, eventData.endEvents, constructData.labels);
-        } 
+        } else {
+            constructData.states = ['opened', 'Ready to start', 'Doing next', 'Doing', 'In review'];
+            result = getAmountStated(eventData.timeframe, eventData.startEvents, eventData.midEvents, eventData.endEvents, constructData.states);
+        }
         
         var notag = getAmountNotag(eventData.timeframe, eventData.startEvents, eventData.endEvents);
         if (debug) {
             console.log("[amout_chart_processor]Amounts", result);
+            console.log("[amout_chart_processor]Notag", notag);
+            
         }
 
         data.amounts = result.amounts;
@@ -582,7 +703,7 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         } else if (tag === "label") {
             data.tags = constructData.labels;
         } else {
-            data.tags = false;
+            data.tags = constructData.states;
         }
 
 

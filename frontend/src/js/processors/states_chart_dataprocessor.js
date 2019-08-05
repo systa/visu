@@ -7,25 +7,33 @@
  * Main authors: Antti Luoto, Anna-Liisa Mattila, Henri Terho
  */
 
-//Data processor for event timeline chart
+var debug = true;
+
+//Data processor for amount timeline chart
 //Filters can be used to query data based on e.g. origin or time frame. NOT YET IMPLEMENTED!
 //mapping is to determine which field of construct is used as a Y axis index values
 //if anonymize flag is set to true the Y axis index values are anonymized using the base string provided
 //in astring parameter and order number. If no base string is provided only order numbers are used to anonymize the ids.
-var LIFSPAN_TIMELINE_PROCESSOR = function (par) {
+var STATES_CHART_PROCESSOR = function (par) {
+
     var p = par || {};
+    var _states = p.states !== undefined ? p.states : {};
+
+    if (!_states) {
+        _states = {};
+    }
+    if (!_states.start) {
+        _states.start = [];
+    }
+    if (!_states.resolution) {
+        _states.resolution = [];
+    }
 
     var _rowId = p.rowId !== undefined ? p.rowId : "_id";
     var _fromOrigin = p.rowIdIsFromOrigin !== undefined ? p.rowIdIsFromOrigin : false;
     var _anonymize = p.anonymize !== undefined ? p.anonymize : true;
     //var _anonymize = p.anonymize !== undefined ? p.anonymize : false;
     var _astring = p.astring !== undefined ? p.astring : "";
-    var _states = p.states !== undefined ? p.states : {};
-
-    var _resolution = _states.resolution !== undefined ? _states.resolution : [];
-
-    //Splitting the Y-index mapping from . so we can do the mapping properly
-    //even if it is a field of nested object.
     _rowId = _rowId.split(".");
 
     //Sorts event based on time
@@ -33,66 +41,205 @@ var LIFSPAN_TIMELINE_PROCESSOR = function (par) {
     // and close events are allways larger than other events
     // if both events have the same timestamp and are both start or close events or neither of them
     // the ordering is done based on rowid (alphabetically)
-    var stSortFunction = function (e1, e2) {
+    var eventSortFunction = function (e1, e2) {
         var t1 = new Date(e1.time).getTime();
         var t2 = new Date(e2.time).getTime();
-
-        if (t1 === t2) {
-
-            if (e1.statechange === undefined || e2.statechange === undefined) {
-                return 0;
-            }
-
-            if (e1.statechange.from === "" || e1.statechange.from === null || e1.statechange.from === undefined) {
-                return 1;
-            } else if (e2.statechange.from === "" || e2.statechange.from === null || e2.statechange.from === undefined) {
-                return -1;
-            }
-        }
-
         return t1 - t2;
     };
 
-    var eventSortFunction = function(e1, e2){
-        var t1 = new Date(e1.time).getTime();
-        var t2 = new Date(e2.time).getTime();
-        /*if(t1 === t2){
-            
-            var start1 = _states.start.indexOf(e1.type);
-            var start2 = _states.start.indexOf(e2.type);
-            
-            var closed1 = _states.resolution.indexOf(e1.type);
-            var closed2 = _states.resolution.indexOf(e2.type);
-            
-            if(start1 !== -1 && start2 === -1){
-                return -1;//e1 is smaller as it is start event and e2 is not
-            }
-            else if(start2 !== -1 && start1 === -1){
-                return 1;//e2 is smaller as it is start event and e1 is not
-            }
-            else if(closed1 !== -1 && closed2 === -1){
-                return 1;//e2 is smaller as it is not resolution event and e1 is
-            }
-            else if(closed2 !== -1 && closed1 === -1){
-                return -1;//e1 is smaller as it is not resolution event and e2 is
-            }
-            else{
-                if(e1.rowId !== undefined && e2.rowId !== undefined){
-                    return e1.rowId.localeCompare(e2.rowId);
+    var getAmounts = function (timeframe, lifespans, states) {
+        var start = new Date(timeframe[0].getUTCFullYear(), timeframe[0].getMonth(), timeframe[0].getDate());
+        var end = new Date(timeframe[1].getUTCFullYear(), timeframe[1].getMonth(), timeframe[1].getDate());
+
+        var amounts = [];
+        var maxAmount = 0;
+        var minAmount = 0;
+
+        if (debug ) {
+            console.log("[states_chart_processor]Get amounts", start, end);
+        }
+
+        //Prepare the amounts data structure
+        states.forEach(function (st) { //Create the metadata for each state
+            var obj = {
+                data: [],
+                state: st,
+                max: 0,
+                min: 0
+            };
+
+            amounts.push(obj);
+        });
+
+        var date = start; //Each day
+        while (date <= end) {
+            var dayCount = [];
+            lifespans.forEach(function (ls) { //Go through all lifespans
+
+                var s;
+                switch (ls.state) {
+                    case 'open':
+                        s = 0;
+                        break;
+                    case 'Ready to start':
+                        s = 1;
+                        break;
+                    case 'Doing next':
+                        s = 2;
+                        break;
+                    case 'Doing':
+                        s = 3;
+                        break;
+                    case 'In review':
+                        s = 4;
+                        break;
                 }
-                else if(e1.rowId !== undefined){
-                    return -1;
+
+                //Keep only lifespans that exist at this day
+                var _start = new Date(ls.start);
+                var startDay = new Date(_start.getUTCFullYear(), _start.getMonth(), _start.getDate());
+
+                var _end = ls.end === false ? false : new Date(ls.end);
+                var endDay = _end === false ? false : new Date(_end.getUTCFullYear(), _end.getMonth(), _end.getDate());
+                if ((+_start) > ((+date) + (1000*60*60*24))) {
+                    //Lifespan has not started yet
+                    if (debug && ls.state === 'open' && date === start) {
+                        //console.log("[states_chart_processor]has not started yet:", date, startDay, endDay, ls);
+                    }
+
+                    if (dayCount[s] === undefined) {
+                        dayCount[s] = 0;
+                    }
+
+                    return;
+                } else if (!_end) {
+                    //Lifespan has not ended at all
+                    if (debug && ls.state === 'open') {
+                        //console.log("[states_chart_processor]has not ended:", date, startDay, endDay, ls);
+                    }
+                } else if (_end < ((+date) + (1000*60*60*24))) {
+                    //Lifespan has ended already
+                    if (debug && ls.state === 'open' && date === start) {
+                        //console.log("[states_chart_processor]has ended already:", date, startDay, endDay, ls);
+                    }
+
+                    if (dayCount[s] === undefined) {
+                        dayCount[s] = 0;
+                    }
+    
+                    return;
+                }else if  (_end === _start) {
+                    if (dayCount[s] === undefined) {
+                        dayCount[s] = 0;
+                    }
+    
+                    return;
                 }
-                else if(e2.rowId !== undefined){
-                    return 1;
+
+                
+
+                if (debug && s === 0) {
+                    //                    console.log("[states_chart_processor]Dates:", date, startDay, endDay, ls);
                 }
-                else{
-                    return 0;
+
+                //Register the state of the open lifespan in the counter
+                if (dayCount[s] === undefined) {
+                    dayCount[s] = 1;
+                } else {
+                    dayCount[s]++;
                 }
-            }
-        }*/
-        return t1-t2;
+            });
+
+            var prev = 0;
+            var x = 0;
+            var previous = [];
+            states.forEach(function (st) { //Update the data for each state
+                if (x > 0) {
+                    prev = previous[x-1].count + previous[x-1].previous;
+                }else{
+                    prev = 0; //opened is the baseline
+                }
+
+                var s;
+                switch (st) {
+                    case 'opened':
+                        s = 0;
+                        break;
+                    case 'Ready to start':
+                        s = 1;
+                        break;
+                    case 'Doing next':
+                        s = 2;
+                        break;
+                    case 'Doing':
+                        s = 3;
+                        break;
+                    case 'In review':
+                        s = 4;
+                        break;
+                }
+
+                var obj = {
+                    date: new Date(date),
+                    count: dayCount[s],
+                    tag: st,
+                    previous: prev
+                };
+
+                amounts[x].data.push(obj);
+
+                previous[x] = {
+                    count: dayCount[s],
+                    previous: prev
+                };
+
+                if (prev + obj.count > maxAmount) {
+                    maxAmount = prev + obj.count;
+                }
+
+                x++;
+            });
+
+
+            date.setDate(date.getDate() + 1);
+        }
+
+        if (debug) {
+            console.log("[states_chart_processor]Amounts:", amounts);
+        }
+
+        return {
+            amounts: amounts,
+            max: maxAmount,
+            min: minAmount
+        };
     };
+
+
+    /*var parseConstructs = function (constructs, tag) {
+        var cList = [];
+        var constructHelpper = {};
+        var labels = [];
+        var assignees = [];
+
+        constructs.forEach(function (construct) {
+            var c = construct;
+
+            if (c.type !== "issue") {
+                return;
+            }
+
+            constructHelpper[c._id.toString()] = c;
+            cList.push(c);
+        });
+
+        return {
+            constructs: cList,
+            helper: constructHelpper,
+            labels: labels,
+            assignees: assignees
+        };
+    };*/
 
     var parseLifespans = function (statelist) {
         var lifespans = [];
@@ -233,66 +380,6 @@ var LIFSPAN_TIMELINE_PROCESSOR = function (par) {
         };
     };
 
-    var parseEvents = function (events, constructMap) {
-        var evs = [];
-        var types = [];
-
-        var start = false;
-        var end = false;
-
-        var identity_helper = [];
-
-        events.forEach(function (ev) {
-            //Ignoring duplicates
-            if (identity_helper.indexOf(ev._id) === -1) {
-                identity_helper.push(ev._id);
-
-                var related = false;
-                for (var i = 0; i < ev.related_constructs.length; ++i) {
-                    if (ev.related_constructs[i] !== null || ev.related_constructs[i] !== undefined) {
-                        var tmp = {};
-                        //Cloning the event object as it can have multiple constructs it is related to.
-                        //as we want to visualize all events related to a construct in a single line
-                        //we need to clone the event for all the constructs it relates to.
-                        for (var property in ev) {
-                            if (ev.hasOwnProperty(property)) {
-                                tmp[property] = ev[property];
-                            }
-                        }
-                        //Storing the link between events and constructs so that the visualization understands it.
-                        if (constructMap[ev.related_constructs[i].toString()] !== undefined && constructMap[ev.related_constructs[i].toString()].type === "issue") {
-                            tmp.rowId = constructMap[ev.related_constructs[i].toString()].rowId;
-                            evs.push(tmp);
-                            related = true;
-                        }
-                    }
-                }
-
-                if (related) {
-                    var time = new Date(ev.time).getTime();
-
-                    //detecting the timeframe
-                    if (time < start || start === false) {
-                        start = time;
-                    }
-                    if (time > end || end === false) {
-                        end = time;
-                    }
-
-                    if (types.indexOf(ev.type) === -1) {
-                        types.push(ev.type);
-                    }
-                }
-            }
-
-        });
-        return {
-            events: evs,
-            timeframe: [new Date(start), new Date(end)],
-            types: types
-        };
-    };
-
     //Parses construct data and state option data from constructs.
     //Adds rowId attribute to the constructs as it is needed for the visualization.
     //Forms helper data structure for event parsing.
@@ -402,164 +489,51 @@ var LIFSPAN_TIMELINE_PROCESSOR = function (par) {
         };
     };
 
-    var sortRows = function (lifespans) {
-        var idHelper = {};
-        var lptmp = [];
-        var ids = [];
-        lifespans.forEach(function (lp) {
-            if (idHelper[lp.rowId] === undefined) {
-                idHelper[lp.rowId] = {
-                    start: lp.start,
-                    end: lp.end
-                };
-            } else {
-                var endtmp = idHelper[lp.rowId].end;
-                if (endtmp !== false && lp.end !== false) {
-                    var e1 = new Date(endtmp).getTime();
-                    var e2 = new Date(lp.end).getTime();
-                    if (e2 > e1) {
-                        idHelper[lp.rowId].end = lp.end;
-                    }
-                } else {
-                    idHelper[lp.rowId].end = false;
-                }
-
-                var s1 = new Date(idHelper[lp.rowId].start).getTime();
-                var s2 = new Date(lp.start).getTime();
-                if (s2 < s1) {
-                    idHelper[lp.rowId].start = lp.start;
-                }
-            }
-        });
-        for (var obj in idHelper) {
-            if (idHelper.hasOwnProperty(obj)) {
-                lptmp.push({
-                    start: idHelper[obj].start,
-                    end: idHelper[obj].end,
-                    rowId: obj
-                });
-            }
-        }
-        lptmp.sort(function (lp1, lp2) {
-            var s1 = new Date(lp1.start).getTime();
-            var s2 = new Date(lp2.start).getTime();
-            //return s1 - s2;
-
-            if (lp1.end === false && lp2.end === false) {
-                return s1 - s2;
-            } else if (lp1.end === false) {
-                return 1;
-            } else if (lp2.end === false) {
-                return -1;
-            } else {
-                var t1 = new Date(lp1.end);
-                var t2 = new Date(lp2.end);
-
-                t1 = new Date(t1.getFullYear(), t1.getMonth(), t1.getDate()).getTime();
-                t2 = new Date(t2.getFullYear(), t2.getMonth(), t2.getDate()).getTime();
-
-                var e = t1 - t2;
-                if (e === 0) {
-                    return s1 - s2;
-                } else {
-                    return e;
-                }
-            }
-        });
-        for (var i = 0; i < lptmp.length; ++i) {
-            ids.push(lptmp[i].rowId);
-        }
-        return ids;
-    };
-
-    var mergeIdLists = function (stateId, constructId) {
-        for (var i = 0; i < constructId.length; ++i) {
-            if (stateId.indexOf(constructId[i]) === -1) {
-                stateId.push(constructId);
-            }
-        }
-        return stateId;
-    };
-
-    var parseData = function (constructs, events, statechanges, tag) {
+    var parseData = function (events, constructs, states, tag) {
         if (debug) {
-            console.log("[lifespan timeline]Data for processor:", events, constructs, statechanges);
+            console.log("[states_chart_processor]Data for processor:", events, constructs, states);
         }
+
         //object for the processed data
         var data = {};
 
+        var constructData = parseConstructs(constructs, tag);
+        if (debug) {
+            console.log("[states_chart_processor]Parsed constructs:", constructData);
+        }
         //from constructs we parse ids and constructs that are used
         //it also adds property rowID to constructs in _constructs list!
-        var constructData = parseConstructs(constructs);
-        console.log("[lifespan timeline]Construc data:", constructData);
 
-        var eventData = parseEvents(events, constructData.helper);
-        var stateData = parseStates(statechanges, constructData.helper, tag);
 
-        console.log("[lifespan timeline]State data:", stateData);
-
-        data.constructs = constructData.processedConstructs;
-        data.longestId = constructData.longestId;
-        data.longestType = constructData.longestType;
-        data.events = eventData.events;
+        var stateData = parseStates(states, constructData.helper);
         data.lifespans = stateData.lifespans;
-        data.types = eventData.types; //eventData.types.concat(stateData.types);
-        data.types.sort();
-
-        //var tmpStates = stateData.types; //eventData.types.concat(stateData.types);
-        data.states = ['open', 'Ready to start', 'Doing next', 'Doing', 'In review', 'closed'];
-
-        var scId = sortRows(stateData.lifespans);
-        data.ids = mergeIdLists(scId, constructData.ids);
-
-        var start = eventData.timeframe[0];
-        var s1 = eventData.timeframe[0].getTime();
-        var s2 = stateData.timeframe[0].getTime();
-        if (s2 < s1) {
-            start = stateData.timeframe[0];
+        if (debug) {
+            console.log("[states_chart_processor]Lifespan:", data.lifespans);
         }
 
-        var end = eventData.timeframe[1];
-        var e1 = eventData.timeframe[1].getTime();
-        var e2 = stateData.timeframe[1].getTime();
-        if (e2 > e1) {
-            end = stateData.timeframe[1];
-        }
 
-        data.timeframe = [new Date(start.getFullYear(), start.getMonth(), start.getDate()),
-            new Date(end.getFullYear(), end.getMonth(), end.getDate() + 1)
+        data.timeframe = [new Date(stateData.timeframe[0].getFullYear(), stateData.timeframe[0].getMonth(), stateData.timeframe[0].getDate()),
+            new Date(stateData.timeframe[1].getFullYear(), stateData.timeframe[1].getMonth(), stateData.timeframe[1].getDate() + 1)
         ];
-
-        if (tag === "assigned") {
-            data.tags = constructData.assignees.sort(assignSort);
-        } else if (tag === "label") {
-            data.tags = constructData.labels.sort(labelSort);
-        } else {
-            data.tags = false;
+        if (debug) {
+            console.log("[states_chart_processor]Parsed timeframe:", data.timeframe);
         }
+
+        constructData.states = ['opened', 'Ready to start', 'Doing next', 'Doing', 'In review'];
+        var result = getAmounts(stateData.timeframe, stateData.lifespans, constructData.states);
+
+        if (debug) {
+            console.log("[states_chart_processor]Amounts", result);
+        }
+
+        data.amounts = result.amounts;
+        data.max = result.max;
+        data.min = 0; //notag.min;
+
+        data.tags = constructData.states;
 
         //giving the data to who needs it
         return data;
-    };
-
-    var labelSort = function (l1, l2) {
-        if(l1 === 'Unlabelled'){
-            return -1;
-        }else if (l2 === 'Unlabelled'){
-            return 1;
-        }
-
-        return l1.localeCompare(l2);
-    };
-
-    var assignSort = function (l1, l2) {
-        if(l1 === 'Unassigned'){
-            return -1;
-        }else if (l2 === 'Unassigned'){
-            return 1;
-        }
-
-        return l1.localeCompare(l2);
     };
 
     return parseData;

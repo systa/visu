@@ -43,6 +43,7 @@ var DASHBOARD_MAIN = function (par) {
     var _issueChart = false;
     var _amountChartLabel = false;
     var _amountChartAuthor = false;
+    var _amountChartState = false;
     var _durationChart = false;
     var _timeSelector = false;
 
@@ -51,6 +52,7 @@ var DASHBOARD_MAIN = function (par) {
     var _colorScaleLabels = d3.scale.category20c();
     var _colorScaleAuthors = d3.scale.category20c();
     var _colorScaleDurations = d3.scale.category10();
+    var _colorScaleStates = d3.scale.category20c();
 
     var elements = false;
 
@@ -106,6 +108,16 @@ var DASHBOARD_MAIN = function (par) {
             _amountChartLabel.onResize(_width, height, _ChartMargins);
         }
 
+        if (_amountChartState !== false) {
+            //We should not exceed the total height
+            var min = _amountChartState.getMinHeight();
+            var height = _height * 0.3;
+            if (height < min) {
+                height = min;
+            }
+            _amountChartState.onResize(_width, height, _ChartMargins);
+        }
+
         if (_durationChart !== false) {
             //We should not exceed the total height
             var min = _durationChart.getMinHeight();
@@ -127,17 +139,21 @@ var DASHBOARD_MAIN = function (par) {
         var scale;
         if (chart === "label"){
             scale = _colorScaleLabels;
+        }else if (chart = "state"){
+            scale = _colorScaleStates;
         }else{
             scale = _colorScaleAuthors;
         }
         
         for (var i = 0; i < types.length; ++i) {
             var color = scale(types[i]);
-            if (types[i] === 'Unlabelled' || types[i] === 'Unassigned' )
+            if (types[i] === 'Unlabelled' || types[i] === 'Unassigned' ){
                 color = '#909090';
-            else
-                color = scale(types[i]);
-
+            } else if (types[i] === 'opened'){
+                color = scale('open');
+                types[i] = 'open';
+            }
+                
             _layout.appendLabel({
                 legend: legend,
                 bgcolor: color,
@@ -185,6 +201,7 @@ var DASHBOARD_MAIN = function (par) {
                 _issueChart.onBrush(timeRange);
                 _amountChartAuthor.onBrush(timeRange);
                 _amountChartLabel.onBrush(timeRange);
+                _amountChartState.onBrush(timeRange);
                 _durationChart.onBrush(timeRange);
             };
 
@@ -200,6 +217,7 @@ var DASHBOARD_MAIN = function (par) {
         switch (chart) {
             case "issue":
                 _colorScaleEvents.domain(data.types);
+                _colorScaleStates.domain(data.states.slice(0,data.tags.length))
                 _issueChart = EventTimeline({
                     svg: elements.issueChart.svg,
                     margins: _ChartMargins,
@@ -210,10 +228,11 @@ var DASHBOARD_MAIN = function (par) {
                     constructs: data.constructs,
                     colorScaleEvents: _colorScaleEvents,
                     colorScaleAuthors: _colorScaleAuthors,
-                    colorScaleLabels: _colorScaleLabels
+                    colorScaleLabels: _colorScaleLabels,
+                    colorScaleStates: _colorScaleStates
                 });
                 createLegend("label", elements.issueChart.legend1, data.types);
-                createLegend("label", elements.issueChart.legend2, data.tags);
+                createLegend("state", elements.issueChart.legend2, data.states.slice(0,data.tags.length));
                 break;
             case "assigned":
                 _colorScaleAuthors.domain(data.tags.slice(1,data.tags.length));
@@ -241,6 +260,19 @@ var DASHBOARD_MAIN = function (par) {
                 });
                 createLegend(chart, elements.amountChartLabel.legend, data.tags);
                 break;
+            case "state":
+                _colorScaleStates.domain(data.tags);
+                _amountChartState = AmountChart({
+                    svg: elements.amountChartState.svg,
+                    margins: _ChartMargins,
+                    timeframe: timeframe,
+                    max: data.max,
+                    min: data.min,
+                    amounts: data.amounts,
+                    colorScale: _colorScaleStates
+                });
+                createLegend(chart, elements.amountChartState.legend, data.tags);
+                break;
             case "duration":
                 _durationChart = DurationTimeline({
                     svg : elements.durationChart.svg,
@@ -259,7 +291,7 @@ var DASHBOARD_MAIN = function (par) {
 
         window.addEventListener('resize', onResize);
 
-        if (_issueChart && _amountChartAuthor && _amountChartLabel) {
+        if (_issueChart && _amountChartAuthor && _amountChartLabel && _amountChartState) {
             onResize();
 
             document.getElementById("loader").style.display = "none";
@@ -269,6 +301,7 @@ var DASHBOARD_MAIN = function (par) {
             _issueChart.draw();
             _amountChartAuthor.draw();
             _amountChartLabel.draw();
+            _amountChartState.draw();
         }
 
         if(callback){
@@ -295,7 +328,8 @@ var DASHBOARD_MAIN = function (par) {
     var createIssueTimeline = function (mapping, filters, timeframe, tag, callback) {
         var _parser = LIFSPAN_TIMELINE_PROCESSOR(mapping);
         var _queryFilters = QUERY_UTILITIES().formatFilters(filters);
-
+        filters.constructs.type = "issue";
+        
         //Initializing the dataquery module for fetching the data
         var _query = DATA_QUERY();
         var _events = false;
@@ -376,6 +410,51 @@ var DASHBOARD_MAIN = function (par) {
         _query.getFilteredEvents(_queryFilters.eventFilters, eventsLoaded);
     };
 
+    var createStatesTimeline = function (mapping, filters, timeframe, tag, callback) {
+        filters.tag = tag;
+
+        console.log("Parameters for amount parser:", mapping, filters, timeframe);
+
+        var _parser = STATES_CHART_PROCESSOR(mapping);
+        var _queryFilters = QUERY_UTILITIES().formatFilters(filters);
+
+        //Initializing the dataquery module for fetching the data
+        var _query = DATA_QUERY();
+        var _events = false;
+        var _states = false;
+        var _constructs = false;
+
+        var whenLoaded = function () {
+            if (_events && _constructs && _states) {
+                console.log("Data for amount parser:", _constructs, _events, _states);
+                var parsed_data = _parser(_events, _constructs, _states, tag);
+                console.log("Data from amount parser:", parsed_data);
+                initCharts(tag, parsed_data, timeframe, callback);
+            }
+            return false;
+        };
+
+        var eventsLoaded = function (data) {
+            _events = data;
+            whenLoaded();
+        };
+
+        var constructsLoaded = function (data) {
+            _constructs = data;
+            whenLoaded();
+        };
+        var statesLoaded = function (data) {
+            _states = data;
+            whenLoaded();
+        };
+
+        console.log("Construct filters:", _queryFilters.constructFilters);
+        _query.getFilteredConstructs(_queryFilters.constructFilters, constructsLoaded);
+        //_query.getAllConstructs(constructsLoaded);
+        _query.getFilteredStatechanges(_queryFilters.eventFilters, statesLoaded);
+        _query.getFilteredEvents(_queryFilters.eventFilters, eventsLoaded);
+    };
+
     var createDurationTimeline = function (mapping, filters, timeframe) {
         //console.log('Filters: ', filters)
         filters.constructs.type = 'stage';
@@ -415,10 +494,13 @@ var DASHBOARD_MAIN = function (par) {
     createAmountTimeline(_mapping, _filters, _timeframe, "assigned", function () {
         // AMOUNT TIMELINE 2
         createAmountTimeline(_mapping, _filters, _timeframe, "label", function () {
-            // ISSUE TIMELINE
-            createIssueTimeline(_mapping, _filters, _timeframe, "label", function () {
-                // DURATION TIMELINE
-                createDurationTimeline(_mapping, _filters, _timeframe);
+            // AMOUNT TIMELINE 3
+            createStatesTimeline(_mapping, _filters, _timeframe, "state", function () {
+                // ISSUE TIMELINE
+                createIssueTimeline(_mapping, _filters, _timeframe, "label", function () {
+                    // DURATION TIMELINE
+                    createDurationTimeline(_mapping, _filters, _timeframe);
+                });
             });
         });
     });

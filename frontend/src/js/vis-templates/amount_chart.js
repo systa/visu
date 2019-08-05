@@ -136,8 +136,9 @@ var AmountChart = function(par){
 
         dispstring += "<strong>Tag:</strong> " + data.tag + "<br>";
         dispstring += "<strong>Amount:</strong> " + data.count + "<br>";
-        var date = data.date.getUTCDate() + "/" + (data.date.getUTCMonth()+1)  + "/" + data.date.getUTCFullYear();
+        var date = (data.date.getUTCDate()+1) + "/" + (data.date.getUTCMonth()+1)  + "/" + data.date.getUTCFullYear();
         dispstring += "<strong>Date:</strong> " + date + "<br>";
+        //dispstring += "<strong>Previous:</strong> " + data.previous + "<br>";
         
         _tooltip.html(dispstring);
         return _tooltip.style("visibility", "visible");

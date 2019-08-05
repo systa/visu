@@ -83,6 +83,23 @@ var issueComment = {
    message: '$.body'
 };
 
+var stateChange = {
+   id: '$.id',
+   // the id of the issue whose comment this is
+   // this doesn't come from the comment but its parent i.e. the issue
+   issue: {
+      path: '$.id',
+      source: 'parent'
+   },
+   // the username of the person who posted the comment
+   user: '$.author.username',
+   created: '$.created_at',
+   // the action text
+   action: '$.action',
+   //the label itself
+   label: '$.label.name'
+};
+
 var changeEvent = {
    user: '$.author_username',
    issue: '$.target_id',
@@ -154,6 +171,14 @@ var api = {
             },
             items: '',
             item: issueComment
+         },
+         stateChanges: {
+             path: '/projects/{id}/issues/{issue_id}/resource_label_events',
+             parentParams: {
+               issue_id: '$.iid'
+            },
+             items: '',
+             item: stateChange
          }
       }
    },
@@ -166,18 +191,18 @@ var api = {
       items: '',
       item: milestone
    },
-   changeEvents: {
-      path: '/projects/{id}/events',
-      items: '',
-      item: changeEvent,
-      filter: function (item) {
-         return item.target_type !== 'Issue';
-      }
-   },
    jobs: {
       path: '/projects/{id}/jobs',
       items: '',
       item: job
+   },
+   changeEvents: {
+       path: '/projects/{id}/events',
+       items: '',
+       item: changeEvent,
+       filter: function ( item ) {
+          return item.target_type !== 'Issue';
+       }
    }
 };
 module.exports = api;

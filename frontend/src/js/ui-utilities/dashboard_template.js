@@ -57,6 +57,12 @@ var DASHBOARD_TEMPLATE = function (mpar) {
         legend: false
     };
 
+    var _amountChartState = {
+        div: false,
+        svg: false,
+        legend: false
+    };
+
     var _durationChart = {
         div: false,
         svg: false,
@@ -267,6 +273,15 @@ var DASHBOARD_TEMPLATE = function (mpar) {
             source: _amountChartLabel
         });
 
+        //Create the amount timeline 3
+        createChartSVG({
+            className: "chart",
+            id: "amountContainer3",
+            svgId: "chart",
+            parent: document.getElementById("amountParent3"),
+            source: _amountChartState
+        });
+
         //Create the duration timeline
         createChartSVG({
             className: "chart",
@@ -282,6 +297,7 @@ var DASHBOARD_TEMPLATE = function (mpar) {
             issueChart: _issueChart,
             amountChartAuthor: _amountChartAuthor,
             amountChartLabel: _amountChartLabel,
+            amountChartState: _amountChartState,
             durationChart: _durationChart
         };
     };

@@ -59,6 +59,7 @@ var EventTimeline = function (par) {
     var _colorScaleEvents = p.colorScaleLabels;
     var _colorScaleLabels = p.colorScaleLabels;
     var _colorScaleAuthors = p.colorScaleAuthors;
+    var _colorScaleStates = p.colorScaleStates;
 
     var _range = 0;
     var _timeScale = d3.time.scale().domain(_xDomain);
@@ -244,7 +245,7 @@ var EventTimeline = function (par) {
         var time = date.getUTCDate() + "/" + (date.getUTCMonth() + 1) + "/" + date.getUTCFullYear() + " " + date.getUTCHours() + ":" + date.getUTCMinutes() + ":" + date.getUTCSeconds() + "." + date.getUTCMilliseconds();
         dispstring += "<strong>Time:</strong> " + time + "<br>";
 
-        if (data.message)
+        if (data.data && data.data.message)
             dispstring += "<strong>Message:</strong> " + data.data.message + "<br>";
 
         if (data.related_constructs)
@@ -296,6 +297,9 @@ var EventTimeline = function (par) {
 
         if (data.description)
             dispstring += "<strong>Description:</strong> " + data.description + "<br>";
+
+        if (data.author)
+            dispstring += "<strong>Author:</strong> " + data.author + "<br>";
 
         dispstring += "<strong>Statechanges:</strong> " + data.related_statechanges.length + "<br>";
         dispstring += "<strong>Events:</strong> " + data.related_events.length + "<br>";
@@ -350,9 +354,8 @@ var EventTimeline = function (par) {
     };
 
     pub.getColorLifespan = function (data) {
-        if (data.tag === "Unlabelled")
-            return '#909090';
-        return _colorScaleLabels(data.tag);
+        
+        return _colorScaleStates(data.state);
     };
 
     //Returns the state text from data

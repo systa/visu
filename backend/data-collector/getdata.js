@@ -96,7 +96,7 @@ var GET_DATA = function (baseRequest, api, userParams, callback) {
 // parent: if this is a child resource of some item
 // e.g. if the resource is a issue comment then the parent is the issue
 function getItems(baseRequest, api, type, itemDesc, userParams, result, status, callback, parent) {
-   //console.log("[Getdata]Getting items:" + type);
+   console.log("[Getdata]Getting items:" + type);
 
    // save the stuff we get here
    var items = [];

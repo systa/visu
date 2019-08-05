@@ -57,7 +57,7 @@ var SEND_DATA = function (issueData, origin, callback) {
 
 
     // add stuff to the db in this order 
-    var entityOrder = ['milestones', 'issues', 'comments', 'changeEvents', 'jiraIssues', 'jiraChanges', 'builds', 'buildHistorys', 'jobs'];
+    var entityOrder = ['milestones', 'issues', 'comments', 'stateChanges','changeEvents', 'jiraIssues', 'jiraChanges', 'builds', 'buildHistorys', 'jobs'];
 
     // Arrays for Jira parser
     // Items that are not wanted - fields after 'Sprint' might be interesting for us
@@ -99,7 +99,14 @@ var SEND_DATA = function (issueData, origin, callback) {
                     meta.duedate = item.duedate;
                 } else if (type === 'issue') {
                     meta.assignee = item.assignee;
-                    meta.label = item.labels[0];
+                    var l;
+                    for (var i = 0; i < item.labels.length; i++){
+                        l = item.labels[i];
+                        if (l === 'open' || l === 'Ready to start' || l ===  'Doing next' || l ===  'Doing' || l ===  'In review' || l ===  'closed'){
+                            l = 'Unlabelled';
+                        }
+                    }
+                    meta.label = l;
                 }
 
                 artefact.data = meta;
@@ -366,7 +373,7 @@ var SEND_DATA = function (issueData, origin, callback) {
                     sent: false,
                     item: item
                 });
-            } else if (type === 'comment' || type === 'changeEvent') {
+            } else if (type === 'comment' || type === 'changeEvent' || type === 'stateChange') {
                 // we are creating a event from an issue comment or changeEvent
                 event.origin_id = {
                     source_id: String(item.id),
@@ -386,9 +393,28 @@ var SEND_DATA = function (issueData, origin, callback) {
                     event.type = 'comment';
                     event.data = {};
                     event.data.message = item.message;
-                }
-                //change event
-                else if (item.change === 'opened' || item.change === 'reopened' || item.change === 'closed') {
+                //label changes
+                }else if (type === 'stateChange'){
+                    var states = ['Doing', 'Doing next', 'In review', 'Ready to start'];
+                    var l = item.label;
+                    if (l !== states[0] && l !== states[1] && l !== states[2] && l !== states[3]){
+                        return; //not a relevant state change
+                    }
+
+                    if (item.action === 'add'){
+                        event.type = "state change";
+                        event.isStatechange = true;
+                        
+                        event.statechange = {
+                            from: "",
+                            to: item.label
+                        };
+                    }else{
+                        return; //label removal is not really interesting to us
+                    }
+
+                    //change event
+                }else if (item.change === 'opened' || item.change === 'reopened' || item.change === 'closed') {
                     //I reduce the reopened state to opened state because by doing that we can
                     //count on that when we get state closed the state change is from state opened
                     event.type = item.change;
@@ -531,7 +557,7 @@ var SEND_DATA = function (issueData, origin, callback) {
 
                         milestoneLinks[item.id].milestoneMongoid = body._id;
                     }
-                } else if (type === 'comment' || type === 'changeEvent' || type === 'jiraChange' || type === 'buildHistory' || type === 'job') {
+                } else if (type === 'comment' || type === 'changeEvent' || type === 'stateChange' || type === 'jiraChange' || type === 'buildHistory' || type === 'job') {
 
                     if (debugLink) {
                         //console.log(body);

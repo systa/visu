@@ -35,6 +35,7 @@
 
   <!-- Data processors -->
   <script defer type="text/javascript" src="../src/js/processors/amount_chart_dataprocessor.js"></script>
+  <script defer type="text/javascript" src="../src/js/processors/states_chart_dataprocessor.js"></script>
   <script defer type="text/javascript" src="../src/js/processors/lifespan_timeline_processor.js"></script>
   <script defer type="text/javascript" src="../src/js/processors/duration_timeline_dataprocessor.js"></script>
   <script defer type="text/javascript" src="../src/js/processors/processor_utilities.js"></script>
@@ -295,7 +296,7 @@
                 <label for="intermediate" class="col-sm-4 control-label">Intermediate states separated by comma</label>
                 <div class="col-sm-8">
                   <input class="form-control" type="text" name="intermediate" id="intermediate"
-                    value="in progress, under review, accepted" />
+                    value="Ready to start, Doing Next, Doing, In review" />
                 </div>
               </div>
               <div class="form-group">
@@ -340,6 +341,11 @@
     <div draggable="true" ondragstart="drag(event)" id="drag3" ondrop="drop(event, 'drag3')" ondragover="allowDrop(event)">
       <button class="collapsible">Amount Timeline (label)</button>
       <div id="amountParent2" class="parentContainer content"></div>
+    </div>
+
+    <div draggable="true" ondragstart="drag(event)" id="drag5" ondrop="drop(event, 'drag5')" ondragover="allowDrop(event)">
+      <button class="collapsible">Amount Timeline (state)</button>
+      <div id="amountParent3" class="parentContainer content"></div>
     </div>
 
     <div draggable="true" ondragstart="drag(event)" id="drag4" ondrop="drop(event, 'drag4')" ondragover="allowDrop(event)">
