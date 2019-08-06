@@ -236,12 +236,17 @@ var AmountChart = function(par){
     pub.getColor = function(data){
         var day = data.date.getDay();
         var color;
+
+        if (data.tag === 'opened'){
+            data.tag = 'open';
+        }
+
         if (day == 0 || day == 6){
             if (data.tag === "Unlabelled" || data.tag === "Unassigned" ){
-                color = "rgba(144,144,144,0.7)";
+                color = "rgba(144,144,144,0.75)";
             }else{
                 var tmp = d3.rgb(_colorScale(data.tag));
-                color = "rgba(" + tmp.r + "," + tmp.g + "," + tmp.b + ", 0.7)";
+                color = "rgba(" + tmp.r + "," + tmp.g + "," + tmp.b + ", 0.75)";
             }
         }else{
             if (data.tag === "Unlabelled" || data.tag === "Unassigned" ){

@@ -48,7 +48,7 @@ var DASHBOARD_MAIN = function (par) {
     var _timeSelector = false;
 
     //Colorscales
-    var _colorScaleEvents = d3.scale.category10();
+    var _colorScaleEvents = d3.scale.category20b();
     var _colorScaleLabels = d3.scale.category20c();
     var _colorScaleAuthors = d3.scale.category20c();
     var _colorScaleDurations = d3.scale.category10();
@@ -65,9 +65,9 @@ var DASHBOARD_MAIN = function (par) {
 
     //Function for resize event
     var onResize = function () {
-        var _containerWidth = window.innerWidth
-            || document.documentElement.clientWidth
-            || document.body.clientWidth;
+        var _containerWidth = window.innerWidth ||
+            document.documentElement.clientWidth ||
+            document.body.clientWidth;
 
         _width = (_containerWidth - _containerMargins.left - _containerMargins.right) * 0.98;
 
@@ -137,35 +137,41 @@ var DASHBOARD_MAIN = function (par) {
 
     var createLegend = function (chart, legend, types) {
         var scale;
-        if (chart === "label"){
+        if (chart === "label") {
             scale = _colorScaleLabels;
-        }else if (chart = "state"){
+        } else if (chart = "state") {
             scale = _colorScaleStates;
-        }else{
+        } else if (chart = "event") {
+            scale = _colorScaleEvents;
+        } else {
             scale = _colorScaleAuthors;
         }
-        
+
         for (var i = 0; i < types.length; ++i) {
             var color = scale(types[i]);
-            if (types[i] === 'Unlabelled' || types[i] === 'Unassigned' ){
+            if (types[i] === 'Unlabelled' || types[i] === 'Unassigned') {
                 color = '#909090';
-            } else if (types[i] === 'opened'){
-                color = scale('open');
-                types[i] = 'open';
+            } else if (types[i] === 'opened') {
+                color = scale('opened');
+                types[i] = 'Open';
             }
-                
+
             _layout.appendLabel({
                 legend: legend,
                 bgcolor: color,
-                text: types[i] + " "
+                text: jsUcfirst(types[i]) + " "
             });
         }
     };
 
+    function jsUcfirst(string)  {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
     var createLegendTests = function (chart, legend, types) {
         var scale = _colorScaleDurations;
         for (var i = 0; i < 2; ++i) {
-            var color = scale(types[i]+"2");
+            var color = scale(types[i] + "2");
         }
 
         for (var i = 0; i < types.length; ++i) {
@@ -217,7 +223,7 @@ var DASHBOARD_MAIN = function (par) {
         switch (chart) {
             case "issue":
                 _colorScaleEvents.domain(data.types);
-                _colorScaleStates.domain(data.states.slice(0,data.tags.length))
+                _colorScaleStates.domain(data.states.slice(0, data.tags.length))
                 _issueChart = EventTimeline({
                     svg: elements.issueChart.svg,
                     margins: _ChartMargins,
@@ -231,11 +237,11 @@ var DASHBOARD_MAIN = function (par) {
                     colorScaleLabels: _colorScaleLabels,
                     colorScaleStates: _colorScaleStates
                 });
-                createLegend("label", elements.issueChart.legend1, data.types);
-                createLegend("state", elements.issueChart.legend2, data.states.slice(0,data.tags.length));
+                createLegend("event", elements.issueChart.legend1, data.types);
+                createLegend("state", elements.issueChart.legend2, data.states.slice(0, data.tags.length));
                 break;
             case "assigned":
-                _colorScaleAuthors.domain(data.tags.slice(1,data.tags.length));
+                _colorScaleAuthors.domain(data.tags.slice(1, data.tags.length));
                 _amountChartAuthor = AmountChart({
                     svg: elements.amountChartAuthor.svg,
                     margins: _ChartMargins,
@@ -248,7 +254,7 @@ var DASHBOARD_MAIN = function (par) {
                 createLegend(chart, elements.amountChartAuthor.legend, data.tags);
                 break;
             case "label":
-                _colorScaleLabels.domain(data.tags.slice(1,data.tags.length));
+                _colorScaleLabels.domain(data.tags.slice(1, data.tags.length));
                 _amountChartLabel = AmountChart({
                     svg: elements.amountChartLabel.svg,
                     margins: _ChartMargins,
@@ -275,13 +281,13 @@ var DASHBOARD_MAIN = function (par) {
                 break;
             case "duration":
                 _durationChart = DurationTimeline({
-                    svg : elements.durationChart.svg,
+                    svg: elements.durationChart.svg,
                     margins: _ChartMargins,
-                    timeframe : data.timeframe,
-                    ids : data.ids,
-                    data : data.events,
-                    colors : data.states,
-                    linear : false
+                    timeframe: data.timeframe,
+                    ids: data.ids,
+                    data: data.events,
+                    colors: data.states,
+                    linear: false
                     //constructs : data.constructs
                 });
                 createLegendTests(_durationChart, elements.durationChart.legend, data.states);
@@ -304,7 +310,7 @@ var DASHBOARD_MAIN = function (par) {
             _amountChartState.draw();
         }
 
-        if(callback){
+        if (callback) {
             callback();
         }
     };
@@ -321,7 +327,7 @@ var DASHBOARD_MAIN = function (par) {
     var _timeframe = false;
     if (_filters.startTime && _filters.endTime) {
         _timeframe = [new Date(_filters.startTime), new Date(_filters.endTime)];
-    }else if (_filters.startTime) {
+    } else if (_filters.startTime) {
         _timeframe = [new Date(_filters.startTime), new Date()];
     }
 
@@ -329,7 +335,7 @@ var DASHBOARD_MAIN = function (par) {
         var _parser = LIFSPAN_TIMELINE_PROCESSOR(mapping);
         var _queryFilters = QUERY_UTILITIES().formatFilters(filters);
         filters.constructs.type = "issue";
-        
+
         //Initializing the dataquery module for fetching the data
         var _query = DATA_QUERY();
         var _events = false;

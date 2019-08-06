@@ -56,7 +56,7 @@ var EventTimeline = function (par) {
     console.log("[lifespan timeline]Lifespan data:", _lifespanData);
     console.log("[lifespan timeline]Event data:", _eventData);
 
-    var _colorScaleEvents = p.colorScaleLabels;
+    var _colorScaleEvents = p.colorScaleLabels; //p.colorScaleEvents;
     var _colorScaleLabels = p.colorScaleLabels;
     var _colorScaleAuthors = p.colorScaleAuthors;
     var _colorScaleStates = p.colorScaleStates;
