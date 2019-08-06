@@ -1,14 +1,7 @@
-need4speed vis tool
+VISU Application
 ==========
 
-A node based web app to visualize commit and issue data. Hosts a rest database and parser methods for different datasources.
-
-    Copyright (c) TUT Tampere University of Technology 2014-2015.
-    All rights reserved.
-    This software has been developed in Tekes-TIVIT project Need-for-Speed.
-    All rule set in consortium agreement of Need-for-Speed project apply.
-    Main authors: Antti Luoto, Anna-Liisa Mattila, Henri Terho
-
+A node-based dashboard prototype for the ITEA 3 VISDOM Project.
 
 Installation
 -------------
