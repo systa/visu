@@ -39,9 +39,9 @@ Files
 
 Folders
 ----------
-1. **Backend** - Backend code of the app. Contains the routes, the mongo database, and the data collectors. 
-2. **Frontend** - Frontend code of the app. Containes the HTML/CSS files for the webpages and the js files of the visualizations.
-3. **Config** - Configuration files for development (default) and testing (test). **TODO**: deployment config file.
-4. **Datasources** - Data collectors and parsers for the data model.
-5. **Test** - Mocha/Chai Unit Testing for the application. 
-6. **Node modules** - Node libraries for the web app. **TODO**: propoer separation of deployment/development dependencies. 
+1. **[Backend](backend/README.md)** - Backend code of the app. Contains the routes, the mongo database, and the data collectors. 
+2. **[Frontend](frontend/README.md)** - Frontend code of the app. Containes the HTML/CSS files for the webpages and the js files of the visualizations.
+3. **[Config](config/README.md)** - Configuration files for development (default) and testing (test). **TODO**: deployment config file.
+4. **[Datasources](datasources/README.md)** - Data collectors and parsers for the data model.
+5. **[Test](test/README.md)** - Mocha/Chai Unit Testing for the application. 
+6. **Node modules** - Node libraries for the web app. **TODO**: proper separation of deployment/development dependencies. 

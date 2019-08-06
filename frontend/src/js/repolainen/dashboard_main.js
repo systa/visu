@@ -224,7 +224,7 @@ var DASHBOARD_MAIN = function (par) {
             case "issue":
                 _colorScaleEvents.domain(data.types);
                 _colorScaleStates.domain(data.states.slice(0, data.tags.length))
-                _issueChart = EventTimeline({
+                _issueChart = LifespanChart({
                     svg: elements.issueChart.svg,
                     margins: _ChartMargins,
                     timeframe: timeframe,
@@ -280,7 +280,7 @@ var DASHBOARD_MAIN = function (par) {
                 createLegend(chart, elements.amountChartState.legend, data.tags);
                 break;
             case "duration":
-                _durationChart = DurationTimeline({
+                _durationChart = DurationChart({
                     svg: elements.durationChart.svg,
                     margins: _ChartMargins,
                     timeframe: data.timeframe,
@@ -332,7 +332,7 @@ var DASHBOARD_MAIN = function (par) {
     }
 
     var createIssueTimeline = function (mapping, filters, timeframe, tag, callback) {
-        var _parser = LIFSPAN_TIMELINE_PROCESSOR(mapping);
+        var _parser = LIFSPAN_CHART_PROCESSOR(mapping);
         var _queryFilters = QUERY_UTILITIES().formatFilters(filters);
         filters.constructs.type = "issue";
 
@@ -465,7 +465,7 @@ var DASHBOARD_MAIN = function (par) {
         //console.log('Filters: ', filters)
         filters.constructs.type = 'stage';
 
-        var _parser = DURATION_TIMELINE_PROCESSOR(mapping);
+        var _parser = DURATION_CHART_PROCESSOR(mapping);
         var _queryFilters = QUERY_UTILITIES().formatFilters(filters);
 
         //Initializing the dataquery module for fetching the data
