@@ -56,7 +56,9 @@ router.get('/gitlab', function(req, res) {
 
 //Database
 router.get('/database', function(req, res) {
-  res.redirect('http://localhost:8081/db/visu');
+  var url = 'http://' + req.rawHeaders[1].split(':')[0] + ':8081/db/visu';
+  console.log(url);
+  res.redirect(url);
 });
 
 
