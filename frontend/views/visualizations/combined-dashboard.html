@@ -35,7 +35,7 @@
   <script defer type="text/javascript" src="../src/js/repolainen/duration_chart_dataprocessor.js"></script>
 
   <!-- UI-Utilities -->
-  <script defer type="text/javascript" src="../src/js/ui-utilities/demo_query_ui.js"></script>
+  <script defer type="text/javascript" src="../src/js/ui-utilities/repolainen_query_ui.js"></script>
 
   <!-- Templates -->
   <script defer type="text/javascript" src="../src/js/vis-templates/time_selector.js"></script>
@@ -49,7 +49,7 @@
 
   <script type="text/javascript">
     $(function () {
-      DEMO_QUERY_UI("full", DASHBOARD_MAIN);
+      REPOLAINEN_QUERY_UI("full", DASHBOARD_MAIN);
     });
   </script>
 
@@ -174,77 +174,7 @@
               </div>
             </div>
 
-            <div class="col-sm-12">
-              <h2>Other data attributes</h2>
-
-              <div class="col-sm-6">
-                <h3>Event filters</h3>
-                <div class="form-group">
-                  <label for="eventCreator" class="col-sm-3 control-label">Creator</label>
-                  <div class="col-sm-9">
-                    <input class="form-control" type="text" name="ec" id="eventCreator" />
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label for="eventType" class="col-sm-3 control-label">Type</label>
-                  <div class="col-sm-9">
-                    <input class="form-control" type="text" name="et" id="eventType" />
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label for="eventSate" class="col-sm-3 control-label">State</label>
-                  <div class="col-sm-9">
-                    <input class="form-control" type="text" name="es" id="eventSate" />
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label for="eventDuration" class="col-sm-3 control-label">Duration</label>
-                  <div class="col-sm-9">
-                    <input class="form-control" type="text" name="ed" id="eventDuration" />
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label for="eventDate" class="col-sm-3 control-label">Date</label>
-                  <div class="col-sm-6">
-                    <input class="form-control" type="date" name="edate" id="eventDate" />
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label for="eventTime" class="col-sm-3 control-label">Time</label>
-                  <div class="col-sm-6">
-                    <input class="form-control" type="time" name="time" id="eventTime" />
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-sm-6">
-                <h3>Construct filters</h3>
-                <div class="form-group">
-                  <label for="constructName" class="col-sm-3 control-label">Name</label>
-                  <div class="col-sm-9">
-                    <input class="form-control" type="text" name="cn" id="constructName" />
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label for="constructType" class="col-sm-3 control-label">Type</label>
-                  <div class="col-sm-9">
-                    <input class="form-control" type="text" name="ct" id="constructType" value="issue"/>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label for="constructState" class="col-sm-3 control-label">State</label>
-                  <div class="col-sm-9">
-                    <input class="form-control" type="text" name="cs" id="constructState" />
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label for="constructDescription" class="col-sm-3 control-label">Description</label>
-                  <div class="col-sm-9">
-                    <input class="form-control" type="text" name="cd" id="constructDescription" />
-                  </div>
-                </div>
-              </div>
-            </div>
+           
           </div>
         </div>
       </div>
