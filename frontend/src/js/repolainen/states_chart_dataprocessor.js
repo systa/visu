@@ -460,14 +460,15 @@ var STATES_CHART_PROCESSOR = function (par) {
             console.log("[STATES_CHART_PROCESSOR]Parsed timeframe:", data.timeframe);
         }
 
-        constructData.states = ['opened', 'Ready to start', 'Doing next', 'Doing', 'In review'];
-        var result = getAmounts(stateData.timeframe, stateData.lifespans, constructData.states);
+        var states = ['opened', 'Ready to start', 'Doing next', 'Doing', 'In review'];
+        var result = getAmounts(stateData.timeframe, stateData.lifespans, states);
 
         data.amounts = result.amounts;
         data.max = result.max;
         data.min = 0;
 
-        data.tags = stateData.types;
+        //Not very clear but this is to keep the same colorsheme as the lifespan chart, which uses 'open' instead of 'opnned'
+        data.tags = ['open', 'Ready to start', 'Doing next', 'Doing', 'In review'];
 
         return data;
     };

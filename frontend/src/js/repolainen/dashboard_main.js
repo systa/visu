@@ -8,7 +8,7 @@
  */
 
 //Main debug variable for repolainen dashboard
-var debug = false;
+var debug = true;
 
 var DASHBOARD_MAIN = function (par) {
     if (debug) {
@@ -250,7 +250,7 @@ var DASHBOARD_MAIN = function (par) {
                 break;
 
             case "state":
-                _colorScaleStates.domain(data.tags); //Domain already created by issue_timeline
+                _colorScaleStates.domain(data.tags); 
                 createLegend(_colorScaleStates, _elements.amountChartState.legend, data.tags);
 
                 //NB: State chart uses AmountChart (as do the labels and authors charts, but a different data-processor)

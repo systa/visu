@@ -472,7 +472,7 @@ var LIFESPAN_CHART_PROCESSOR = function (par) {
         data.lifespans = stateData.lifespans;
 
         data.types = eventData.types.sort();
-        data.states = stateData.types;
+        data.states = ['open', 'Ready to start', 'Doing next', 'Doing', 'In review'];
 
         var scId = sortRows(stateData.lifespans);
         data.ids = mergeIdLists(scId, constructData.ids);
