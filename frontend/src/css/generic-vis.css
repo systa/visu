@@ -7,30 +7,29 @@
 * Main authors: Antti Luoto, Anna-Liisa Mattila, Henri Terho
 */
 
-body{
-    background-color : #FFFFFF;
+body {
+    background-color: #FFFFFF;
     padding: 0px;
     outline: 0px;
-    margin : 0px;
-    font-family:"Lucida Console", Monaco, Monospace;
-    font-size: 1.1em;
-    /*overflow-x: hidden;*/
+    margin: 0px;
+    font-family: "Lucida Console", Monaco, Monospace;
+    font-size: 1em;
 }
 
 #visuParent{
     width: 95%;
     padding: 0px;
     outline: 0px;
-    margin : 2%;
+    margin: 2%;
 }
 
-.parentContainer{
+.parentContainer {
     width: 99%;
     height: 30%;
     padding: 0px;
     outline: 0px;
-    margin-left : 1%;
-    margin-right : 1%;
+    margin-left: 1%;
+    margin-right: 1%;
     border: 1px solid grey;
 }
 
@@ -38,110 +37,84 @@ body{
     border: 0px;
 }
 
+.ui {
+    display: block;
+    padding: 0% 10% 2% 15%;
+}
 
-#loader {
-    border: 16px solid #f3f3f3; /* Light grey */
-    border-top: 16px solid #3498db; /* Blue */
-    border-radius: 50%;
-    width: 120px;
-    height: 120px;
-    animation: spin 1.5s linear infinite;
-    position : absolute;
-    top: 45%;
-    left: 47%;
+/* Elements of the charts */
+
+.legend {
+    margin-top: 5px;
     text-align: center;
-    display: none;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-
-.ui{
-    display : block;
-    padding : 0% 10% 2% 15%;
+    font-size: 1.5em;
 }
 
-.legend{
-    margin-top : 5px;
-    text-align : center;
-    font-size : 1.3em;
+.search {
+    display: block;
+    padding: 1%;
 }
 
-.search{
-    display : block;
-    padding : 1%;
-}
-
-.tooltipC{
-    padding : 0.5%;
-    z-index : 10;
-    position : fixed;
-    visibility : hidden;
-    font-size : 0.85em;
-    background-color : rgba(226, 240, 253, 0.835);
-    color : #000000;
+.tooltipC {
+    padding: 0.5%;
+    z-index: 10;
+    position: fixed;
+    visibility: hidden;
+    font-size: 1em;
+    background-color: rgba(226, 240, 253, 0.85);
+    color: #000000;
     max-width: 500px;
     border-radius: 1.5%;
 }
 
-.chart{
+.chart {
     font-size: 1.2em;
     padding: 0.5%;
     overflow-x: hidden;
 }
 
-
-#issueParent {
-    resize: vertical;
-    overflow-y: auto;
-}
-
-#issueParent .chart{
-    overflow-y: auto;
-}
-
-.chart rect{
+.chart rect {
     fill-opacity: 0.99;
     shape-rendering: geometricPrecision;
 }
 
-.chart circle{
-    stroke : #F0F0F0;
+.chart circle {
+    stroke: #F0F0F0;
     fill-opacity: 0.9;
     shape-rendering: crispEdges;
 }
 
-.chart text{
+.chart text {
     fill: #000;
     text-anchor: start;
 }
 
-.chart line{
-    fill : none;
-    stroke-width : 5px;
+.chart line {
+    fill: none;
+    stroke-width: 5px;
 }
 
-.brush text{
+.brush text {
     fill: #3a3a3a;
     font-size: 1.1em;
     text-anchor: start;
 }
 
-.brush .extent{
+.brush .extent {
     stroke: #fff;
     fill-opacity: .125;
     shape-rendering: crispEdges;
 }
 
 .axis path,
-.axis line{
+.axis line {
     fill: none;
     stroke: #C0C0C0;
     shape-rendering: crispEdges;
-    stroke-width : 1px;
+    stroke-width: 1px;
 }
+
+/* Parts of the repolainen dashboard that can be open/closed and drag/dropped */
 
 .collapsible {
     background-color: lightgray;
@@ -149,34 +122,72 @@ body{
     cursor: pointer;
     border: none;
     text-align: left;
-    font-size: 15px;
+    font-size: 1.2em;
 
     width: 99%;
     margin-top: 10px;
     padding-left: 10px;
     padding-right: 10px;
     outline: 0px;
-    margin-left : 1%;
-    margin-right : 1%;
-  }
-  
-  .active, .collapsible:hover {
+    margin-left: 1%;
+    margin-right: 1%;
+}
+
+.active,
+.collapsible:hover {
     background-color: #555;
     color: white;
-  }
-  
-  .collapsible:after {
+}
+
+.collapsible:after {
     content: '';
     color: white;
     font-weight: bold;
     float: right;
-  }
-  
-  .content {
+}
+
+.content {
     max-height: 0;
     height: 30%;
     overflow: hidden;
     transition: max-height 0.2s ease-out;
     background-color: #ffffff;
     font-size: 0.9em;
-  }
+}
+
+#issueParent {
+    resize: vertical;
+    overflow-y: auto;
+}
+
+#issueParent .chart {
+    overflow-y: auto;
+}
+
+/* Loader before the visualization appears */
+
+#loader {
+    border: 16px solid #f3f3f3;
+    /* Light grey */
+    border-top: 16px solid #3498db;
+    /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 1.5s linear infinite;
+    position: absolute;
+    top: 45%;
+    left: 47%;
+    text-align: center;
+    display: none;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
