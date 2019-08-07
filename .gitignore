@@ -16,3 +16,11 @@ docker-compose.yml
 
 # vscode
 .vscode
+
+datasources/issue_collector/nemo\.txt
+
+datasources/issue_collector/repolainen\.txt
+
+datasources/issue_collector/visu-dev\.txt
+
+datasources/issue_collector/visu-test\.txt
