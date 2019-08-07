@@ -7,8 +7,6 @@
  * Main authors: Antti Luoto, Anna-Liisa Mattila, Henri Terho
  */
 
-var debug = true;
-
 //Data processor for amount timeline chart
 //Filters can be used to query data based on e.g. origin or time frame. NOT YET IMPLEMENTED!
 //mapping is to determine which field of construct is used as a Y axis index values
@@ -55,10 +53,6 @@ var STATES_CHART_PROCESSOR = function (par) {
         var maxAmount = 0;
         var minAmount = 0;
 
-        if (debug ) {
-            console.log("[states_chart_processor]Get amounts", start, end);
-        }
-
         //Prepare the amounts data structure
         states.forEach(function (st) { //Create the metadata for each state
             var obj = {
@@ -101,12 +95,8 @@ var STATES_CHART_PROCESSOR = function (par) {
 
                 var _end = ls.end === false ? false : new Date(ls.end);
                 var endDay = _end === false ? false : new Date(_end.getUTCFullYear(), _end.getMonth(), _end.getDate());
-                if ((+_start) > ((+date) + (1000*60*60*24))) {
+                if ((+_start) > ((+date) + (1000 * 60 * 60 * 24))) {
                     //Lifespan has not started yet
-                    if (debug && ls.state === 'open' && date === start) {
-                        //console.log("[states_chart_processor]has not started yet:", date, startDay, endDay, ls);
-                    }
-
                     if (dayCount[s] === undefined) {
                         dayCount[s] = 0;
                     }
@@ -114,32 +104,20 @@ var STATES_CHART_PROCESSOR = function (par) {
                     return;
                 } else if (!_end) {
                     //Lifespan has not ended at all
-                    if (debug && ls.state === 'open') {
-                        //console.log("[states_chart_processor]has not ended:", date, startDay, endDay, ls);
-                    }
-                } else if (_end < ((+date) + (1000*60*60*24))) {
+
+                } else if (_end < ((+date) + (1000 * 60 * 60 * 24))) {
                     //Lifespan has ended already
-                    if (debug && ls.state === 'open' && date === start) {
-                        //console.log("[states_chart_processor]has ended already:", date, startDay, endDay, ls);
-                    }
-
                     if (dayCount[s] === undefined) {
                         dayCount[s] = 0;
                     }
-    
+
                     return;
-                }else if  (_end === _start) {
+                } else if (_end === _start) {
                     if (dayCount[s] === undefined) {
                         dayCount[s] = 0;
                     }
-    
+
                     return;
-                }
-
-                
-
-                if (debug && s === 0) {
-                    //                    console.log("[states_chart_processor]Dates:", date, startDay, endDay, ls);
                 }
 
                 //Register the state of the open lifespan in the counter
@@ -155,8 +133,8 @@ var STATES_CHART_PROCESSOR = function (par) {
             var previous = [];
             states.forEach(function (st) { //Update the data for each state
                 if (x > 0) {
-                    prev = previous[x-1].count + previous[x-1].previous;
-                }else{
+                    prev = previous[x - 1].count + previous[x - 1].previous;
+                } else {
                     prev = 0; //opened is the baseline
                 }
 
@@ -204,10 +182,6 @@ var STATES_CHART_PROCESSOR = function (par) {
             date.setDate(date.getDate() + 1);
         }
 
-        if (debug) {
-            console.log("[states_chart_processor]Amounts:", amounts);
-        }
-
         return {
             amounts: amounts,
             max: maxAmount,
@@ -215,39 +189,13 @@ var STATES_CHART_PROCESSOR = function (par) {
         };
     };
 
-
-    /*var parseConstructs = function (constructs, tag) {
-        var cList = [];
-        var constructHelpper = {};
-        var labels = [];
-        var assignees = [];
-
-        constructs.forEach(function (construct) {
-            var c = construct;
-
-            if (c.type !== "issue") {
-                return;
-            }
-
-            constructHelpper[c._id.toString()] = c;
-            cList.push(c);
-        });
-
-        return {
-            constructs: cList,
-            helper: constructHelpper,
-            labels: labels,
-            assignees: assignees
-        };
-    };*/
-
     var parseLifespans = function (statelist) {
         var lifespans = [];
         //Looping through all constructs
         for (var rid in statelist) {
             if (statelist.hasOwnProperty(rid)) {
                 var statechanges = statelist[rid];
-                
+
                 statechanges.sort(eventSortFunction);
                 //statechanges.sort(stSortFunction);
 
@@ -300,7 +248,7 @@ var STATES_CHART_PROCESSOR = function (par) {
                         state: state,
                         end: rt,
                         tag: sc.tag
-                    }); 
+                    });
                 }
             }
         }
@@ -409,7 +357,7 @@ var STATES_CHART_PROCESSOR = function (par) {
             }
 
             //To ignore duplicates
-            if (identity_helper.indexOf(construct._id) === -1 && construct.type === "issue") {
+            if (identity_helper.indexOf(construct._id) === -1) {
                 identity_helper.push(construct._id);
                 //Finding the right attribute of a construct for y axis indetifier
                 var id = construct;
@@ -491,48 +439,36 @@ var STATES_CHART_PROCESSOR = function (par) {
 
     var parseData = function (events, constructs, states, tag) {
         if (debug) {
-            console.log("[states_chart_processor]Data for processor:", events, constructs, states);
+            console.log("[STATES_CHART_PROCESSOR]parseData", events, constructs, states);
         }
 
         //object for the processed data
         var data = {};
 
-        var constructData = parseConstructs(constructs, tag);
-        if (debug) {
-            console.log("[states_chart_processor]Parsed constructs:", constructData);
-        }
         //from constructs we parse ids and constructs that are used
         //it also adds property rowID to constructs in _constructs list!
-
-
+        var constructData = parseConstructs(constructs, tag);
         var stateData = parseStates(states, constructData.helper);
         data.lifespans = stateData.lifespans;
-        if (debug) {
-            console.log("[states_chart_processor]Lifespan:", data.lifespans);
-        }
-
 
         data.timeframe = [new Date(stateData.timeframe[0].getFullYear(), stateData.timeframe[0].getMonth(), stateData.timeframe[0].getDate()),
             new Date(stateData.timeframe[1].getFullYear(), stateData.timeframe[1].getMonth(), stateData.timeframe[1].getDate() + 1)
         ];
         if (debug) {
-            console.log("[states_chart_processor]Parsed timeframe:", data.timeframe);
+            console.log("[STATES_CHART_PROCESSOR]Parsed constructs:", constructData);
+            console.log("[STATES_CHART_PROCESSOR]Lifespan:", data.lifespans);
+            console.log("[STATES_CHART_PROCESSOR]Parsed timeframe:", data.timeframe);
         }
 
         constructData.states = ['opened', 'Ready to start', 'Doing next', 'Doing', 'In review'];
         var result = getAmounts(stateData.timeframe, stateData.lifespans, constructData.states);
 
-        if (debug) {
-            console.log("[states_chart_processor]Amounts", result);
-        }
-
         data.amounts = result.amounts;
         data.max = result.max;
-        data.min = 0; //notag.min;
+        data.min = 0;
 
-        data.tags = constructData.states;
+        data.tags = stateData.types;
 
-        //giving the data to who needs it
         return data;
     };
 

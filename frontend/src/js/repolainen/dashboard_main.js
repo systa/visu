@@ -7,8 +7,14 @@
  * Main authors: Antti Luoto, Anna-Liisa Mattila, Henri Terho
  */
 
+//Main debug variable for repolainen dashboard
+var debug = false;
+
 var DASHBOARD_MAIN = function (par) {
-    console.log("[dashboard_main]");
+    if (debug) {
+        console.log("[DASHBOARD_MAIN]", par);
+    }
+
     //-----------------------------------------
     //  DRAWING RELATED STUFF
     //-----------------------------------------
@@ -22,6 +28,7 @@ var DASHBOARD_MAIN = function (par) {
         left: 0,
         right: 0
     };
+
     var _timeSelectorMargins = {
         top: 20,
         bottom: 10,
@@ -39,7 +46,10 @@ var DASHBOARD_MAIN = function (par) {
         right: 60
     };
 
-    //The chart objects will be here
+    //Contains the HTML (mailny div and svg) elements of the layout
+    var _elements = false;
+
+    //The chart objects
     var _issueChart = false;
     var _amountChartLabel = false;
     var _amountChartAuthor = false;
@@ -48,20 +58,23 @@ var DASHBOARD_MAIN = function (par) {
     var _timeSelector = false;
 
     //Colorscales
-    var _colorScaleEvents = d3.scale.category20b();
-    var _colorScaleLabels = d3.scale.category20c();
-    var _colorScaleAuthors = d3.scale.category20c();
+    /*D3.js in v3 supports natively 4 color scales:
+     * category10 - 10 different colours (most constrast, but looks terrible)
+     * category20 - 10 different colours (1 in dark and 1 in light)
+     * category20b - 5 different colours (4 shades each)
+     * category20c - 5 different colours (4 shades each)
+     */
+    var _colorScaleEvents = d3.scale.category20c();
+    var _colorScaleLabels = d3.scale.category10();
+    var _colorScaleAuthors = d3.scale.category10();
     var _colorScaleDurations = d3.scale.category10();
-    var _colorScaleStates = d3.scale.category20c();
-
-    var elements = false;
+    var _colorScaleStates = d3.scale.category10();
 
     //Initializing the module that helps with cerating the HTML and SVG elements
-    var _parent = document.getElementById("visuParent");
     var _layout = DASHBOARD_TEMPLATE({
-        parent: _parent
+        parent: document.getElementById("visuParent"),
+        hidden: true
     });
-    _layout.hide();
 
     //Function for resize event
     var onResize = function () {
@@ -134,74 +147,36 @@ var DASHBOARD_MAIN = function (par) {
 
     };
 
-
-    var createLegend = function (chart, legend, types) {
-        var scale;
-        if (chart === "label") {
-            scale = _colorScaleLabels;
-        } else if (chart = "state") {
-            scale = _colorScaleStates;
-        } else if (chart = "event") {
-            scale = _colorScaleEvents;
-        } else {
-            scale = _colorScaleAuthors;
-        }
-
-        for (var i = 0; i < types.length; ++i) {
-            var color = scale(types[i]);
-            if (types[i] === 'Unlabelled' || types[i] === 'Unassigned') {
-                color = '#909090';
-            } else if (types[i] === 'opened') {
-                color = scale('opened');
-                types[i] = 'Open';
-            }
+    var createLegend = function (colorScale, legend, elements) {
+        elements.forEach(function (elem) {
+            var color = colorScale(elem);
+            var text = elem.charAt(0).toUpperCase() + elem.slice(1) + " ";
 
             _layout.appendLabel({
                 legend: legend,
                 bgcolor: color,
-                text: jsUcfirst(types[i]) + " "
+                text: text
             });
-        }
-    };
-
-    function jsUcfirst(string)  {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
-    var createLegendTests = function (chart, legend, types) {
-        var scale = _colorScaleDurations;
-        for (var i = 0; i < 2; ++i) {
-            var color = scale(types[i] + "2");
-        }
-
-        for (var i = 0; i < types.length; ++i) {
-            var color = scale(types[i]);
-
-            _layout.appendLabel({
-                legend: legend,
-                bgcolor: color,
-                text: types[i] + " "
-            });
-        }
+        })
     };
 
     //Initializes the chart template and draws the visualization.
     var initCharts = function (chart, data, timeframe, callback) {
         //console.log("[dashboard_main]initCharts:", data);
 
+        //Custom timeframe used if defined
         if (!timeframe) {
             timeframe = data.timeframe;
         }
 
-        if (!elements) {
-            elements = _layout.createLayout();
+        if (!_elements) {
+            _elements = _layout.createLayout();
 
-            _ChartMargins.left = _layout.getSVGTextWidth("0000");
+            //TODO: fix margins
+            _ChartMargins.left = _layout.getSVGTextWidth("000000");
             _ChartMargins.right = _layout.getSVGTextWidth("Unassigned c    c");
             _timeSelectorMargins.left = _ChartMargins.left;
             _timeSelectorMargins.right = _ChartMargins.right;
-
-            //console.log("[dashboard_main]Margins:", _ChartMargins);
 
             var onBrush = function (timeRange) {
                 _issueChart.onBrush(timeRange);
@@ -212,7 +187,7 @@ var DASHBOARD_MAIN = function (par) {
             };
 
             _timeSelector = TimeSelector({
-                svg: elements.brush.svg,
+                svg: _elements.brush.svg,
                 margins: _timeSelectorMargins,
                 timeframe: timeframe,
                 onBrushFunction: onBrush,
@@ -222,10 +197,14 @@ var DASHBOARD_MAIN = function (par) {
 
         switch (chart) {
             case "issue":
-                _colorScaleEvents.domain(data.types);
-                _colorScaleStates.domain(data.states.slice(0, data.tags.length))
+                _colorScaleEvents.domain(data.types); //event types
+                createLegend(_colorScaleEvents, _elements.issueChart.legend1, data.types);
+
+                //_colorScaleStates.domain(data.states); //defined by the states chart!
+                createLegend(_colorScaleStates, _elements.issueChart.legend2, data.states);
+
                 _issueChart = LifespanChart({
-                    svg: elements.issueChart.svg,
+                    svg: _elements.issueChart.svg,
                     margins: _ChartMargins,
                     timeframe: timeframe,
                     ids: data.ids,
@@ -235,15 +214,17 @@ var DASHBOARD_MAIN = function (par) {
                     colorScaleEvents: _colorScaleEvents,
                     colorScaleAuthors: _colorScaleAuthors,
                     colorScaleLabels: _colorScaleLabels,
-                    colorScaleStates: _colorScaleStates
+                    colorScaleStates: _colorScaleStates,
+                    lifespanColor: 'state' //'label' //'assignee'
                 });
-                createLegend("event", elements.issueChart.legend1, data.types);
-                createLegend("state", elements.issueChart.legend2, data.states.slice(0, data.tags.length));
                 break;
+
             case "assigned":
-                _colorScaleAuthors.domain(data.tags.slice(1, data.tags.length));
+                _colorScaleAuthors.domain(data.tags);
+                createLegend(_colorScaleAuthors, _elements.amountChartAuthor.legend, data.tags);
+
                 _amountChartAuthor = AmountChart({
-                    svg: elements.amountChartAuthor.svg,
+                    svg: _elements.amountChartAuthor.svg,
                     margins: _ChartMargins,
                     timeframe: timeframe,
                     max: data.max,
@@ -251,12 +232,14 @@ var DASHBOARD_MAIN = function (par) {
                     amounts: data.amounts,
                     colorScale: _colorScaleAuthors
                 });
-                createLegend(chart, elements.amountChartAuthor.legend, data.tags);
                 break;
+
             case "label":
-                _colorScaleLabels.domain(data.tags.slice(1, data.tags.length));
+                _colorScaleLabels.domain(data.tags);
+                createLegend(_colorScaleLabels, _elements.amountChartLabel.legend, data.tags);
+
                 _amountChartLabel = AmountChart({
-                    svg: elements.amountChartLabel.svg,
+                    svg: _elements.amountChartLabel.svg,
                     margins: _ChartMargins,
                     timeframe: timeframe,
                     max: data.max,
@@ -264,12 +247,15 @@ var DASHBOARD_MAIN = function (par) {
                     amounts: data.amounts,
                     colorScale: _colorScaleLabels
                 });
-                createLegend(chart, elements.amountChartLabel.legend, data.tags);
                 break;
+
             case "state":
-                _colorScaleStates.domain(data.tags);
+                _colorScaleStates.domain(data.tags); //Domain already created by issue_timeline
+                createLegend(_colorScaleStates, _elements.amountChartState.legend, data.tags);
+
+                //NB: State chart uses AmountChart (as do the labels and authors charts, but a different data-processor)
                 _amountChartState = AmountChart({
-                    svg: elements.amountChartState.svg,
+                    svg: _elements.amountChartState.svg,
                     margins: _ChartMargins,
                     timeframe: timeframe,
                     max: data.max,
@@ -277,27 +263,29 @@ var DASHBOARD_MAIN = function (par) {
                     amounts: data.amounts,
                     colorScale: _colorScaleStates
                 });
-                createLegend(chart, elements.amountChartState.legend, data.tags);
                 break;
+
             case "duration":
+                _colorScaleDurations.domain(data.states);
+                createLegend(_colorScaleDurations, _elements.durationChart.legend, data.states);
+
                 _durationChart = DurationChart({
-                    svg: elements.durationChart.svg,
+                    svg: _elements.durationChart.svg,
                     margins: _ChartMargins,
-                    timeframe: data.timeframe,
+                    timeframe: timeframe,
                     ids: data.ids,
                     data: data.events,
-                    colors: data.states,
-                    linear: false
-                    //constructs : data.constructs
+                    colors: data.states
                 });
-                createLegendTests(_durationChart, elements.durationChart.legend, data.states);
                 break;
+
+            default:
+                console.log("Chart type not valid.");
+                return;
         }
 
-
-        window.addEventListener('resize', onResize);
-
-        if (_issueChart && _amountChartAuthor && _amountChartLabel && _amountChartState) {
+        if (_issueChart && _amountChartAuthor && _amountChartLabel && _amountChartState && _durationChart) {
+            window.addEventListener('resize', onResize);
             onResize();
 
             document.getElementById("loader").style.display = "none";
@@ -308,6 +296,7 @@ var DASHBOARD_MAIN = function (par) {
             _amountChartAuthor.draw();
             _amountChartLabel.draw();
             _amountChartState.draw();
+            _durationChart.draw();
         }
 
         if (callback) {
@@ -318,8 +307,6 @@ var DASHBOARD_MAIN = function (par) {
     //-----------------------------------------
     // DATA RELATED STUFF
     //-----------------------------------------
-
-    //parsing the parameters from user to query data and select timeframe
     var p = par || {};
 
     var _mapping = p.mapping !== undefined ? p.mapping : false;
@@ -331,31 +318,29 @@ var DASHBOARD_MAIN = function (par) {
         _timeframe = [new Date(_filters.startTime), new Date()];
     }
 
-    var createIssueTimeline = function (mapping, filters, timeframe, tag, callback) {
-        var _parser = LIFSPAN_CHART_PROCESSOR(mapping);
-        var _queryFilters = QUERY_UTILITIES().formatFilters(filters);
-        filters.constructs.type = "issue";
-
-        //Initializing the dataquery module for fetching the data
+    var createIssueTimeline = function (mapping, filters, timeframe, callback) {
+        var _parser = LIFESPAN_CHART_PROCESSOR(mapping);
         var _query = DATA_QUERY();
+        var _queryFilters = QUERY_UTILITIES().formatFilters(filters);
+
         var _events = false;
         var _states = false;
         var _constructs = false;
 
         var whenLoaded = function () {
             if (_events && _constructs && _states) {
-                var parsed_data = _parser(_constructs, _events, _states, tag);
-
+                var parsed_data = _parser(_constructs, _events, _states);
+                if (debug) {
+                    console.log("[IssueTimeline]Parsed data:", parsed_data);
+                }
                 initCharts("issue", parsed_data, timeframe, callback);
             }
-            return false;
         };
 
         var eventsLoaded = function (data) {
             _events = data;
             whenLoaded();
         };
-
         var constructsLoaded = function (data) {
             _constructs = data;
             whenLoaded();
@@ -366,40 +351,37 @@ var DASHBOARD_MAIN = function (par) {
         };
 
         _query.getFilteredConstructs(_queryFilters.constructFilters, constructsLoaded);
-        //_query.getAllConstructs(constructsLoaded);
         _query.getFilteredStatechanges(_queryFilters.eventFilters, statesLoaded);
         _query.getFilteredEvents(_queryFilters.eventFilters, eventsLoaded);
     };
 
-    var createAmountTimeline = function (mapping, filters, timeframe, tag, callback) {
-        filters.tag = tag;
-
-        console.log("Parameters for amount parser:", mapping, filters, timeframe);
+    var createAmountTimelines = function (mapping, filters, timeframe, callback) {
 
         var _parser = AMOUNT_CHART_PROCESSOR(mapping);
+        var _query = DATA_QUERY();
         var _queryFilters = QUERY_UTILITIES().formatFilters(filters);
 
-        //Initializing the dataquery module for fetching the data
-        var _query = DATA_QUERY();
         var _events = false;
         var _states = false;
         var _constructs = false;
 
         var whenLoaded = function () {
             if (_events && _constructs && _states) {
-                console.log("Data for amount parser:", _constructs, _events, _states);
-                var parsed_data = _parser(_events, _constructs, _states, tag);
-                console.log("Data from amount parser:", parsed_data);
-                initCharts(tag, parsed_data, timeframe, callback);
+                var parsed_data = _parser(_events, _constructs, _states);
+                if (debug) {
+                    console.log("[AmountTimeline]Parsed data:", parsed_data);
+                }
+
+                //Only do the callback after the 2nd chart is initialized!
+                initCharts("assigned", parsed_data[0], timeframe, false);
+                initCharts("label", parsed_data[1], timeframe, callback);
             }
-            return false;
         };
 
         var eventsLoaded = function (data) {
             _events = data;
             whenLoaded();
         };
-
         var constructsLoaded = function (data) {
             _constructs = data;
             whenLoaded();
@@ -409,42 +391,35 @@ var DASHBOARD_MAIN = function (par) {
             whenLoaded();
         };
 
-        console.log("Construct filters:", _queryFilters.constructFilters);
         _query.getFilteredConstructs(_queryFilters.constructFilters, constructsLoaded);
-        //_query.getAllConstructs(constructsLoaded);
         _query.getFilteredStatechanges(_queryFilters.eventFilters, statesLoaded);
         _query.getFilteredEvents(_queryFilters.eventFilters, eventsLoaded);
     };
 
     var createStatesTimeline = function (mapping, filters, timeframe, tag, callback) {
         filters.tag = tag;
-
-        console.log("Parameters for amount parser:", mapping, filters, timeframe);
-
         var _parser = STATES_CHART_PROCESSOR(mapping);
+        var _query = DATA_QUERY();
         var _queryFilters = QUERY_UTILITIES().formatFilters(filters);
 
-        //Initializing the dataquery module for fetching the data
-        var _query = DATA_QUERY();
         var _events = false;
         var _states = false;
         var _constructs = false;
 
         var whenLoaded = function () {
             if (_events && _constructs && _states) {
-                console.log("Data for amount parser:", _constructs, _events, _states);
                 var parsed_data = _parser(_events, _constructs, _states, tag);
-                console.log("Data from amount parser:", parsed_data);
+                if (debug) {
+                    console.log("[StatesTimeline]Parsed data:", parsed_data);
+                }
                 initCharts(tag, parsed_data, timeframe, callback);
             }
-            return false;
         };
 
         var eventsLoaded = function (data) {
             _events = data;
             whenLoaded();
         };
-
         var constructsLoaded = function (data) {
             _constructs = data;
             whenLoaded();
@@ -454,39 +429,34 @@ var DASHBOARD_MAIN = function (par) {
             whenLoaded();
         };
 
-        console.log("Construct filters:", _queryFilters.constructFilters);
         _query.getFilteredConstructs(_queryFilters.constructFilters, constructsLoaded);
-        //_query.getAllConstructs(constructsLoaded);
         _query.getFilteredStatechanges(_queryFilters.eventFilters, statesLoaded);
         _query.getFilteredEvents(_queryFilters.eventFilters, eventsLoaded);
     };
 
     var createDurationTimeline = function (mapping, filters, timeframe) {
-        //console.log('Filters: ', filters)
         filters.constructs.type = 'stage';
 
         var _parser = DURATION_CHART_PROCESSOR(mapping);
+        var _query = DATA_QUERY();
         var _queryFilters = QUERY_UTILITIES().formatFilters(filters);
 
-        //Initializing the dataquery module for fetching the data
-        var _query = DATA_QUERY();
         var _events = false;
         var _constructs = false;
-
         var whenLoaded = function () {
             if (_events && _constructs) {
                 var parsed_data = _parser(_constructs, _events);
-
-                initCharts("duration", parsed_data, false, false);
+                if (debug) {
+                    console.log("[DurationTimeline]Parsed data:", parsed_data);
+                }
+                initCharts("duration", parsed_data, timeframe, false);
             }
-            return false;
         };
 
         var eventsLoaded = function (data) {
             _events = data;
             whenLoaded();
         };
-
         var constructsLoaded = function (data) {
             _constructs = data;
             whenLoaded();
@@ -496,17 +466,18 @@ var DASHBOARD_MAIN = function (par) {
         _query.getFilteredEvents(_queryFilters.eventFilters, eventsLoaded);
     };
 
+    /*
+     * Warning: the order of creation of the charts matter. e.g. to keep coloscales coherent between charts.
+     */
+
     // AMOUNT TIMELINE 1
-    createAmountTimeline(_mapping, _filters, _timeframe, "assigned", function () {
-        // AMOUNT TIMELINE 2
-        createAmountTimeline(_mapping, _filters, _timeframe, "label", function () {
-            // AMOUNT TIMELINE 3
-            createStatesTimeline(_mapping, _filters, _timeframe, "state", function () {
-                // ISSUE TIMELINE
-                createIssueTimeline(_mapping, _filters, _timeframe, "label", function () {
-                    // DURATION TIMELINE
-                    createDurationTimeline(_mapping, _filters, _timeframe);
-                });
+    createAmountTimelines(_mapping, _filters, _timeframe, function () {
+        // AMOUNT TIMELINE 3
+        createStatesTimeline(_mapping, _filters, _timeframe, "state", function () {
+            // ISSUE TIMELINE
+            createIssueTimeline(_mapping, _filters, _timeframe, function () {
+                // DURATION TIMELINE
+                createDurationTimeline(_mapping, _filters, _timeframe, false);
             });
         });
     });

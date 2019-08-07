@@ -16,10 +16,6 @@ var DURATION_CHART_PROCESSOR = function(par){
     
     var p = par || {};
 
-    if (debug){
-        console.log("[dataprocessor]Processor parameters:", p);
-    }
-    
     var _rowId = p.rowId !== undefined ? p.rowId : "_id";
     var _fromOrigin = p.rowIdIsFromOrigin !== undefined ? p.rowIdIsFromOrigin : false;
     var _anonymize = p.anonymize !== undefined ? p.anonymize : false;
@@ -70,9 +66,6 @@ var DURATION_CHART_PROCESSOR = function(par){
                 
                 var st = new Date(ev.time).getTime();
                 var et = st + parseInt(ev.duration);
-                if (debug){
-                    //console.log("[dataprocessor]Event data:", ev, st, et);
-                }
                 if(st < start || start === false){
                     start = st;
                 }
@@ -125,10 +118,6 @@ var DURATION_CHART_PROCESSOR = function(par){
             }
         }
         
-        if (debug){
-            console.log("[dataprocessor]Time data:", new Date(start), new Date(end));
-        }
-
         return {events:evs, timeframe:[start, end], ids : ids, states: states, types: types};
     };
     
@@ -215,7 +204,7 @@ var DURATION_CHART_PROCESSOR = function(par){
     
     var parseData = function(constructs, events){
         if (debug){
-            console.log("[dataprocessor]Input data:", constructs, events);
+            console.log("[DURATION_CHART_PROCESSOR]parseData:", constructs, events);
         }
 
         //object for the processed data
@@ -242,7 +231,7 @@ var DURATION_CHART_PROCESSOR = function(par){
         data.timeframe = eventData.timeframe;
 
         if (debug){
-            console.log("[dataprocessor]Parsed data:", data);
+            console.log("[DURATION_CHART_PROCESSOR]Parsed data:", data);
         }
         
         //giving the data to who needs it

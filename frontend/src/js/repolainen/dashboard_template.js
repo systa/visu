@@ -11,22 +11,9 @@ var DASHBOARD_TEMPLATE = function (mpar) {
 
     //The main container parameters
     var _mainParameters = mpar || {};
-
-    var _mclassName = _mainParameters.className !== undefined ? _mainParameters.className : "container";
-    var _containerId = _mainParameters.id !== undefined ? _mainParameters.id : "container";
     var _containerParent = _mainParameters.parent !== undefined ? _mainParameters.parent : document.body;
     var _hidden = _mainParameters.hidden !== undefined ? _mainParameters.hidden : true;
-    var _container = _mainParameters.container !== undefined ? _mainParameters.container : document.createElement("div");
-
-    _container.className = _mclassName;
-    _container.id = _containerId;
-    if (_hidden) {
-        _container.style.display = "none";
-    } else {
-        _container.style.display = "block";
-    }
-
-
+    
     //Canvas for text width calculus
     var _canvas = document.createElement('canvas');
     _canvas.style.display = "none";
@@ -80,7 +67,7 @@ var DASHBOARD_TEMPLATE = function (mpar) {
 
         var className = p.className !== undefined ? p.className : "legend";
         var id = p.id !== undefined ? p.id : "legendContainer";
-        var parent = p.parent !== undefined ? p.parent : _container;
+        var parent = p.parent !== undefined ? p.parent : _containerParent;
 
         _legend = document.createElement("div");
         _legend.className = className;
@@ -99,7 +86,7 @@ var DASHBOARD_TEMPLATE = function (mpar) {
             var className = p.className !== undefined ? p.className : "brush";
             var id = p.id !== undefined ? p.id : "brushContainer";
             var svgId = p.svgId !== undefined ? p.svgId : "brush";
-            var parent = p.parent !== undefined ? p.parent : _container;
+            var parent = p.parent !== undefined ? p.parent : _containerParent;
 
             //time selector container
             _brush.div = document.createElement("div");
@@ -132,7 +119,7 @@ var DASHBOARD_TEMPLATE = function (mpar) {
             var className = p.className !== undefined ? p.className : "chart";
             var id = p.id !== undefined ? p.id : "chartContainer";
             var svgId = p.svgId !== undefined ? p.svgId : "chart";
-            var parent = p.parent !== undefined ? p.parent : _container;
+            var parent = p.parent !== undefined ? p.parent : _containerParent;
 
 
             //legend
@@ -156,7 +143,6 @@ var DASHBOARD_TEMPLATE = function (mpar) {
                 });
             }
            
-
             //timeline containers
             source.div = document.createElement("div");
             source.div.className = className;
@@ -179,29 +165,19 @@ var DASHBOARD_TEMPLATE = function (mpar) {
     //---------------------------------------
     //    PUBLIC METHODS
     //---------------------------------------
-    var pub = {}; //Public methods are used in InitChart by custom_timeline_main.js
+    var pub = {}; 
 
     //---------------------------------------
     //    GETTERS FOR SVG & HTML ELEMENTS
     //---------------------------------------
-
-    pub.getLegendContainer = function () {
-        return _legend;
-    };
     pub.getBrushContainer = function () {
         return _brush.div;
     };
     pub.getBrushSVG = function () {
         return _brush.svg;
     };
-    pub.getChartContainer = function () {
-        return _chartDIV;
-    };
-    pub.getChartSVG = function () {
-        return _chartSVG;
-    };
     pub.getContainer = function () {
-        return _container;
+        return _containerParent;
     };
 
     //-------------------------------
@@ -308,8 +284,8 @@ var DASHBOARD_TEMPLATE = function (mpar) {
     //text : the label text
     pub.appendLabel = function (par) {
         var p = par || {};
+
         var _legend = p.legend;
-        
         var bgcolor = p.bgcolor !== undefined ? p.bgcolor : _legend.style.backgroundColor;
         var color = p.color !== undefined ? p.color : _legend.style.color;
         var text = p.text !== undefined ? p.text : false;

@@ -43,27 +43,20 @@ var LifespanChart = function (par) {
         right: 0
     };
     var _xDomain = p.timeframe !== undefined ? p.timeframe : [0, 1000];
-    var _labelDomain = p.labelColors !== undefined ? p.labelColors : [];
-    var _typeDomain = p.stateColors !== undefined ? p.stateColors : [];
     var _yDomain = p.ids !== undefined ? p.ids : [];
     var _eventData = p.events !== undefined ? p.events : [];
     var _lifespanData = p.lifespans !== undefined ? p.lifespans : [];
     var _constructData = p.constructs !== undefined ? p.constructs : false;
-    //If we want to display the construct types or not?
-    var _displayTypes = p.displayTypes !== undefined ? p.displayTypes : true;
+    var _displayTypes = p.displayTypes !== undefined ? p.displayTypes : true; //If we want to display the right labels or not?
 
-    console.log("[lifespan timeline]Construct data:", _constructData);
-    console.log("[lifespan timeline]Lifespan data:", _lifespanData);
-    console.log("[lifespan timeline]Event data:", _eventData);
-
-    var _colorScaleEvents = p.colorScaleLabels; //p.colorScaleEvents;
+    var _colorScaleEvents = p.colorScaleEvents;
     var _colorScaleLabels = p.colorScaleLabels;
     var _colorScaleAuthors = p.colorScaleAuthors;
     var _colorScaleStates = p.colorScaleStates;
 
-    var _range = 0;
-    var _timeScale = d3.time.scale().domain(_xDomain);
+    var _lifespanColor = p.lifespanColor;
 
+    var _timeScale = d3.time.scale().domain(_xDomain);
     _timeScale.range([_margins.left, _width - _margins.right]);
 
     //the tick size is negative because the orient of the axis is top. This reverts the axis...
@@ -74,8 +67,8 @@ var LifespanChart = function (par) {
 
     //calculaiting height for one row now that we know how many rows we will have
     var _rowHeight = ((_height - _margins.bottom - _margins.top) / _yDomain.length);
-    var _minRowHeight = 20; //12;
-    var _maxRowHeight = 30; //16;
+    var _minRowHeight = 20;
+    var _maxRowHeight = 30;
     if (_rowHeight < _minRowHeight) {
         _rowHeight = _minRowHeight;
     } else if (_rowHeight > _maxRowHeight) {
@@ -100,15 +93,14 @@ var LifespanChart = function (par) {
         var _states = _stateGroup.selectAll("rect").data(_constructData).enter().append("rect");
         var _labels = _stateGroup.selectAll("text").data(_constructData).enter().append("text");
     }
-    //Defining the data!
-    //Lifespan data
 
+    //Lifespan data
     var _lifespanGroup = _svg.append("g");
     var _lifespans = _lifespanGroup.selectAll("line").data(_lifespanData).enter().append("line");
 
-    //The event times
-    var _outerEventGroup = _svg.append("g");
-    var _innerEventGroup = _svg.append("g");
+    //The events
+    var _outerEventGroup = _svg.append("g"); //open and close events
+    var _innerEventGroup = _svg.append("g"); //other events
 
     var _outerEventData = [];
     var _innerEventData = [];
@@ -126,6 +118,7 @@ var LifespanChart = function (par) {
     var _xAxisGraphic = _svg.append("g").attr("class", "x axis");
     var _tooltip = d3.select("#tooltipC");
 
+    //Starting X coordinate of the lifespan
     var getLpStart = function (data) {
         var domain = _timeScale.domain();
         var start = new Date(data.start);
@@ -147,6 +140,7 @@ var LifespanChart = function (par) {
         return _timeScale(start);
     };
 
+    //Ending X coordinate of the lifespan
     var getLpEnd = function (data) {
         var domain = _timeScale.domain();
         var start = new Date(data.start);
@@ -174,8 +168,7 @@ var LifespanChart = function (par) {
 
     };
 
-    //Gets the timeline bars start point
-    //The start point is the x-coordinate of the runtime bar
+    //X coordinate of inner events
     var getX = function (data) {
         var domain = _timeScale.domain();
         var start = new Date(data.time);
@@ -190,6 +183,7 @@ var LifespanChart = function (par) {
         return x;
     };
 
+    //X coordinate of outter events
     var getX2 = function (data) {
         var domain = _timeScale.domain();
         var start = new Date(data.time);
@@ -209,30 +203,21 @@ var LifespanChart = function (par) {
         return _scaleY(data.rowId);
     };
 
+    //Y coordinate of inner events
     var getLineY = function (data) {
-        var y = getY(data);
-        y += _rowHeight * 0.5;
-        if (data.data && data.data.collide && data.data.collide !== 0) {
-            //console.log("[custom_timeline.js]Data collides:", data.data.collide);
-            y += (_rowHeight * 0.2) * data.data.collide;
-        }
+        var y = getY(data) + (_rowHeight * 0.5);
+
         return y;
     };
 
+    //Y coordinate of outter events
     var getLineY2 = function (data) {
         var y = getY(data) + (_rowHeight * 0.05);
 
         return y;
     };
 
-    var getRadius = function (data) {
-        if (data.type === 'opened' || data.type === 'closed') {
-            return _rowHeight * 0.4;
-        } else {
-            return _rowHeight * 0.2;
-        }
-    };
-
+    //Tooltip displayed when overing over events
     var onMouseOverEvent = function (data) {
         var dispstring = "<h5>Event</h5>";
 
@@ -264,10 +249,11 @@ var LifespanChart = function (par) {
         return _tooltip.style("visibility", "visible");
     };
 
+    //Tooltip displayed when overing over lifespans
     var onMouseOverLifespan = function (data) {
         var dispstring = "<h5>Lifespan</h5>";
 
-        dispstring += "<strong>Tag:</strong> " + data.tag + "<br>";
+        //dispstring += "<strong>Tag:</strong> " + data.tag + "<br>";
         dispstring += "<strong>State:</strong> " + data.state + "<br>";
         dispstring += "<strong>Row id:</strong> " + data.rowId + "<br>";
 
@@ -287,8 +273,9 @@ var LifespanChart = function (par) {
         return _tooltip.style("visibility", "visible");
     };
 
+    //Tooltip displayed when overing over issues
     var onMouseOverConstruct = function (data) {
-        var dispstring = "<h5>Construct</h5>";
+        var dispstring = "<h5>Issue</h5>";
 
         dispstring += "<strong>_id:</strong> " + data._id + "<br>";
         dispstring += "<strong>Type:</strong> " + data.type + "<br>";
@@ -326,10 +313,10 @@ var LifespanChart = function (par) {
         return _tooltip.style("visibility", "visible");
     };
 
+    //Other tooltip functions
     var onMouseMove = function (data) {
         return _tooltip.style("top", (event.clientY) + "px").style("left", (event.clientX + 15) + "px");
     };
-
     var onMouseOut = function (data) {
         return _tooltip.style("visibility", "hidden");
     };
@@ -347,18 +334,21 @@ var LifespanChart = function (par) {
         return _colorScaleEvents(data.type);
     };
 
+    pub.getColorLifespan = function (data) {
+        switch (_lifespanColor) {
+            case "assignee":
+                return _colorScaleAuthors(data.assigned);
+            case "label":
+                return _colorScaleLabels(data.label);
+            case "state":
+                return _colorScaleStates(data.state);
+        }
+    };
+
     pub.getColorAuthor = function (data) {
-        if (data.data.assignee === 'Unassigned')
-            return '#909090';
         return _colorScaleAuthors(data.data.assignee);
     };
 
-    pub.getColorLifespan = function (data) {
-        
-        return _colorScaleStates(data.state);
-    };
-
-    //Returns the state text from data
     pub.getLabel = function (data) {
         return data.data.assignee;
     };

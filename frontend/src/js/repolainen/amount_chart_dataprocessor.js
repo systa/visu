@@ -7,8 +7,6 @@
  * Main authors: Antti Luoto, Anna-Liisa Mattila, Henri Terho
  */
 
-var debug = true;
-
 //Data processor for amount timeline chart
 //Filters can be used to query data based on e.g. origin or time frame. NOT YET IMPLEMENTED!
 //mapping is to determine which field of construct is used as a Y axis index values
@@ -41,9 +39,9 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
     };
 
     var labelSort = function (l1, l2) {
-        if(l1 === 'Unlabelled'){
+        if (l1 === 'Unlabelled') {
             return -1;
-        }else if (l2 === 'Unlabelled'){
+        } else if (l2 === 'Unlabelled') {
             return 1;
         }
 
@@ -51,9 +49,9 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
     };
 
     var assignSort = function (l1, l2) {
-        if(l1 === 'Unassigned'){
+        if (l1 === 'Unassigned') {
             return -1;
-        }else if (l2 === 'Unassigned'){
+        } else if (l2 === 'Unassigned') {
             return 1;
         }
 
@@ -70,7 +68,6 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         return tmp;
     };
 
-
     var getCreated = function (startEvents, startDate) {
         var data = [];
 
@@ -79,7 +76,6 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         date.y = startDate.getUTCFullYear();
         date.m = startDate.getMonth();
         date.d = startDate.getDate();
-
 
         startEvents.forEach(function (ev) {
             ev.time = new Date(ev.time);
@@ -207,68 +203,7 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
             x++;
             date.setDate(date.getDate() + 1);
         }
-        console.log(x, i, k);
-        return {
-            data: data,
-            max: maxAmount,
-            min: minAmount
-        };
-    };
 
-    var getAmount2 = function (timeframe, startEvents, midEvents, endEvents, tag, previous) {
-
-        var start = new Date(timeframe[0].getUTCFullYear(), timeframe[0].getMonth(), timeframe[0].getDate());
-        var end = new Date(timeframe[1].getUTCFullYear(), timeframe[1].getMonth(), timeframe[1].getDate());
-
-        var opened = getCreated(startEvents.concat(midEvents), start); //.concat(getCreated(midEvents, start));
-        var closed = getClosed(endEvents.concat(midEvents), start);
-
-        var opened = getCreated(startEvents.concat(midEvents), start); //.concat(getCreated(midEvents, start));
-        console.log("At " + tag + " (opened, closed):", opened,  closed);
-
-        var date = start;
-
-        var data = [];
-        var amount = 0;
-        var maxAmount = 0;
-        var minAmount = 0;
-        var i = 0;
-        var k = 0;
-        var x = 0;
-        while (date <= end) {
-            if (i < opened.length && opened[i].date.getTime() == date.getTime()) {
-                amount += opened[i].opened;
-                ++i;
-            }
-            if (k < closed.length && closed[k].date.getTime() == date.getTime()) {
-                amount -= closed[k].closed;
-                ++k;
-            }
-
-            if (amount > maxAmount) {
-                maxAmount = amount;
-            }
-
-            if (amount < minAmount) {
-                minAmount = amount;
-            }
-
-            var prev = 0;
-            if (previous !== false) {
-                prev = previous[x].count + previous[x].previous;
-            }
-
-            var obj = {
-                date: new Date(date),
-                count: amount,
-                tag: tag,
-                previous: prev
-            };
-            data.push(obj);
-            x++;
-            date.setDate(date.getDate() + 1);
-        }
-        console.log(x, i, k);
         return {
             data: data,
             max: maxAmount,
@@ -290,16 +225,6 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         var parsed = [];
         events.forEach(function (e) {
             if (e.label === label)
-                parsed.push(e);
-        });
-
-        return parsed;
-    }
-
-    var getStated = function (events, state) {
-        var parsed = [];
-        events.forEach(function (e) {
-            if (e.state === state)
                 parsed.push(e);
         });
 
@@ -376,50 +301,11 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         };
     };
 
-    var getAmountStated = function (timeframe, startEvents, midEvents, endEvents, states) {
-        console.log("Begin:", startEvents, midEvents, endEvents);
+    var getAmountNotag = function (timeframe, startEvents, endEvents) {
 
-        var amounts = [];
-        var max = false;
-        var min = false;
-        var previous = false;
-        states.forEach(function (state) {
-            var startStated = getStated(startEvents, state);
-            var midStated = getStated(midEvents, state);
-            var endStated = getStated(endEvents, state);
-
-            console.log("At " + state + ":", startStated,  midStated, endStated);
-
-            var result = getAmount2(timeframe, startStated,  midStated, endStated, state, previous)
-            amounts.push({
-                state: state,
-                min: result.min,
-                max: result.max,
-                data: result.data
-            });
-            if (max === false || result.max > max) {
-                max = result.max;
-            }
-
-            if (min === false || result.min < min) {
-                min = result.min;
-            }
-
-            previous = result.data;
-        });
-
-        return {
-            amounts: amounts,
-            max: max,
-            min: min
-        };
-    };
-
-    var getAmountNotag = function(timeframe, startEvents, endEvents){
-        
         var start = new Date(timeframe[0].getUTCFullYear(), timeframe[0].getMonth(), timeframe[0].getDate());
         var end = new Date(timeframe[1].getUTCFullYear(), timeframe[1].getMonth(), timeframe[1].getDate());
-        
+
         var opened = getCreated(startEvents, start);
         var closed = getClosed(endEvents, start);
 
@@ -431,28 +317,31 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         var minAmount = 0;
         var i = 0;
         var k = 0;
-        while(date <= end){
-            if(i < opened.length && opened[i].date.getTime() == date.getTime()){
+        while (date <= end) {
+            if (i < opened.length && opened[i].date.getTime() == date.getTime()) {
                 amount += opened[i].opened;
                 ++i;
             }
-            if(k < closed.length && closed[k].date.getTime() == date.getTime()){
+            if (k < closed.length && closed[k].date.getTime() == date.getTime()) {
                 amount -= closed[k].closed;
                 ++k;
             }
 
-            if(amount > maxAmount){
+            if (amount > maxAmount) {
                 maxAmount = amount;
             }
-            
-            if(amount < minAmount){
+
+            if (amount < minAmount) {
                 minAmount = amount;
             }
 
-            var obj = {date : new Date(date), count : amount};
+            var obj = {
+                date: new Date(date),
+                count: amount
+            };
             data.push(obj);
 
-            date.setDate(date.getDate() +1);
+            date.setDate(date.getDate() + 1);
         }
 
         var amounts = [];
@@ -462,7 +351,11 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
             min: minAmount
         });
 
-        return {amounts: amounts, max: maxAmount, min: minAmount};
+        return {
+            amounts: amounts,
+            max: maxAmount,
+            min: minAmount
+        };
     };
 
     //Parses the link to related constructs into events and forms the id list ordered sorted by the event time stamp so that
@@ -486,11 +379,6 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         var start_helper = [];
         var end_helper = [];
         var inter_helper = [];
-
-        if (debug) {
-            console.log("[amout_chart_processor]Helper:", constructMap);
-            console.log("[amout_chart_processor]Events:", events);
-        }
 
         events.forEach(function (ev) {
             //Ignoring duplicates
@@ -602,7 +490,7 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         };
     };
 
-    var parseConstructs = function (constructs, tag) {
+    var parseConstructs = function (constructs) {
         var cList = [];
         var constructHelpper = {};
         var labels = [];
@@ -611,7 +499,7 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         constructs.forEach(function (construct) {
             var c = construct;
 
-            if (c.type !== "issue"){
+            if (c.type !== "issue") {
                 return;
             }
 
@@ -650,65 +538,51 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         };
     };
 
-    var parseData = function (events, constructs, states, tag) {
+    var parseData = function (events, constructs, states) {
         if (debug) {
-            console.log("[amout_chart_processor]Data for processor:", events, constructs, states);
+            console.log("[AMOUNT_CHART_PROCESSOR]parseData", events, constructs, states);
         }
 
         //object for the processed data
-        var data = {};
+        var dataAssigned = {};
+        var dataLabelled = {};
 
-        var constructData = parseConstructs(constructs, tag);
-        if (debug) {
-            console.log("[amout_chart_processor]Parsed constructs:", constructData);
-        }
         //from constructs we parse ids and constructs that are used
         //it also adds property rowID to constructs in _constructs list!
-
+        var constructData = parseConstructs(constructs);
         var eventData = parseEvents(events, constructData.helper);
-        if (debug) {
-            console.log("[amout_chart_processor]Parsed events:", eventData);
-        }
 
-        data.timeframe = [new Date(eventData.timeframe[0].getFullYear(), eventData.timeframe[0].getMonth(), eventData.timeframe[0].getDate()),
+        var timeframe = [new Date(eventData.timeframe[0].getFullYear(), eventData.timeframe[0].getMonth(), eventData.timeframe[0].getDate()),
             new Date(eventData.timeframe[1].getFullYear(), eventData.timeframe[1].getMonth(), eventData.timeframe[1].getDate() + 1)
         ];
+        dataAssigned.timeframe = timeframe;
+        dataLabelled.timeframe = timeframe;
+
         if (debug) {
-            console.log("[amout_chart_processor]Parsed timeframe:", data.timeframe);
+            console.log("[AMOUNT_CHART_PROCESSOR]Parsed constructs:", constructData);
+            console.log("[AMOUNT_CHART_PROCESSOR]Parsed events:", eventData);
         }
 
-        var result;
-        if (tag === "assigned") {
-            result = getAmountAssigned(eventData.timeframe, eventData.startEvents, eventData.endEvents, constructData.assignees);
-        } else if (tag === "label") {
-            result = getAmountLabeled(eventData.timeframe, eventData.startEvents, eventData.endEvents, constructData.labels);
-        } else {
-            constructData.states = ['opened', 'Ready to start', 'Doing next', 'Doing', 'In review'];
-            result = getAmountStated(eventData.timeframe, eventData.startEvents, eventData.midEvents, eventData.endEvents, constructData.states);
-        }
-        
+        var result = [];
+        result[0] = getAmountAssigned(eventData.timeframe, eventData.startEvents, eventData.endEvents, constructData.assignees);
+        result[1] = getAmountLabeled(eventData.timeframe, eventData.startEvents, eventData.endEvents, constructData.labels);
+
+        //TODO: make this nicer plz, it's shite
         var notag = getAmountNotag(eventData.timeframe, eventData.startEvents, eventData.endEvents);
-        if (debug) {
-            console.log("[amout_chart_processor]Amounts", result);
-            console.log("[amout_chart_processor]Notag", notag);
-            
-        }
 
-        data.amounts = result.amounts;
-        data.max = notag.max;
-        data.min = notag.min;
+        dataAssigned.max = notag.max;
+        dataLabelled.max = notag.max;
 
-        if (tag === "assigned") {
-            data.tags = constructData.assignees;
-        } else if (tag === "label") {
-            data.tags = constructData.labels;
-        } else {
-            data.tags = constructData.states;
-        }
+        dataAssigned.min = notag.min;
+        dataLabelled.min = notag.min;
 
+        dataAssigned.tags = constructData.assignees;
+        dataLabelled.tags = constructData.labels;
 
-        //giving the data to who needs it
-        return data;
+        dataAssigned.amounts = result[0].amounts;
+        dataLabelled.amounts = result[1].amounts;
+
+        return [dataAssigned, dataLabelled];
     };
 
     return parseData;

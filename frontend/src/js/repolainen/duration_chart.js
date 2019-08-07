@@ -36,9 +36,8 @@ var DurationChart = function(par){
     var _width = p.width !== undefined ? p.width : 256;
     var _height = p.height !== undefined ? p.height : 32;
     var _margins = p.margins !== undefined ? p.margins : {top: 0, bottom : 0, left: 0, right: 0};
-    
     var _xDomain = p.timeframe !== undefined ? p.timeframe : [0, 1000];
-    var _linear = p.linear !== undefined ? p.linear : true;
+    var _linear = p.linear !== undefined ? p.linear : false;
     
     var _colorDomain = p.colors !== undefined ? p.colors : [];
     var _yDomain = p.ids !== undefined ? p.ids : [];
@@ -50,22 +49,9 @@ var DurationChart = function(par){
     * with minimal modifications
     */
     var _stateData = p.constructs !== undefined ? p.constructs : false;
-    
-    if (debug){
-        console.log("[duration_timeline]Data (durations, states):", _durationData, _stateData);
-    }
-    
-    var _range = 0;
-    var _timeScale;
-    //dynamic scale for showing timeframe
-    if(_linear){
-        _range = _xDomain[1]-_xDomain[0];
-        _timeScale = d3.scale.linear().domain([0, _range]);
-    }
-    else{
-        _timeScale = d3.time.scale().domain(_xDomain);
-    }
-    _timeScale.range([_margins.left, _width-_margins.right]);
+
+    var _timeScale = d3.time.scale().domain(_xDomain);
+    _timeScale.range([_margins.left, _width - _margins.right]);
     
     //the tick size is negative because the orient of the axis is top. This reverts the axis...
     var _timeAxis = d3.svg.axis().orient("top").scale(_timeScale).tickSize(-_height+_margins.top+_margins.bottom);

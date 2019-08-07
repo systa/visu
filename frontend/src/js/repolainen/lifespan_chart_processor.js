@@ -12,86 +12,45 @@
 //mapping is to determine which field of construct is used as a Y axis index values
 //if anonymize flag is set to true the Y axis index values are anonymized using the base string provided
 //in astring parameter and order number. If no base string is provided only order numbers are used to anonymize the ids.
-var LIFSPAN_CHART_PROCESSOR = function (par) {
+var LIFESPAN_CHART_PROCESSOR = function (par) {
     var p = par || {};
 
     var _rowId = p.rowId !== undefined ? p.rowId : "_id";
     var _fromOrigin = p.rowIdIsFromOrigin !== undefined ? p.rowIdIsFromOrigin : false;
-    var _anonymize = p.anonymize !== undefined ? p.anonymize : true;
-    //var _anonymize = p.anonymize !== undefined ? p.anonymize : false;
+    var _anonymize = p.anonymize !== undefined ? p.anonymize : false;
     var _astring = p.astring !== undefined ? p.astring : "";
     var _states = p.states !== undefined ? p.states : {};
-
-    var _resolution = _states.resolution !== undefined ? _states.resolution : [];
 
     //Splitting the Y-index mapping from . so we can do the mapping properly
     //even if it is a field of nested object.
     _rowId = _rowId.split(".");
 
-    //Sorts event based on time
-    // if the timestamps are the same start events are allways smaller than other events
-    // and close events are allways larger than other events
-    // if both events have the same timestamp and are both start or close events or neither of them
-    // the ordering is done based on rowid (alphabetically)
-    var stSortFunction = function (e1, e2) {
-        var t1 = new Date(e1.time).getTime();
-        var t2 = new Date(e2.time).getTime();
-
-        if (t1 === t2) {
-
-            if (e1.statechange === undefined || e2.statechange === undefined) {
-                return 0;
-            }
-
-            if (e1.statechange.from === "" || e1.statechange.from === null || e1.statechange.from === undefined) {
-                return 1;
-            } else if (e2.statechange.from === "" || e2.statechange.from === null || e2.statechange.from === undefined) {
-                return -1;
-            }
-        }
-
-        return t1 - t2;
-    };
-
     var eventSortFunction = function(e1, e2){
         var t1 = new Date(e1.time).getTime();
         var t2 = new Date(e2.time).getTime();
-        /*if(t1 === t2){
-            
-            var start1 = _states.start.indexOf(e1.type);
-            var start2 = _states.start.indexOf(e2.type);
-            
-            var closed1 = _states.resolution.indexOf(e1.type);
-            var closed2 = _states.resolution.indexOf(e2.type);
-            
-            if(start1 !== -1 && start2 === -1){
-                return -1;//e1 is smaller as it is start event and e2 is not
-            }
-            else if(start2 !== -1 && start1 === -1){
-                return 1;//e2 is smaller as it is start event and e1 is not
-            }
-            else if(closed1 !== -1 && closed2 === -1){
-                return 1;//e2 is smaller as it is not resolution event and e1 is
-            }
-            else if(closed2 !== -1 && closed1 === -1){
-                return -1;//e1 is smaller as it is not resolution event and e2 is
-            }
-            else{
-                if(e1.rowId !== undefined && e2.rowId !== undefined){
-                    return e1.rowId.localeCompare(e2.rowId);
-                }
-                else if(e1.rowId !== undefined){
-                    return -1;
-                }
-                else if(e2.rowId !== undefined){
-                    return 1;
-                }
-                else{
-                    return 0;
-                }
-            }
-        }*/
         return t1-t2;
+    };
+
+    //Puts 'Unlabelled' first
+    var labelSort = function (l1, l2) {
+        if(l1 === 'Unlabelled'){
+            return -1;
+        }else if (l2 === 'Unlabelled'){
+            return 1;
+        }
+
+        return l1.localeCompare(l2);
+    };
+
+    //Puts 'Unassigned' first
+    var assignSort = function (l1, l2) {
+        if(l1 === 'Unassigned'){
+            return -1;
+        }else if (l2 === 'Unassigned'){
+            return 1;
+        }
+
+        return l1.localeCompare(l2);
     };
 
     var parseLifespans = function (statelist) {
@@ -124,7 +83,8 @@ var LIFSPAN_CHART_PROCESSOR = function (par) {
                             start: st,
                             state: state,
                             end: sc.time,
-                            tag: sc.tag
+                            label: sc.label,
+                            assigned: sc.assigned
                         };
                         lifespans.push(tmp);
                         st = sc.time;
@@ -152,7 +112,8 @@ var LIFSPAN_CHART_PROCESSOR = function (par) {
                         start: st,
                         state: state,
                         end: rt,
-                        tag: sc.tag
+                        label: sc.label,
+                        assigned: sc.assigned
                     }); 
                 }
             }
@@ -164,10 +125,8 @@ var LIFSPAN_CHART_PROCESSOR = function (par) {
     //the topmost drawn row in the visualization is the row where the first event happened and so on. This is the default ordering of rows for the visualization.
     //Construct map is a helper data structure which contains all constructs in a object where the key is the construct _id (MongoDB). The helper has been formed in
     //parseConstructs function --> parseConstructs NEEDS TO BE CALLED BEFORE THIS FUNCTION (PRECONDITION)!
-    var parseStates = function (statechangeEvents, constructMap, tag) {
+    var parseStates = function (statechangeEvents, constructMap) {
         var types = [];
-
-        //helper datastructure for parsing lifespans
         var states = {};
 
         var start = false;
@@ -175,7 +134,14 @@ var LIFSPAN_CHART_PROCESSOR = function (par) {
 
         var identity_helper = [];
 
+        //helper datastructure for parsing lifespans
         statechangeEvents.forEach(function (ev) {
+            //Ignoring states not related to issues
+            var whitelist = ['state change', 'opened', 'closed'];
+            if(!whitelist.includes(ev.type)){
+                return;
+            }
+
             //Ignoring duplicates
             if (identity_helper.indexOf(ev._id) === -1) {
                 identity_helper.push(ev._id);
@@ -210,11 +176,8 @@ var LIFSPAN_CHART_PROCESSOR = function (par) {
                     //Storing the link between events and constructs so that the visualization understands it.
                     if (constructMap[ev.related_constructs[i].toString()] !== undefined) {
                         tmp.rowId = constructMap[ev.related_constructs[i].toString()].rowId;
-                        if (tag === "label")
-                            tmp.tag = constructMap[ev.related_constructs[i].toString()].data.label;
-                        else if (tag === "assigned")
-                            tmp.tag = constructMap[ev.related_constructs[i].toString()].data.assigned;
-                        else tmp.tag = "notag";
+                        tmp.assigned =  constructMap[ev.related_constructs[i].toString()].data.assignee;
+                        tmp.label = constructMap[ev.related_constructs[i].toString()].data.label;
 
                         if (!states[tmp.rowId]) {
                             states[tmp.rowId] = [];
@@ -241,7 +204,6 @@ var LIFSPAN_CHART_PROCESSOR = function (par) {
         var end = false;
 
         var identity_helper = [];
-
         events.forEach(function (ev) {
             //Ignoring duplicates
             if (identity_helper.indexOf(ev._id) === -1) {
@@ -317,12 +279,13 @@ var LIFSPAN_CHART_PROCESSOR = function (par) {
         //The helper data structure is for linking construct origin_id.source_id to events
         var constructHelpper = {};
         constructs.forEach(function (construct) {
+            //Ignore constructs that are not issues
             if (construct.type !== "issue") {
                 return;
             }
 
             //To ignore duplicates
-            if (identity_helper.indexOf(construct._id) === -1 && construct.type === "issue") {
+            if (identity_helper.indexOf(construct._id) === -1) {
                 identity_helper.push(construct._id);
                 //Finding the right attribute of a construct for y axis indetifier
                 var id = construct;
@@ -440,10 +403,12 @@ var LIFSPAN_CHART_PROCESSOR = function (par) {
                 });
             }
         }
+
+        //Sort issues by end time
         lptmp.sort(function (lp1, lp2) {
             var s1 = new Date(lp1.start).getTime();
             var s2 = new Date(lp2.start).getTime();
-            //return s1 - s2;
+            //return s1 - s2; //Use this to sort by start time
 
             if (lp1.end === false && lp2.end === false) {
                 return s1 - s2;
@@ -466,9 +431,11 @@ var LIFSPAN_CHART_PROCESSOR = function (par) {
                 }
             }
         });
+
         for (var i = 0; i < lptmp.length; ++i) {
             ids.push(lptmp[i].rowId);
         }
+
         return ids;
     };
 
@@ -481,9 +448,9 @@ var LIFSPAN_CHART_PROCESSOR = function (par) {
         return stateId;
     };
 
-    var parseData = function (constructs, events, statechanges, tag) {
+    var parseData = function (constructs, events, statechanges) {
         if (debug) {
-            console.log("[lifespan timeline]Data for processor:", events, constructs, statechanges);
+            console.log("[LIFESPAN_CHART_PROCESSOR]ParseData", events, constructs, statechanges);
         }
         //object for the processed data
         var data = {};
@@ -491,23 +458,21 @@ var LIFSPAN_CHART_PROCESSOR = function (par) {
         //from constructs we parse ids and constructs that are used
         //it also adds property rowID to constructs in _constructs list!
         var constructData = parseConstructs(constructs);
-        console.log("[lifespan timeline]Construc data:", constructData);
-
         var eventData = parseEvents(events, constructData.helper);
-        var stateData = parseStates(statechanges, constructData.helper, tag);
-
-        console.log("[lifespan timeline]State data:", stateData);
+        var stateData = parseStates(statechanges, constructData.helper);
 
         data.constructs = constructData.processedConstructs;
         data.longestId = constructData.longestId;
         data.longestType = constructData.longestType;
+
+        data.authors = constructData.assignees.sort(assignSort);
+        data.labels = constructData.labels.sort(labelSort);
+
         data.events = eventData.events;
         data.lifespans = stateData.lifespans;
-        data.types = eventData.types; //eventData.types.concat(stateData.types);
-        data.types.sort();
 
-        //var tmpStates = stateData.types; //eventData.types.concat(stateData.types);
-        data.states = ['open', 'Ready to start', 'Doing next', 'Doing', 'In review', 'closed'];
+        data.types = eventData.types.sort();
+        data.states = stateData.types;
 
         var scId = sortRows(stateData.lifespans);
         data.ids = mergeIdLists(scId, constructData.ids);
@@ -530,36 +495,7 @@ var LIFSPAN_CHART_PROCESSOR = function (par) {
             new Date(end.getFullYear(), end.getMonth(), end.getDate() + 1)
         ];
 
-        if (tag === "assigned") {
-            data.tags = constructData.assignees.sort(assignSort);
-        } else if (tag === "label") {
-            data.tags = constructData.labels.sort(labelSort);
-        } else {
-            data.tags = false;
-        }
-
-        //giving the data to who needs it
         return data;
-    };
-
-    var labelSort = function (l1, l2) {
-        if(l1 === 'Unlabelled'){
-            return -1;
-        }else if (l2 === 'Unlabelled'){
-            return 1;
-        }
-
-        return l1.localeCompare(l2);
-    };
-
-    var assignSort = function (l1, l2) {
-        if(l1 === 'Unassigned'){
-            return -1;
-        }else if (l2 === 'Unassigned'){
-            return 1;
-        }
-
-        return l1.localeCompare(l2);
     };
 
     return parseData;
