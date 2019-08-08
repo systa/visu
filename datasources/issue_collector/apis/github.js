@@ -52,7 +52,9 @@ var changeEvent = {
    user: '$.actor.login',
    issue: '$.issue.id',
    created: '$.created_at',
-   change: '$.event'
+   change: '$.event', //what exactly was the event
+   label: '$.label.name',
+   assignee: '$.assignee.login'
 };
 
 var api = {

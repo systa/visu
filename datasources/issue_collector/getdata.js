@@ -136,8 +136,8 @@ function getItems( baseRequest, api, type, itemDesc, userParams, result, status,
          return;
       }
 
-      console.log('[Getdata]' + type);
-      console.log('[Getdata]', body);
+      //console.log('[Getdata]' + type);
+      //console.log('[Getdata]', body);
 
       //for jira parser issues and change history 
       if(type === "jiraIssues" || type === "jiraChanges") {
@@ -238,7 +238,7 @@ function getItems( baseRequest, api, type, itemDesc, userParams, result, status,
             // add the items to the list for that type
             result[type] = result[type].concat( items );
             status.count--; // one resource now completely processed
-            console.log(status.count);
+            //console.log(status.count);
             if ( status.count === 0 ) {
                // every resource processed
                // create additional events from the milestones and issues according to the api description

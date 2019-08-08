@@ -14,7 +14,7 @@ var _ = require( 'underscore' );
 
 var debugLink = true;
 var debugSend = true;
-var debugParse = true;
+var debugParse = false;
 
 
 function parseJenkinsTime(jenkinsTime){

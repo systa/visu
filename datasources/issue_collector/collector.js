@@ -15,7 +15,7 @@ var path = require( 'path' );
 // prompt is a library for getting user input
 var prompt = require( 'prompt' );
 var request = require( 'request' );
-require('request').debug = true;
+require('request').debug = false;
 
 var _ = require( 'underscore' );
 
@@ -235,7 +235,7 @@ function gotOrigin( err, origin ) {
         });
 
         // send the issue data to the db
-        //console.log( '[Collector]Sending data to database.' );
-        //poster( result, origin );
+        console.log( '[Collector]Sending data to database.' );
+        poster( result, origin );
     });
 };
