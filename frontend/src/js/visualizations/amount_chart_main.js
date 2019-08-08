@@ -17,8 +17,8 @@ var AMOUNT_CHART_MAIN = function(par){
     
     //The left and right margin as well as width should be the same
     //for all the charts if we want to align the draw areas vertically
-    var _amountChartMargins = {top: 40, bottom: 20, left: 20, right: 40};
-    var _timeSelectorMargins = {top: 20, bottom: 10, left: 20, right: 40};
+    var _amountChartMargins = {top: 40, bottom: 20, left: 20, right: 140};
+    var _timeSelectorMargins = {top: 20, bottom: 10, left: 20, right: 140};
     
     var _width = 0;
     var _height = 0;
@@ -75,7 +75,7 @@ var AMOUNT_CHART_MAIN = function(par){
     var initCharts = function(data, timeframe){
 
         if (debug) {
-            console.log("[amout_chart_main]Data for initCharts:", data);
+            console.log("[AMOUNT_CHART_MAIN]Data for initCharts:", data);
         }
         
         var elements = _layout.createLayout([
@@ -139,7 +139,7 @@ var AMOUNT_CHART_MAIN = function(par){
     var p = par || {};
 
     if (debug) {
-        console.log("[amout_chart_main]Init data:", p);
+        console.log("[AMOUNT_CHART_MAIN]Init data:", p);
     }
     
     var _mapping = p.mapping !== undefined ? p.mapping : false;
@@ -150,7 +150,7 @@ var AMOUNT_CHART_MAIN = function(par){
         _timeframe = [new Date(_filters.startTime), new Date(_filters.endTime)];
     }
     
-    console.log("Data for parer:", _mapping, _filters, _timeframe);
+    console.log("[AMOUNT_CHART_MAIN]Data for parer:", _mapping, _filters, _timeframe);
 
     var _parser = AMOUNT_CHART_PROCESSOR(_mapping);
     var _queryFilters = QUERY_UTILITIES().formatFilters(_filters);
@@ -164,7 +164,7 @@ var AMOUNT_CHART_MAIN = function(par){
     
     var whenLoaded = function(){
         if(_events && _constructs && _states){
-            console.log("Data for parer:", _constructs, _events, _states);
+            console.log("[AMOUNT_CHART_MAIN]Data for parer:", _constructs, _events, _states);
             var parsed_data = _parser(_events, _constructs, _states, _filters.tag); //assigned, label
             initCharts(parsed_data, _timeframe);
         }
@@ -173,22 +173,18 @@ var AMOUNT_CHART_MAIN = function(par){
     
     var eventsLoaded = function(data){
         _events = data;
-        console.log("[issue_timeline_main]Events: ", _events);
         whenLoaded();
     };
     
     var constructsLoaded = function(data){
         _constructs = data;
-        console.log("[issue_timeline_main]Constructs: ", _constructs);
         whenLoaded();
     };
     var statesLoaded = function(data){
         _states = data;
-        console.log("[issue_timeline_main]Statechanges: ", _states);
         whenLoaded();
     };
        
-    console.log("[lifespan_timeline_main]Query data:", _queryFilters);
     _query.getFilteredConstructs(_queryFilters.constructFilters, constructsLoaded);
     _query.getFilteredStatechanges(_queryFilters.eventFilters, statesLoaded);
     _query.getFilteredEvents(_queryFilters.eventFilters, eventsLoaded);

@@ -288,37 +288,23 @@
               <h2>Tags</h2>
               <p>Define the tag to be visualized within the amount. Note that
                 the tags are fetched from the event's attributes!</p>
-              <div class="form-group">
-                <label for="tags" class="col-sm-4 control-label">Tag</label>
-                <div class="col-sm-8">
-                  <div hidden>
-                    <input class="form-control" type="text" name="tagging" id="tagging" value="none" />
+                <div class="form-group">
+                  <label for="initial" class="col-sm-4 control-label">Keep one of the following tags</label>
+                  <div class="col-sm-8">
+                    <input class="form-control" type="text" name="tagging" id="tagging"
+                      value="none" placeholder="none, label, assigned" />
                   </div>
-                  <script>
-                    function getTag(obj) {
-                      console.log(obj.value);
-                      $('.tagging').value = obj.value;
-                    };
-                  </script>
-                  <select class="form-control" id="tags" onchange="getTag(this);">
-                    <option value="none" selected>No tag</option>
-                    <option value="label">Label</option>
-                    <option value="assigned">Assigned</option>
-                  </select>
-
                 </div>
-              </div>
             </div>
           </div>
         </div>
-
-
-
       </div>
+
     </form>
 
     <div class="col-sm-12" id="buttonplacer"></div>
   </div>
+
   <div id="loader"></div>
   <div class="tooltipC" id="tooltipC"></div>
   <div id="visuParent" class="container"></div>
