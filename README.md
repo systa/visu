@@ -11,7 +11,7 @@ Installation
 
 ``` sudo docker-compose up```
 
-The server is now running and can be accessed at localhost:8080, but no data is loaded on it yet. Three services are started by Docker: **web** (the web app, port 8080), **mongo** (the Mongo DB, port 27017), and **mongo-express** (the DB management dashboard, port 8081).
+The server is now running and can be accessed at localhost:8082, but no data is loaded on it yet. Three services are started by Docker: **web** (the web app, port 8082), **mongo** (the Mongo DB, port 27017), and **mongo-express** (the DB management dashboard, port 8081). NB: A *debugger* is attached to the web service on port 5858.
 
 Usage 
 ------------
