@@ -41,9 +41,9 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
     };
 
     var labelSort = function (l1, l2) {
-        if(l1 === 'Unlabelled'){
+        if (l1 === 'Unlabelled') {
             return -1;
-        }else if (l2 === 'Unlabelled'){
+        } else if (l2 === 'Unlabelled') {
             return 1;
         }
 
@@ -51,9 +51,9 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
     };
 
     var assignSort = function (l1, l2) {
-        if(l1 === 'Unassigned'){
+        if (l1 === 'Unassigned') {
             return -1;
-        }else if (l2 === 'Unassigned'){
+        } else if (l2 === 'Unassigned') {
             return 1;
         }
 
@@ -171,8 +171,8 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         var amount = 0;
         var maxAmount = 0;
         var minAmount = 0;
-        var i = 0;
-        var k = 0;
+        var i = 0; //opened
+        var k = 0; //closed
         var x = 0;
         while (date <= end) {
             if (i < opened.length && opened[i].date.getTime() == date.getTime()) {
@@ -280,6 +280,10 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
             var startLabeled = getLabeled(startEvents, label);
             var endLabeled = getLabeled(endEvents, label);
 
+            if (debug) {
+                console.log('[AMOUNT_CHART_PROCESSOR]Labeled:', startLabeled, endLabeled)
+            }
+
             var result = getAmount(timeframe, startLabeled, endLabeled, label, previous)
             amounts.push({
                 tag: label,
@@ -305,11 +309,11 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         };
     };
 
-    var getAmountNotag = function(timeframe, startEvents, endEvents){
-        
+    var getAmountNotag = function (timeframe, startEvents, endEvents) {
+
         var start = new Date(timeframe[0].getUTCFullYear(), timeframe[0].getMonth(), timeframe[0].getDate());
         var end = new Date(timeframe[1].getUTCFullYear(), timeframe[1].getMonth(), timeframe[1].getDate());
-        
+
         var opened = getCreated(startEvents, start);
         var closed = getClosed(endEvents, start);
 
@@ -321,28 +325,32 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         var minAmount = 0;
         var i = 0;
         var k = 0;
-        while(date <= end){
-            if(i < opened.length && opened[i].date.getTime() == date.getTime()){
+        while (date <= end) {
+            if (i < opened.length && opened[i].date.getTime() == date.getTime()) {
                 amount += opened[i].opened;
                 ++i;
             }
-            if(k < closed.length && closed[k].date.getTime() == date.getTime()){
+            if (k < closed.length && closed[k].date.getTime() == date.getTime()) {
                 amount -= closed[k].closed;
                 ++k;
             }
 
-            if(amount > maxAmount){
+            if (amount > maxAmount) {
                 maxAmount = amount;
             }
-            
-            if(amount < minAmount){
+
+            if (amount < minAmount) {
                 minAmount = amount;
             }
 
-            var obj = {date : new Date(date), count : amount, tag: "No tag"};
+            var obj = {
+                date: new Date(date),
+                count: amount,
+                tag: "No tag"
+            };
             data.push(obj);
 
-            date.setDate(date.getDate() +1);
+            date.setDate(date.getDate() + 1);
         }
 
         var amounts = [];
@@ -352,7 +360,11 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
             min: minAmount
         });
 
-        return {amounts: amounts, max: maxAmount, min: minAmount};
+        return {
+            amounts: amounts,
+            max: maxAmount,
+            min: minAmount
+        };
     };
 
     //Parses the link to related constructs into events and forms the id list ordered sorted by the event time stamp so that
@@ -378,8 +390,8 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         var inter_helper = [];
 
         if (debug) {
-            console.log("[amout_chart_processor]Helper:", constructMap);
-            console.log("[amout_chart_processor]Events:", events);
+            console.log("[amout_chart_processor]events:", events);
+            console.log("[amout_chart_processor]map:", constructMap);
         }
 
         events.forEach(function (ev) {
@@ -401,78 +413,76 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
                     end = time;
                 }
 
-                for (var i = 0; i < ev.related_constructs.length; ++i) {
-                    if (ev.related_constructs[i] === null || ev.related_constructs[i] === undefined) {
-                        continue;
-                    }
+                //make sure state is set
+                if (ev.isStatechange) {
+                    if (ev.state === "" || ev.state === null || ev.state === undefined || ev.state === false)
+                        //ev.state = ev.statechange.from;
+                        if (ev.type !== 'state change')
+                            ev.state = ev.type;
+                        else
+                            ev.state = ev.statechange.to;
 
-                    if (ev.isStatechange) {
-                        if (ev.state === "" || ev.state === null || ev.state === undefined || ev.state === false)
-                            //ev.state = ev.statechange.from;
-                            if (ev.type !== 'state change')
-                                ev.state = ev.type;
-                            else
-                                ev.state = ev.statechange.to;
-                    }
 
-                    //storing states for calculating lifespans
-                    if (ev.state !== "" && ev.state !== null && ev.state !== undefined && ev.state !== false) {
+                    for (var i = 0; i < ev.related_constructs.length; ++i) {
+                        if (ev.related_constructs[i] === null || ev.related_constructs[i] === undefined) {
+                            continue;
+                        }
 
-                        var trimmedState = ev.state.replace(/\s/g, '');
-                        var tmp = {};
+                        //storing states for calculating lifespans
+                        if (ev.state !== "" && ev.state !== null && ev.state !== undefined && ev.state !== false) {
+                            var trimmedState = ev.state.replace(/\s/g, '');
+                            var tmp = {};
 
-                        if (_states.start.indexOf(trimmedState) !== -1) { //If it's a starting state
-                            if (start_helper.indexOf(ev.related_constructs[i]) === -1) {
-                                tmp = cloneEvent(ev);
-                                tmp.rowId = ev.related_constructs[i].toString();
+                            if (_states.start.indexOf(trimmedState) !== -1) { //If it's a starting state
+                                if (start_helper.indexOf(ev.related_constructs[i]) === -1) {
+                                    tmp = cloneEvent(ev);
+                                    tmp.rowId = ev.related_constructs[i].toString();
 
-                                var x = constructMap[ev.related_constructs[i].toString()];
-                                if (x === undefined || x === null)
-                                    return;
+                                    var x = constructMap[ev.related_constructs[i].toString()];
+                                    if (x === undefined || x === null)
+                                        return;
 
-                                tmp.label = constructMap[ev.related_constructs[i].toString()].data.label;
-                                tmp.assignee = constructMap[ev.related_constructs[i].toString()].data.assignee;
+                                    tmp.label = constructMap[ev.related_constructs[i].toString()].data.label;
+                                    tmp.assignee = constructMap[ev.related_constructs[i].toString()].data.assignee;
 
-                                startEvents.push(tmp);
-                                start_helper.push(ev.related_constructs[i]);
-                            }
+                                    startEvents.push(tmp);
+                                    start_helper.push(ev.related_constructs[i]);
+                                }
 
-                        } else if (_states.resolution.indexOf(trimmedState) !== -1) { //If it's a resolution state
-                            if (end_helper.indexOf(ev.related_constructs[i]) === -1) {
-                                tmp = cloneEvent(ev);
-                                tmp.rowId = ev.related_constructs[i].toString();
+                            } else if (_states.resolution.indexOf(trimmedState) !== -1) { //If it's a resolution state
+                                if (end_helper.indexOf(ev.related_constructs[i]) === -1) {
+                                    tmp = cloneEvent(ev);
+                                    tmp.rowId = ev.related_constructs[i].toString();
 
-                                var x = constructMap[ev.related_constructs[i].toString()];
-                                if (x === undefined || x === null)
-                                    return;
+                                    var x = constructMap[ev.related_constructs[i].toString()];
+                                    if (x === undefined || x === null)
+                                        return;
 
-                                tmp.label = constructMap[ev.related_constructs[i].toString()].data.label;
-                                tmp.assignee = constructMap[ev.related_constructs[i].toString()].data.assignee;
+                                    tmp.label = constructMap[ev.related_constructs[i].toString()].data.label;
+                                    tmp.assignee = constructMap[ev.related_constructs[i].toString()].data.assignee;
 
-                                endEvents.push(tmp);
-                                end_helper.push(ev.related_constructs[i]);
-                            }
-                        } else if (_states.intermediate.indexOf(trimmedState) !== -1) { //If it's an intermediate state
-                            if (inter_helper.indexOf(ev.related_constructs[i]) === -1) {
-                                tmp = cloneEvent(ev);
-                                tmp.rowId = ev.related_constructs[i].toString();
+                                    endEvents.push(tmp);
+                                    end_helper.push(ev.related_constructs[i]);
+                                }
 
-                                var x = constructMap[ev.related_constructs[i].toString()];
-                                if (x === undefined || x === null)
-                                    return;
+                            } else if (_states.intermediate.indexOf(trimmedState) !== -1) { //If it's an intermediate state
+                                if (inter_helper.indexOf(ev.related_constructs[i]) === -1) {
+                                    tmp = cloneEvent(ev);
+                                    tmp.rowId = ev.related_constructs[i].toString();
 
-                                tmp.label = constructMap[ev.related_constructs[i].toString()].data.label;
-                                tmp.assignee = constructMap[ev.related_constructs[i].toString()].data.assignee;
+                                    var x = constructMap[ev.related_constructs[i].toString()];
+                                    if (x === undefined || x === null)
+                                        return;
 
-                                interEvents.push(tmp);
-                                inter_helper.push(ev.related_constructs[i]);
+                                    tmp.label = constructMap[ev.related_constructs[i].toString()].data.label;
+                                    tmp.assignee = constructMap[ev.related_constructs[i].toString()].data.assignee;
 
-                                if (debug) {
-                                    //console.log("[amout_chart_processor]Inter event:", ev);
+                                    interEvents.push(tmp);
+                                    inter_helper.push(ev.related_constructs[i]);
                                 }
                             }
                         }
-                    }
+                    } //end for
                 }
             }
 
@@ -483,6 +493,11 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         //For each does not preserve order!
         startEvents.sort(eventSortFunction);
         endEvents.sort(eventSortFunction);
+
+        if (debug) {
+            console.log("[amout_chart_processor]start", startEvents);
+            console.log("[amout_chart_processor]end", endEvents);
+        }
 
         return {
             startEvents: startEvents,
@@ -501,7 +516,7 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         constructs.forEach(function (construct) {
             var c = construct;
 
-            if (c.type !== "issue"){
+            if (c.type !== "issue") {
                 return;
             }
 
@@ -553,11 +568,10 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         data.timeframe = [new Date(eventData.timeframe[0].getFullYear(), eventData.timeframe[0].getMonth(), eventData.timeframe[0].getDate()),
             new Date(eventData.timeframe[1].getFullYear(), eventData.timeframe[1].getMonth(), eventData.timeframe[1].getDate() + 1)
         ];
-        
+
         if (debug) {
             console.log("[AMOUNT_CHART_PROCESSOR]Parsed constructs:", constructData);
             console.log("[AMOUNT_CHART_PROCESSOR]Parsed events:", eventData);
-            console.log("[AMOUNT_CHART_PROCESSOR]Parsed timeframe:", data.timeframe);
         }
 
         var result;
@@ -568,17 +582,29 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         } else {
             result = getAmountNotag(eventData.timeframe, eventData.startEvents, eventData.endEvents);
         }
-        
-        var notag = getAmountNotag(eventData.timeframe, eventData.startEvents, eventData.endEvents);
+
         if (debug) {
             console.log("[AMOUNT_CHART_PROCESSOR]Amounts", result);
-            console.log("[AMOUNT_CHART_PROCESSOR]Notag", notag);
-            
         }
 
         data.amounts = result.amounts;
-        data.max = notag.max;
-        data.min = notag.min;
+
+        var min = 0;
+        var max = 0;
+        var combinedAmounts = [];
+        for (var i = 0; i < data.amounts[0].data.length; i++) {
+            combinedAmounts[i] = 0;
+
+            var tmp = data.amounts[data.amounts.length - 1].data[i];
+            combinedAmounts[i] += tmp.count + tmp.previous;
+
+            if (combinedAmounts[i] > max) {
+                max = combinedAmounts[i];
+            }
+        }
+
+        data.max = max;
+        data.min = min;
 
         if (tag === "assigned") {
             data.tags = constructData.assignees;
