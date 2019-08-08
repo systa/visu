@@ -1,11 +1,11 @@
 /*
-* Copyright (c) TUT Tampere University of Technology 2014-2015.
-* All rights reserved.
-* This software has been developed in Tekes-TIVIT project Need-for-Speed.
-* All rule set in consortium agreement of Need-for-Speed project apply.
-*
-* Main authors: Antti Luoto, Anna-Liisa Mattila, Henri Terho
-*/
+ * Copyright (c) TUT Tampere University of Technology 2014-2015.
+ * All rights reserved.
+ * This software has been developed in Tekes-TIVIT project Need-for-Speed.
+ * All rule set in consortium agreement of Need-for-Speed project apply.
+ *
+ * Main authors: Antti Luoto, Anna-Liisa Mattila, Henri Terho
+ */
 
 //Timeline visualization component for visualizing amounts of something over time
 /*PARAMETERS:
@@ -18,43 +18,48 @@
     maxAmount   : Maximum amount in the data
     amounts  : array of amount data get by processor. one data item contains a x-axel value (date) and amount (number)
 */
-var AmountChart = function(par){
+var AmountChart = function (par) {
     var p = par || {};
-    
-    var _svg  = p.svg !== undefined ? p.svg : false;
-    if(!_svg){
+
+    var _svg = p.svg !== undefined ? p.svg : false;
+    if (!_svg) {
         console.log("SVG parameter is mandatory for the timeline!");
         return false;
     }
-    
+
     var _width = p.width !== undefined ? p.width : 256;
     var _height = p.height !== undefined ? p.height : 75;
-    var _margins = p.margins !== undefined ? p.margins : {top: 0, bottom : 0, left: 0, right: 0};
+    var _margins = p.margins !== undefined ? p.margins : {
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0
+    };
     var _xDomain = p.timeframe !== undefined ? p.timeframe : [0, 1000];
     var _max = p.max !== undefined ? p.max : 10;
     var _min = p.min !== undefined ? p.min : 0;
     var _amountData = p.amounts !== undefined ? p.amounts : [];
-    
+
     var _yDomain = [_min, Math.ceil(_max / 10) * 10];
-    
+
     _svg.attr("width", _width);
-    _svg.attr("height", _height+10);
-  
-    var _amountScale = d3.scale.linear().domain(_yDomain).range([_height-_margins.bottom, _margins.top]);
-    var _amountAxis = d3.svg.axis().orient("right").scale(_amountScale).tickSize(_width-(_margins.left+_margins.right));
-    
-    var _timeScale = d3.time.scale().domain(_xDomain).range([_margins.left, _width-_margins.right]);
-    var _timeAxis = d3.svg.axis().orient("top").scale(_timeScale).tickSize(-_height+_margins.top+_margins.bottom);
+    _svg.attr("height", _height + 10);
+
+    var _amountScale = d3.scale.linear().domain(_yDomain).range([_height - _margins.bottom, _margins.top]);
+    var _amountAxis = d3.svg.axis().orient("right").scale(_amountScale).tickSize(_width - (_margins.left + _margins.right));
+
+    var _timeScale = d3.time.scale().domain(_xDomain).range([_margins.left, _width - _margins.right]);
+    var _timeAxis = d3.svg.axis().orient("top").scale(_timeScale).tickSize(-_height + _margins.top + _margins.bottom);
 
     var _colorScale = p.colorScale !== undefined ? p.colorScale : d3.scale.category20();
-    
+
     //In SVG the draw order is reverse order of defining the nodes
     var _yAxisGraphic = _svg.append("g").attr("class", "y axis");
-    
+
     //var _colorDomain = [];
     var _amountGroups = [];
     var _amounts = [];
-    _amountData.forEach(function(array){
+    _amountData.forEach(function (array) {
         var group = _svg.append("g");
         var amounts = group.selectAll("rect").data(array.data).enter().append("rect");
 
@@ -66,200 +71,191 @@ var AmountChart = function(par){
 
     //console.log("Colors:", _colorDomain);
     //_colorScale.domain(_colorDomain);
-    
+
     var _xAxisGraphic = _svg.append("g").attr("class", "x axis");
-    
+
     var _tooltip = d3.select("#tooltipC");
-    
+
     //Horizontal position of the bar
-    var mapDataToX = function(data){
+    var mapDataToX = function (data) {
         var domain = _timeScale.domain();
         var start = data.date;
 
-        if((start.getUTCFullYear() < domain[0].getUTCFullYear() &&
-        start.getMonth() < domain[0].getMonth() &&
-        start.getDate() < domain[0].getDate()) ||
-        start > domain[domain.length-1]){
+        if ((start.getUTCFullYear() < domain[0].getUTCFullYear() &&
+                start.getMonth() < domain[0].getMonth() &&
+                start.getDate() < domain[0].getDate()) ||
+            start > domain[domain.length - 1]) {
             return 0;
-        }
-        else if(start < domain[0]){
+        } else if (start < domain[0]) {
             start = domain[0];
         }
         return _timeScale(start);
     };
-    
+
     //Width of the bar
-    var mapDataToWidth = function(data){
+    var mapDataToWidth = function (data) {
         var domain = _timeScale.domain();
         var start = data.date;
 
         //If the data is not in the domain range it is discarded
-        if((start.getUTCFullYear() < domain[0].getUTCFullYear() &&
-        start.getMonth() < domain[0].getMonth() &&
-        start.getDate() < domain[0].getDate()) ||
-        start > domain[domain.length-1]){
+        if ((start.getUTCFullYear() < domain[0].getUTCFullYear() &&
+                start.getMonth() < domain[0].getMonth() &&
+                start.getDate() < domain[0].getDate()) ||
+            start > domain[domain.length - 1]) {
             return 0;
         }
 
         var date = new Date(start);
         date.setDate(start.getDate() + 1);
 
-        if(date < domain[0]){
+        if (date < domain[0]) {
             return 0;
         }
 
-        if(start < domain[0]){
+        if (start < domain[0]) {
             start = domain[0];
         }
 
-        if(date > domain[domain.length-1]){
-            date = domain[domain.length-1];
+        if (date > domain[domain.length - 1]) {
+            date = domain[domain.length - 1];
         }
 
-        return _timeScale(date)-_timeScale(start);
+        return _timeScale(date) - _timeScale(start);
     };
-    
+
     //Vertical position of the bar
-    var mapAmountToY = function(data){
-        if(!data.previous) data.previous = 0;
-        
+    var mapAmountToY = function (data) {
+        if (!data.previous) data.previous = 0;
+
         return _amountScale(data.count + data.previous);
     };
-    
+
     //Height of the bar
-    var mapAmounToHeight = function(data){
-        return _amountScale.range()[0]-_amountScale(data.count);
+    var mapAmounToHeight = function (data) {
+        return _amountScale.range()[0] - _amountScale(data.count);
     };
-    
-    var onMouseOver = function(data){
+
+    var onMouseOver = function (data) {
         var dispstring = "<h5>Issues</h5>";
 
         dispstring += "<strong>Tag:</strong> " + data.tag + "<br>";
         dispstring += "<strong>Amount:</strong> " + data.count + "<br>";
-        var date = (data.date.getUTCDate()+1) + "/" + (data.date.getUTCMonth()+1)  + "/" + data.date.getUTCFullYear();
+        var date = (data.date.getUTCDate() + 1) + "/" + (data.date.getUTCMonth() + 1) + "/" + data.date.getUTCFullYear();
         dispstring += "<strong>Date:</strong> " + date + "<br>";
         //dispstring += "<strong>Previous:</strong> " + data.previous + "<br>";
-        
+
         _tooltip.html(dispstring);
         return _tooltip.style("visibility", "visible");
     };
-    
-    var onMouseMove = function(data){
-        return _tooltip.style("top", (event.clientY)+"px").style("left",(event.clientX+15)+"px");
+
+    var onMouseMove = function (data) {
+        return _tooltip.style("top", (event.clientY) + "px").style("left", (event.clientX + 15) + "px");
     };
-    
-    var onMouseOut = function(data){
+
+    var onMouseOut = function (data) {
         return _tooltip.style("visibility", "hidden");
     };
 
     //public methods
     var pub = {};
-    
-    pub.clear = function(){
+
+    pub.clear = function () {
         _svg.selectAll("*").remove();
     };
-    pub.draw = function(){
+    pub.draw = function () {
 
         //background and y-axis
-        _yAxisGraphic.attr("transform","translate("+_margins.left+","+0+")").call(_amountAxis);
-            
-        _amounts.forEach(function(tag){
+        _yAxisGraphic.attr("transform", "translate(" + _margins.left + "," + 0 + ")").call(_amountAxis);
+
+        _amounts.forEach(function (tag) {
             tag.attr('fill', pub.getColor)
-            .attr('x', mapDataToX)
-            .attr('width', mapDataToWidth)
-            .attr('y', mapAmountToY)
-            .attr('height', mapAmounToHeight)
-            .on("mouseover", onMouseOver)
-            .on("mousemove", onMouseMove)
-            .on("mouseout", onMouseOut);
+                .attr('x', mapDataToX)
+                .attr('width', mapDataToWidth)
+                .attr('y', mapAmountToY)
+                .attr('height', mapAmounToHeight)
+                .on("mouseover", onMouseOver)
+                .on("mousemove", onMouseMove)
+                .on("mouseout", onMouseOut);
         });
 
         //x-axis
-        _xAxisGraphic.attr("transform", "translate(0,"+(_margins.top)+")")
+        _xAxisGraphic.attr("transform", "translate(0," + (_margins.top) + ")")
             .call(_timeAxis)
             .selectAll(".tick text")
             .style("text-anchor", "start");
     };
-    
-    pub.onBrush = function(timeRange){
-        _timeScale.domain(timeRange);        
+
+    pub.onBrush = function (timeRange) {
+        _timeScale.domain(timeRange);
         pub.draw();
     };
-    
-    pub.onResize = function(width, height, margins){
+
+    pub.onResize = function (width, height, margins) {
         _width = width;
         _height = height;
         _margins = margins;
-        
-        _timeScale.range([_margins.left, _width-_margins.right]);
-        _timeAxis.tickSize(-_height+_margins.top+_margins.bottom);
-        _amountScale.range([_height-_margins.bottom, _margins.top]);
-        _amountAxis.tickSize(_width-(_margins.left+_margins.right));
-        
+
+        _timeScale.range([_margins.left, _width - _margins.right]);
+        _timeAxis.tickSize(-_height + _margins.top + _margins.bottom);
+        _amountScale.range([_height - _margins.bottom, _margins.top]);
+        _amountAxis.tickSize(_width - (_margins.left + _margins.right));
+
         _svg.attr("width", _width);
-        _svg.attr("height", _height+10);
-        
+        _svg.attr("height", _height + 10);
+
         pub.draw();
     };
-    
-    pub.getMinHeight = function(){
-       return 30;
+
+    pub.getMinHeight = function () {
+        return 30;
     };
-    
-    pub.updateData = function(ud){
+
+    pub.updateData = function (ud) {
         //Clear the chart before new bindings
         pub.clear();
         var u = ud || {};
-        
+
         _xDomain = p.timeframe !== undefined ? p.timeframe : _xDomain;
         _max = p.max !== undefined ? p.max : _max;
         _min = p.min !== undefined ? p.min : _min;
         _amountData = p.amounts !== undefined ? p.amounts : _amountData;
-        
-        _yDomain = [_min, _max+10];
 
-        _amountScale.domain(_yDomain).range([_height-_margins.bottom, _margins.top]);  
-        _timeScale.domain(_xDomain).range([_margins.left, _width-_margins.right]);
+        _yDomain = [_min, _max + 10];
+
+        _amountScale.domain(_yDomain).range([_height - _margins.bottom, _margins.top]);
+        _timeScale.domain(_xDomain).range([_margins.left, _width - _margins.right]);
 
         //In SVG the draw order is reverse order of defining the nodes
         _yAxisGraphic = _svg.append("g").attr("class", "y axis");
-        
+
         _amountGroup = _svg.append("g");
         _amounts = [];
-        _amountData.forEach(function(tag){
+        _amountData.forEach(function (tag) {
             _amounts[tag] = _amountGroup.selectAll("rect").data(_amountData[tag]).enter().append("rect");
-        })  
-        
+        })
+
         _xAxisGraphic = _svg.append("g").attr("class", "x axis");
     };
-    
-    pub.getColor = function(data){
+
+    pub.getColor = function (data) {
         var day = data.date.getDay();
         var color;
 
-        if (data.tag === 'opened'){
+        if (data.tag === 'opened') {
             data.tag = 'open';
         }
 
-        if (day == 0 || day == 6){
-            if (data.tag === "Unlabelled" || data.tag === "Unassigned" ){
-                color = "rgba(144,144,144,0.75)";
-            }else{
-                var tmp = d3.rgb(_colorScale(data.tag));
-                color = "rgba(" + tmp.r + "," + tmp.g + "," + tmp.b + ", 0.75)";
-            }
-        }else{
-            if (data.tag === "Unlabelled" || data.tag === "Unassigned" ){
-                color = "rgba(144,144,144,1)";
-            }else{
-                color = _colorScale(data.tag);
-            }
+        if (day == 0 || day == 6) {
+            var tmp = d3.rgb(_colorScale(data.tag));
+            color = "rgba(" + tmp.r + "," + tmp.g + "," + tmp.b + ", 0.75)";
+        } else {
+            color = _colorScale(data.tag);
         }
-                
+
         return color;
     };
 
-    pub.getColorScale = function(){
+    pub.getColorScale = function () {
         return _colorScale;
     };
 
