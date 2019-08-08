@@ -12,7 +12,7 @@
 var request = require( 'request' );
 var _ = require( 'underscore' );
 
-var debugLink = true;
+var debugLink = false;
 var debugSend = true;
 var debugParse = false;
 
@@ -90,6 +90,17 @@ function sendToDb( issueData, origin ) {
 
                 else if ( type === 'issue' ) {
                     meta.assignee = item.assignee;
+                    var l;
+                    for (var i = 0; i < item.labels.length; i++){
+                        l = item.labels[i];
+
+                        if (l.hasOwnProperty('name')){
+                            l = l.name;
+                        }else if (l === 'open' || l === 'Ready to start' || l ===  'Doing next' || l ===  'Doing' || l ===  'In review' || l ===  'closed'){
+                            l = 'Unlabelled';
+                        }
+                    }
+                    meta.label = l;
                 }
 
                 artefact.data = meta;
