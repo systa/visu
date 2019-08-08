@@ -530,8 +530,12 @@ var STATES_CHART_PROCESSOR = function (par) {
         data.max = result.max;
         data.min = 0; //notag.min;
 
-        data.tags = constructData.states;
-
+        if (constructs[0].origin_id[0].source === 'github'){
+            data.tags = ['open'];
+        }else{
+            data.tags = ['open', 'Ready to start', 'Doing next', 'Doing', 'In review'];
+        }
+       
         //giving the data to who needs it
         return data;
     };

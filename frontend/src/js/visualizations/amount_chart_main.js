@@ -152,7 +152,13 @@ var AMOUNT_CHART_MAIN = function(par){
     
     console.log("[AMOUNT_CHART_MAIN]Data for parer:", _mapping, _filters, _timeframe);
 
-    var _parser = AMOUNT_CHART_PROCESSOR(_mapping);
+    var _parser;
+    if(_filters.tag === 'state'){
+        _parser = STATES_CHART_PROCESSOR(_mapping);
+    }else{
+        _parser = AMOUNT_CHART_PROCESSOR(_mapping);
+    }
+
     var _queryFilters = QUERY_UTILITIES().formatFilters(_filters);
     var _search = PROCESSOR_UTILITES();
 
