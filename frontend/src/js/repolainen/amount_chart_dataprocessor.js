@@ -567,20 +567,31 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         result[0] = getAmountAssigned(eventData.timeframe, eventData.startEvents, eventData.endEvents, constructData.assignees);
         result[1] = getAmountLabeled(eventData.timeframe, eventData.startEvents, eventData.endEvents, constructData.labels);
 
-        //TODO: make this nicer plz, it's shite
-        var notag = getAmountNotag(eventData.timeframe, eventData.startEvents, eventData.endEvents);
-
-        dataAssigned.max = notag.max;
-        dataLabelled.max = notag.max;
-
-        dataAssigned.min = notag.min;
-        dataLabelled.min = notag.min;
-
         dataAssigned.tags = constructData.assignees;
         dataLabelled.tags = constructData.labels;
 
         dataAssigned.amounts = result[0].amounts;
         dataLabelled.amounts = result[1].amounts;
+
+        var min = 0;
+        var max = 0;
+        var combinedAmounts = [];
+        for (var i = 0; i < dataAssigned.amounts[0].data.length; i++){
+            combinedAmounts[i] = 0;
+
+            var tmp = dataAssigned.amounts[dataAssigned.amounts.length-1].data[i];
+            combinedAmounts[i] += tmp.count + tmp.previous;
+
+            if (combinedAmounts[i] > max){
+                max = combinedAmounts[i];
+            }
+        }
+
+        dataAssigned.max = max;
+        dataLabelled.max = max;
+
+        dataAssigned.min = min;
+        dataLabelled.min = min;
 
         return [dataAssigned, dataLabelled];
     };
