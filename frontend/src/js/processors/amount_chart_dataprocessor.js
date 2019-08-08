@@ -346,7 +346,7 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
             var obj = {
                 date: new Date(date),
                 count: amount,
-                tag: "No tag"
+                tag: "Open"
             };
             data.push(obj);
 
@@ -388,11 +388,6 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         var start_helper = [];
         var end_helper = [];
         var inter_helper = [];
-
-        if (debug) {
-            console.log("[amout_chart_processor]events:", events);
-            console.log("[amout_chart_processor]map:", constructMap);
-        }
 
         events.forEach(function (ev) {
             //Ignoring duplicates
@@ -495,8 +490,8 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         endEvents.sort(eventSortFunction);
 
         if (debug) {
-            console.log("[amout_chart_processor]start", startEvents);
-            console.log("[amout_chart_processor]end", endEvents);
+            console.log("[AMOUNT_CHART_PROCESSOR]start", startEvents);
+            console.log("[AMOUNT_CHART_PROCESSOR]end", endEvents);
         }
 
         return {
@@ -589,10 +584,10 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
 
         data.amounts = result.amounts;
 
-        var min = 0;
-        var max = 0;
+        var min = data.amounts[0].min;
+        var max = data.amounts[0].max;
         var combinedAmounts = [];
-        for (var i = 0; i < data.amounts[0].data.length; i++) {
+        for (var i = 0; i < data.amounts[0].data.length; i++) { //For each day
             combinedAmounts[i] = 0;
 
             var tmp = data.amounts[data.amounts.length - 1].data[i];
@@ -611,7 +606,7 @@ var AMOUNT_CHART_PROCESSOR = function (par) {
         } else if (tag === "label") {
             data.tags = constructData.labels;
         } else {
-            data.tags = ['open', 'closed'];
+            data.tags = ['open'];
         }
 
         return data;

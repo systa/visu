@@ -166,6 +166,10 @@ var AMOUNT_CHART_MAIN = function(par){
         if(_events && _constructs && _states){
             console.log("[AMOUNT_CHART_MAIN]Data for parer:", _constructs, _events, _states);
             var parsed_data = _parser(_events, _constructs, _states, _filters.tag); //assigned, label
+
+            if (debug) {
+                console.log("[AMOUNT_CHART_MAIN]Parsed data", parsed_data);
+            }
             initCharts(parsed_data, _timeframe);
         }
         return false;
