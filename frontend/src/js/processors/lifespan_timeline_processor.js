@@ -483,7 +483,7 @@ var LIFSPAN_TIMELINE_PROCESSOR = function (par) {
 
     var parseData = function (constructs, events, statechanges, tag) {
         if (debug) {
-            console.log("[lifespan timeline]Data for processor:", events, constructs, statechanges);
+            console.log("[LIFSPAN_TIMELINE_PROCESSOR]Data for processor:", events, constructs, statechanges);
         }
         //object for the processed data
         var data = {};
@@ -491,12 +491,12 @@ var LIFSPAN_TIMELINE_PROCESSOR = function (par) {
         //from constructs we parse ids and constructs that are used
         //it also adds property rowID to constructs in _constructs list!
         var constructData = parseConstructs(constructs);
-        console.log("[lifespan timeline]Construc data:", constructData);
+        console.log("[LIFSPAN_TIMELINE_PROCESSOR]Construc data:", constructData);
 
         var eventData = parseEvents(events, constructData.helper);
         var stateData = parseStates(statechanges, constructData.helper, tag);
 
-        console.log("[lifespan timeline]State data:", stateData);
+        console.log("[LIFSPAN_TIMELINE_PROCESSOR]State data:", stateData);
 
         data.constructs = constructData.processedConstructs;
         data.longestId = constructData.longestId;

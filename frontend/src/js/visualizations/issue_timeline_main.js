@@ -7,8 +7,10 @@
 * Main authors: Antti Luoto, Anna-Liisa Mattila, Henri Terho
 */
 
+var debug = true;
+
 var ISSUE_TIMELINE_MAIN = function(par){
-    console.log("[issue_timeline_main]");
+    console.log("[ISSUE_TIMELINE_MAIN]");
 //-----------------------------------------
 //  DRAWING RELATED STUFF
 //-----------------------------------------
@@ -78,7 +80,7 @@ var ISSUE_TIMELINE_MAIN = function(par){
     
     //Initializes the chart template and draws the visualization.
     var initCharts = function(data, timeframe){
-        console.log("[issue_timeline_main]initCharts:", data);
+        console.log("[ISSUE_TIMELINE_MAIN]initCharts", data);
         
         var elements = _layout.createLayout();
         
@@ -177,7 +179,7 @@ var ISSUE_TIMELINE_MAIN = function(par){
         _timeframe = [new Date(_filters.startTime), new Date(_filters.endTime)];
     }
 
-    console.log("[lifespan_timeline_main]Loading modules");
+    console.log("[ISSUE_TIMELINE_MAIN]Loading modules");
     
     var _parser = LIFSPAN_TIMELINE_PROCESSOR(_mapping);
     var _queryFilters = QUERY_UTILITIES().formatFilters(_filters);
@@ -191,7 +193,7 @@ var ISSUE_TIMELINE_MAIN = function(par){
     
     var whenLoaded = function(){
         if(_events && _constructs && _states){
-            console.log("Data for issue parser:", _constructs, _events, _states);
+            console.log("[ISSUE_TIMELINE_MAIN]Data for issue parser:", _constructs, _events, _states);
             var parsed_data = _parser(_constructs, _events, _states);
             initCharts(parsed_data, _timeframe);
         }
@@ -200,7 +202,7 @@ var ISSUE_TIMELINE_MAIN = function(par){
     
     var eventsLoaded = function(data){
         _events = data;
-        console.log("[issue_timeline_main]Events: ", _events);
+        console.log("[ISSUE_TIMELINE_MAIN]Events: ", _events);
         whenLoaded();
     };
     
@@ -210,11 +212,11 @@ var ISSUE_TIMELINE_MAIN = function(par){
     };
     var statesLoaded = function(data){
         _states = data;
-        console.log("[issue_timeline_main]Statechanges: ", _states);
+        console.log("[ISSUE_TIMELINE_MAIN]Statechanges: ", _states);
         whenLoaded();
     };
        
-    console.log("[lifespan_timeline_main]Query data:", _queryFilters);
+    console.log("[ISSUE_TIMELINE_MAIN]Query data:", _queryFilters);
     _query.getFilteredConstructs(_queryFilters.constructFilters, constructsLoaded);
     _query.getFilteredStatechanges(_queryFilters.eventFilters, statesLoaded);
     _query.getFilteredEvents(_queryFilters.eventFilters, eventsLoaded);
