@@ -21,7 +21,7 @@ var issue = {
    updated: '$.updated_at',
    assignee: '$.assignee.login',
    comment_count: '$.comments',
-   //labels: '$.labels',
+   labels: '$.labels',
    milestone: '$.milestone.id'
 };
 
@@ -108,4 +108,4 @@ var api = {
       }
    }
 };
-var github_api = api;
+module.exports = api;

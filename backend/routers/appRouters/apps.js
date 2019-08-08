@@ -8,36 +8,35 @@
  */
 var express = require('express');
 var router = express.Router();
-const querystring = require('querystring');    
+const querystring = require('querystring');
 
 var collector = require("../../../backend/data-collector/collector.js");
 
 router.post('/', function (req, res) {
     res.setHeader('Content-Type', 'text/plain');
-    console.log("TEST DATA RECEIVED: ", req.body);
-    
-    //TODO: indicate to user that data has been processed (or not)
+    console.log("DATA RECEIVED: ", req.body);
 
     var data = parse_data(req.body);
-    collector(data, function(e, err, type) {
+    console.log("Parsed data:", data);
+
+    collector(data, function (e, err, type) {
         var error;
         var etype;
 
-        if (e === true) {//all went well
+        if (e === true) { //all went well
             error = false;
             etype = false;
-        }else{
+        } else {
             if (type === true) { // GET DATA error
                 etype = 'getdata';
                 var code = err.body.message !== undefined ? err.body.message : err.res;
                 error = "Error during data collection: " + code + " at " + err.url + ".";
-            }else { //SEND DATA error
+            } else { //SEND DATA error
                 etype = 'senddata';
                 error = "Error during data sending: " + err;
             }
 
-            console.log("TEST DATA RECEIVED: ", error);
-            
+            console.log("Error: ", error);
         }
 
         const query = querystring.stringify({
@@ -48,35 +47,70 @@ router.post('/', function (req, res) {
 
         res.redirect('/api-collector?' + query);
         res.end('Data received.');
-        
     });
 
-    
+
 });
 
 var parse_data = function (body) {
     var api = body.api;
+    var filters = {};
 
-    var userParams = body.projectName;
-      
-    var baseURL = body.url;
-    var auth = {
-        user: body.userName,
-        password: body.pwd,
-        token: body.token,
-        method: body.authMethod
-    }
-    var origin = {
-        source: body.source,
-        context: body.context
+    switch (api) {
+        case 'gitlab':
+            var userParams = body.projectName;
+            var baseURL = body.url;
+            var auth = {
+                user: body.userName,
+                password: body.pwd,
+                token: body.token,
+                method: body.authMethod
+            };
+            var origin = {
+                source: body.source,
+                context: body.context
+            };
+
+            filters = {
+                userParams: userParams,
+                baseURL: baseURL,
+                auth: auth,
+                origin: origin
+            };
+
+            break;
+
+        case 'github':
+            var userParams = {
+                repo_owner: body.user,
+                repo_name: body.repo
+            };
+            var auth = {
+                user: body.userName,
+                password: body.pwd,
+                method: body.authMethod
+            };
+            var origin = {
+                source: body.source,
+                context: body.context
+            };
+
+            filters = {
+                userParams: userParams,
+                baseURL: baseURL,
+                auth: auth,
+                origin: origin
+            };
+
+            break;
+
+        case 'jira':
+            break;
+
+        case 'jenkins':
+            break;
     }
 
-    var filters = {
-        userParams: userParams,
-        baseURL: baseURL,
-        auth: auth,
-        origin: origin
-    };
 
     return {
         filters: filters,

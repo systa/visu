@@ -29,7 +29,7 @@ var collector = function (p, callback) {
   switch (_api) {
     case 'jenkins':
       _API = require('./apis/jenkins.js');
-      _auth = _API.authentication[1];
+      _auth = _API.authentication[1]; //Force auth method to be basic
 
       break;
     case 'jira':
@@ -38,16 +38,18 @@ var collector = function (p, callback) {
       break;
     case 'github':
       _API = require('./apis/github.js');
+      _auth = _API.authentication[1]; //Force auth method to be basic
 
       break;
     case 'gitlab':
       _API = require('./apis/gitlab.js');
-      _auth = _API.authentication[1];
+      _auth = _API.authentication[1]; //Force auth method to be token
+      _API.baseUrl = _filters.baseURL;
 
       break;
   }
 
-  _API.baseUrl = _filters.baseURL;
+  //TODO: make switch of auth method work
 
   // 2. Get auth method
   console.log('[Collector]_auth:', _auth);
@@ -91,6 +93,11 @@ var collector = function (p, callback) {
       break;
     case 'github':
 
+        _userParams = {
+          'owner': _filters.userParams.repo_owner,
+          'repo': _filters.userParams.repo_name
+        }
+
       break;
     case 'gitlab':
       _userParams = {
@@ -100,7 +107,6 @@ var collector = function (p, callback) {
 
       break;
   }
-
 
   // 5. Get origin
   var origin = _filters.origin;
