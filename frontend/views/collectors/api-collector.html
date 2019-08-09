@@ -24,9 +24,11 @@
 
   <!-- Success/Error of data collection -->
   <script type="text/javascript">
+    //Parse query string in URI
     function parse_query_string(query) {
       var vars = query.split("&");
       var query_string = {};
+
       for (var i = 0; i < vars.length; i++) {
         var pair = vars[i].split("=");
         var key = decodeURIComponent(pair[0]);
@@ -45,10 +47,12 @@
       }
       return query_string;
     }
+
     var query = window.location.search.substring(1);
     var qs = parse_query_string(query);
-    console.log(qs);
+    //console.log(qs);
 
+    //Handle the response
     $(document).ready(function () {
       if (qs.valid === "true") {
         $('#success').show();
@@ -109,9 +113,10 @@
         selecting the appropriate API.</p>
     </div>
 
-		<div class="alert alert-warning">
-        <span class="glyphicon glyphicon-exclamation-sign"></span> As the applicaion is dockerized, <em>localhost</em> is not a valid base URL.
-      </div>
+    <div class="alert alert-warning">
+      <span class="glyphicon glyphicon-exclamation-sign"></span> As the applicaion is dockerized, <em>localhost</em> is
+      not a valid base URL.
+    </div>
 
     <div class="alert alert-success alert-dismissible fade in " id="success" hidden>
       <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
@@ -120,7 +125,8 @@
 
     <div class="alert alert-danger alert-dismissible fade in" id="fail" hidden>
       <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-      <p><span class="glyphicon glyphicon-alert"></span> <strong>A problem occured while processing the request.</strong></p>
+      <p><span class="glyphicon glyphicon-alert"></span> <strong>A problem occured while processing the
+          request.</strong></p>
       <p id="problem"></p>
     </div>
 
@@ -142,7 +148,6 @@
           </div>
         </div>
 
-
         <div class="panel-body" id="form-placer">
           <p class="text-center">Please select the desired API.</p>
         </div>
@@ -156,8 +161,7 @@
   <div id="visuParent" class="container"></div>
 
   <script type="text/javascript">
-    //On click for API selection
-
+    //Script for API selection
     var header = document.getElementById("api-select");
     var btns = header.getElementsByClassName("btn");
 

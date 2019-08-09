@@ -1,81 +1,81 @@
 <script type="text/javascript">
-    function authentication(obj) {
-      $('#authMethod').value = obj.value;
-      switch (obj.value) {
-        case 'noauth':
-          $('#authParams').hide();
-          $('#userName').prop('required', false);
-          $('#pwd').prop('required', false);
-          break;
-        case 'basic':
-          $('#authParams').show();
-          $('#userName').prop('required', true);
-          $('#pwd').prop('required', true);
-          break;
-        default:
-      }
+  //Script that handles authentication method change
+  function authentication(obj) {
+    $('#authMethod').value = obj.value; //Not working!
+    switch (obj.value) {
+      case 'noauth':
+        $('#authParams').hide();
+        $('#userName').prop('required', false);
+        $('#pwd').prop('required', false);
+        break;
+      case 'basic':
+        $('#authParams').show();
+        $('#userName').prop('required', true);
+        $('#pwd').prop('required', true);
+        break;
+      default:
     }
-  </script>
-  
-  <div class="col-sm-12">
-  
-    <form id="queryform" class="form-horizontal" action="/apps" method="post">
-  
-      <h3>Authentication</h3>
-  
-      <div class="form-group">
-        <label for="method" class="col-sm-3 control-label">Method</label>
-        <div class="col-sm-9">
-          <select class="form-control" id="method" onchange="authentication(this);">
-            <option value="noauth" disabled>No authentication</option>
-            <option value="basic" selected>Basic</option>
-            <option value="oauth2" disabled>OAuth2</option>
-          </select>
-        </div>
+  }
+</script>
+
+<div class="col-sm-12">
+
+  <form id="queryform" class="form-horizontal" action="/apps" method="post">
+
+    <h3>Authentication</h3>
+    <div class="form-group">
+      <label for="method" class="col-sm-3 control-label">Method</label>
+      <div class="col-sm-9">
+        <select class="form-control" id="method" onchange="authentication(this);">
+          <option value="noauth" disabled>No authentication</option>
+          <option value="basic" selected>Basic</option>
+          <option value="oauth2" disabled>OAuth2</option>
+        </select>
       </div>
-  
-      <div class="form-group" id="authParams">
-        <label for="userName" class="col-sm-3 control-label">User name</label>
-        <div class="col-sm-9">
-          <input class="form-control" type="text" name="userName" id="userName" value="">
-        </div>
-  
-        <label for="pwd" class="col-sm-3 control-label">Password</label>
-        <div class="col-sm-9">
-          <input class="form-control" type="password" name="pwd" id="pwd" value="" />
-        </div>
+    </div>
+
+    <div class="form-group" id="authParams">
+      <label for="userName" class="col-sm-3 control-label">User name</label>
+      <div class="col-sm-9">
+        <input class="form-control" type="text" name="userName" id="userName" value="">
       </div>
-  
-      <h3>API Settings</h3>
-      <div class="form-group">
-        <label for="url" class="col-sm-3 control-label">The repository owner</label>
-        <div class="col-sm-9">
-          <input class="form-control" type="user" name="user" id="user" value="joeyespo" />
-        </div>
-        <label for="projectName" class="col-sm-3 control-label">The repository</label>
-        <div class="col-sm-9">
-          <input class="form-control" type="text" name="repo" id="repo" value="grip" />
-        </div>
+
+      <label for="pwd" class="col-sm-3 control-label">Password</label>
+      <div class="col-sm-9">
+        <input class="form-control" type="password" name="pwd" id="pwd" value="" />
       </div>
-  
-      <h3>Database Settings</h3>
-      <div class="form-group">
-        <label for="context" class="col-sm-3 control-label">Context</label>
-        <div class="col-sm-9">
-          <input class="form-control" type="text" name="context" id="context" value="grip" />
-        </div>
-        <label for="source" class="col-sm-3 control-label">Source</label>
-        <div class="col-sm-9">
-          <input class="form-control" type="text" name="source" id="source" value="github" />
-        </div>
+    </div>
+
+    <h3>API Settings</h3>
+    <div class="form-group">
+      <label for="url" class="col-sm-3 control-label">The repository owner</label>
+      <div class="col-sm-9">
+        <input class="form-control" type="user" name="user" id="user" value="joeyespo" />
       </div>
-  
-      <!-- Hidden parameters (from selection) -->
-      <div hidden>
-        <input class="form-control" type="text" name="api" id="api" value="github" />
-        <input class="form-control" type="text" name="authMethod" id="authMethod" value="noauth">
+      <label for="projectName" class="col-sm-3 control-label">The repository</label>
+      <div class="col-sm-9">
+        <input class="form-control" type="text" name="repo" id="repo" value="grip" />
       </div>
-  
-      <input type="submit"  class="btn btn-primary btn-block" value="Submit">
-    </form>
-  </div>
+    </div>
+
+    <h3>Database Settings</h3>
+    <div class="form-group">
+      <label for="context" class="col-sm-3 control-label">Context</label>
+      <div class="col-sm-9">
+        <input class="form-control" type="text" name="context" id="context" value="grip" />
+      </div>
+      <label for="source" class="col-sm-3 control-label">Source</label>
+      <div class="col-sm-9">
+        <input class="form-control" type="text" name="source" id="source" value="github" />
+      </div>
+    </div>
+
+    <!-- Hidden parameters (from selection) -->
+    <div hidden>
+      <input class="form-control" type="text" name="api" id="api" value="github" />
+      <input class="form-control" type="text" name="authMethod" id="authMethod" value="noauth">
+    </div>
+
+    <input type="submit" class="btn btn-primary btn-block" value="Submit">
+  </form>
+</div>

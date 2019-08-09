@@ -16,14 +16,18 @@ body {
     font-size: 1.2em;
 }
 
-.alert{
-    margin-left : 15px;
-    margin-right : 15px;
-    margin-top : 15px;
-    margin-bottom : 15px;
+/* Tuning bootstrap elements */
+
+.alert {
+    margin-left: 15px;
+    margin-right: 15px;
+    margin-top: 15px;
+    margin-bottom: 15px;
 }
 
-#visuParent{
+/* Elements of the charts */
+
+#visuParent {
     width: 95%;
     padding: 0px;
     outline: 0px;
@@ -48,8 +52,6 @@ body {
     display: block;
     padding: 0% 10% 2% 15%;
 }
-
-/* Elements of the charts */
 
 .legend {
     margin-top: 5px;

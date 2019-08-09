@@ -1,6 +1,7 @@
 <script type="text/javascript">
+  //Script that handles authentication method change
   function authentication(obj) {
-    $('#authMethod').value = obj.value;
+    $('#authMethod').value = obj.value; //Not working!
     switch (obj.value) {
       case 'noauth':
         $('#authParams').hide();
@@ -22,7 +23,6 @@
   <form id="queryform" class="form-horizontal" action="/apps" method="post">
 
     <h3>Authentication</h3>
-
     <div class="form-group">
       <label for="method" class="col-sm-3 control-label">Method</label>
       <div class="col-sm-9">
@@ -76,6 +76,6 @@
       <input class="form-control" type="text" name="authMethod" id="authMethod" value="noauth">
     </div>
 
-    <input type="submit"  class="btn btn-primary btn-block" value="Submit">
+    <input type="submit" class="btn btn-primary btn-block" value="Submit">
   </form>
 </div>

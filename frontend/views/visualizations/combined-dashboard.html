@@ -57,15 +57,15 @@
     function allowDrop(ev) {
       ev.preventDefault();
     }
-    
+
     function drag(ev) {
       ev.dataTransfer.setData("text", ev.target.id);
     }
-    
+
     function drop(ev, id) {
       ev.preventDefault();
       var data = ev.dataTransfer.getData("text");
-      var elem = $('#'+data)
+      var elem = $('#' + data)
       var target = document.getElementById(id);
       elem.insertAfter(target);
     }
@@ -157,13 +157,13 @@
               <div class="form-group">
                 <label for="source" class="col-sm-3 control-label">Source</label>
                 <div class="col-sm-9">
-                  <input class="form-control" type="text" name="source" id="source" value="gitlab"/>
+                  <input class="form-control" type="text" name="source" id="source" value="gitlab" />
                 </div>
               </div>
               <div class="form-group">
                 <label for="context" class="col-sm-3 control-label">Context</label>
                 <div class="col-sm-9">
-                  <input class="form-control" type="text" name="context" id="context" value="repolainen"/>
+                  <input class="form-control" type="text" name="context" id="context" value="repolainen" />
                 </div>
               </div>
               <div class="form-group">
@@ -174,7 +174,7 @@
               </div>
             </div>
 
-           
+
           </div>
         </div>
       </div>
@@ -244,7 +244,7 @@
         </div>
 
 
-        
+
       </div>
     </form>
 
@@ -257,54 +257,61 @@
   <!-- Placer for the tooltip -->
   <div class="tooltipC" id="tooltipC"></div>
 
-  <!-- Container where the visualization will be drawn -->
+  <!-- Container where the visualization will be drawn 
+       Change the order here to change the order on the dashboard
+  -->
   <div id="visuParent" class="container" hidden>
     <div id="brushParent" class="parentContainer"></div>
 
-    <div draggable="true" ondragstart="drag(event)" id="drag1" ondrop="drop(event, 'drag1')" ondragover="allowDrop(event)">
+    <div draggable="true" ondragstart="drag(event)" id="drag1" ondrop="drop(event, 'drag1')"
+      ondragover="allowDrop(event)">
       <button class="collapsible">Issue Timeline</button>
       <div id="issueParent" class="parentContainer content"></div>
     </div>
 
-    <div draggable="true" ondragstart="drag(event)" id="drag2" ondrop="drop(event, 'drag2')" ondragover="allowDrop(event)">
+    <div draggable="true" ondragstart="drag(event)" id="drag2" ondrop="drop(event, 'drag2')"
+      ondragover="allowDrop(event)">
       <button class="collapsible">Amount Timeline (assigned)</button>
       <div id="amountParent1" class="parentContainer content"></div>
     </div>
 
-    <div draggable="true" ondragstart="drag(event)" id="drag3" ondrop="drop(event, 'drag3')" ondragover="allowDrop(event)">
+    <div draggable="true" ondragstart="drag(event)" id="drag3" ondrop="drop(event, 'drag3')"
+      ondragover="allowDrop(event)">
       <button class="collapsible">Amount Timeline (label)</button>
       <div id="amountParent2" class="parentContainer content"></div>
     </div>
 
-    <div draggable="true" ondragstart="drag(event)" id="drag5" ondrop="drop(event, 'drag5')" ondragover="allowDrop(event)">
+    <div draggable="true" ondragstart="drag(event)" id="drag5" ondrop="drop(event, 'drag5')"
+      ondragover="allowDrop(event)">
       <button class="collapsible">Amount Timeline (state)</button>
       <div id="amountParent3" class="parentContainer content"></div>
     </div>
 
-    <div draggable="true" ondragstart="drag(event)" id="drag4" ondrop="drop(event, 'drag4')" ondragover="allowDrop(event)">
+    <div draggable="true" ondragstart="drag(event)" id="drag4" ondrop="drop(event, 'drag4')"
+      ondragover="allowDrop(event)">
       <button class="collapsible">Duration Timeline (tests)</button>
       <div id="durationParent" class="parentContainer content"></div>
     </div>
-  
+
   </div>
 
   <script>
-    
-      var coll = document.getElementsByClassName("collapsible");
-      var i;
-      
-      for (i = 0; i < coll.length; i++) {
-        coll[i].addEventListener("click", function() {
-          this.classList.toggle("active");
-          var content = this.nextElementSibling;
-          if (content.style.maxHeight){
-            content.style.maxHeight = null;
-          } else {
-            content.style.maxHeight = "900px";
-          } 
-        });
-      }
-      </script>
+    //JS script that handles the opening and closing of the dashboard elements
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+
+    for (i = 0; i < coll.length; i++) {
+      coll[i].addEventListener("click", function () {
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.maxHeight) {
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = "900px";
+        }
+      });
+    }
+  </script>
 </body>
 
 </html>
