@@ -25,6 +25,9 @@ router.get('/amount-timeline', function(req, res) {
 router.get('/duration-timeline', function(req, res) {
   res.sendfile('./frontend/views/visualizations/duration-timeline.html');
 });
+router.get('/pipeline-timeline', function(req, res) {
+  res.sendfile('./frontend/views/visualizations/pipeline-timeline.html');
+});
 router.get('/session-timeframe', function(req, res) {
   res.sendfile('./frontend/views/visualizations/session-timeframe.html');
 });

@@ -1,0 +1,269 @@
+<!--
+* Copyright (c) TUT Tampere University of Technology 2014-2015.
+* All rights reserved.
+* This software has been developed in Tekes-TIVIT project Need-for-Speed.
+* All rule set in consortium agreement of Need-for-Speed project apply.
+*
+* Main authors: Antti Luoto, Anna-Liisa Mattila, Henri Terho, Hugo Fooy
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>PipelineTimeline</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="src/css/generic-vis.css">
+
+  <!-- External libs -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <script defer src="https://d3js.org/d3.v3.min.js"></script>
+
+  <!-- UI-Utilities -->
+  <script defer type="text/javascript" src="../src/js/ui-utilities/demo_template.js"></script>
+  <script defer type="text/javascript" src="../src/js/ui-utilities/demo_query_ui.js"></script>
+
+  <!-- Main visualization module -->
+  <script defer type="text/javascript" src="../src/js/visualizations/pipeline_timeline_main.js"></script>
+
+  <!-- Templates -->
+  <script defer type="text/javascript" src="../src/js/vis-templates/pipeline_timeline.js"></script>
+  <script defer type="text/javascript" src="../src/js/vis-templates/time_selector.js"></script>
+
+  <!-- Data processors -->
+  <script defer type="text/javascript" src="../src/js/processors/pipeline_timeline_processor.js"></script>
+  <script defer type="text/javascript" src="../src/js/processors/processor_utilities.js"></script>
+
+  <!-- Data queries -->
+  <script defer type="text/javascript" src="../src/js/dataquery/dataquery.js"></script>
+  <script defer type="text/javascript" src="../src/js/dataquery/parse_parameters.js"></script>
+
+  <script type="text/javascript">
+    $(function () {
+      DEMO_QUERY_UI("limited", PIPELINE_TIMELINE_MAIN);
+    });
+  </script>
+
+</head>
+
+<body>
+  <nav class="navbar navbar-default" id="nav">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand"><strong>VISDOM - Visu Application</strong> </a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li><a href="./">Home</a></li>
+        <li class="dropdown active"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Visualizations <span
+              class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="./dashboard">Repolainen Dashboard</a></li>
+            <li><a href="./issue-timeline">Issue Timeline</a></li>
+            <li><a href="./amount-timeline">Amount Timeline</a></li>
+            <li><a href="./duration-timeline">Duration Timeline</a></li>
+            <li class="active"><a href="./pipeline-timeline">Pipeline Timeline</a></li>
+            <li><a href="./user-timeframe">User Timeframe</a></li>
+            <li><a href="./session-timeframe">Session Timeframe</a></li>
+          </ul>
+        </li>
+        <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Collectors <span
+              class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="./api-collector">API Collector</a></li>
+          </ul>
+        </li>
+        <li><a href="./database">Database</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="https://github.com/coin-quin/vis-a-vis/tree/dockerized"><span
+              class="glyphicon glyphicon-link"></span> Github</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div id="queryui" class="container">
+    <div class="page-header">
+      <h1>Pipeline Timeline visualization</h1>
+      <p>Filter the data querried from the database and set the parameters.</p>
+    </div>
+
+    <form id="queryform" class="form-horizontal">
+      <div class="col-sm-12">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h1>Data Filtering</h1>
+            <p>Leave the fields empty if you don't want to filter data based on time, origin or other attributes.</p>
+          </div>
+          <div class="panel-body">
+
+            <div class="col-sm-6">
+              <h2>Time range filtering</h2>
+              <div class="form-group">
+                <label for="startDate" class="col-sm-3 control-label">Start date</label>
+                <div class="col-sm-6">
+                  <input class="form-control" type="date" name="startDate" id="startDate" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="startTime" class="col-sm-3 control-label">Start time</label>
+                <div class="col-sm-6">
+                  <input class="form-control" type="time" name="startTime" id="startTime" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="endDate" class="col-sm-3 control-label">End date</label>
+                <div class="col-sm-6">
+                  <input class="form-control" type="date" name="endDate" id="endDate" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="endTime" class="col-sm-3 control-label">End time</label>
+                <div class="col-sm-6">
+                  <input class="form-control" type="time" name="endTime" id="endTime" />
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm-6">
+              <h2>Data origin filtering</h2>
+              <div class="form-group">
+                <label for="source" class="col-sm-3 control-label">Source</label>
+                <div class="col-sm-9">
+                  <input class="form-control" type="text" name="source" id="source" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="context" class="col-sm-3 control-label">Context</label>
+                <div class="col-sm-9">
+                  <input class="form-control" type="text" name="context" id="context" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="source_id" class="col-sm-3 control-label">Data id in source system</label>
+                <div class="col-sm-9">
+                  <input class="form-control" type="text" name="source_id" id="source_id" />
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm-12">
+              <h2>Other data attributes</h2>
+
+              <div class="col-sm-6">
+                <h3>Event filters</h3>
+                <div class="form-group">
+                  <label for="eventCreator" class="col-sm-3 control-label">Creator</label>
+                  <div class="col-sm-9">
+                    <input class="form-control" type="text" name="ec" id="eventCreator" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="eventType" class="col-sm-3 control-label">Type</label>
+                  <div class="col-sm-9">
+                    <input class="form-control" type="text" name="et" id="eventType" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="eventDuration" class="col-sm-3 control-label">Duration</label>
+                  <div class="col-sm-9">
+                    <input class="form-control" type="text" name="ed" id="eventDuration" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="eventDate" class="col-sm-3 control-label">Date</label>
+                  <div class="col-sm-6">
+                    <input class="form-control" type="date" name="edate" id="eventDate" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="eventTime" class="col-sm-3 control-label">Time</label>
+                  <div class="col-sm-6">
+                    <input class="form-control" type="time" name="time" id="eventTime" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-6">
+                <h3>Construct filters</h3>
+                <div class="form-group">
+                  <label for="constructName" class="col-sm-3 control-label">Name</label>
+                  <div class="col-sm-9">
+                    <input class="form-control" type="text" name="cn" id="constructName" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="constructType" class="col-sm-3 control-label">Type</label>
+                  <div class="col-sm-9">
+                    <input class="form-control" type="text" name="ct" id="constructType" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="constructDescription" class="col-sm-3 control-label">Description</label>
+                  <div class="col-sm-9">
+                    <input class="form-control" type="text" name="cd" id="constructDescription" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-12">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h1>Data Mapping</h1>
+          </div>
+          <div class="panel-body">
+            <div class="col-sm-12">
+              <h2>Y-axis</h2>
+              <p>Choose the attribute to be mapped to Y-axis from the data. If the attribute is part of origin id, write
+                just the attribute name (eg. soure_id not origin_id.source_id) and check the checkbox below. However if
+                you want to group data to y-axis based on metada, then you need to write "metada.attributename".</p>
+              <div class="form-group">
+                <label for="rowId" class="col-sm-4 control-label">Attribute name</label>
+                <div class="col-sm-8">
+                  <input class="form-control" type="text" name="rowId" id="rowId" value="source_id" />
+                </div>
+              </div>
+
+              <div class="form-group">
+
+                <label for="rowIdIsFromOrigin" class="col-sm-4 control-label">Y-axis attribute is an attribute of
+                  origin id</label>
+                <div class="col-sm-8">
+                  <input type="checkbox" name="fromOrigin" id="rowIdIsFromOrigin" checked="true" />
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm-12">
+              <h2>States</h2>
+              <p>Define the resolution states of your tickets for the visualization.</p>
+
+              <div class="form-group">
+                <label for="resolution" class="col-sm-4 control-label">Resolution states separated by comma</label>
+                <div class="col-sm-8">
+                  <input class="form-control" type="text" name="resolution" id="resolution"
+                    value="closed, resolved, resolution, done, fixed, cancelled, duplicate, won't fix, won't do, cannot reproduce" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="col-sm-12" id="buttonplacer"></div>
+  </div>
+
+  <div id="loader"></div>
+  <div class="tooltipC" id="tooltipC"></div>
+  <div id="visuParent" class="container"></div>
+
+</body>
+
+</html>
