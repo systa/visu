@@ -9,8 +9,7 @@
 
 var DATA_QUERY = function () {
 
-    //private functions and variables
-
+    //Private functions and variables
     var _eventPath = "/api/events";
     var _constructPath = "/api/constructs";
 
@@ -60,7 +59,7 @@ var DATA_QUERY = function () {
     //PUBLIC INTERFACE
     var pub = {};
 
-    //Functio for querying all events from the backend
+    //Function for querying all events from the backend
     //PARAMETERS:
     //callback : Function that is called when the data is loaded. Gets the data as an argument. user specifies.
     pub.getAllEvents = function (callback) {
@@ -87,8 +86,9 @@ var DATA_QUERY = function () {
         getFiltered(_eventPath, filters, callback);
     };
 
-
-    //MODIFY TO SEARCH WITH STATECHANGE FILTER FROM EVENTS!!
+    //Function for querying all statechanges from the backend
+    //PARAMETERS:
+    //callback : Function that is called when the data is loaded. Gets the data as an argument. user specifies.
     pub.getAllStatechanges = function (callback) {
         var filter = {
             isStatechange: true
@@ -96,6 +96,10 @@ var DATA_QUERY = function () {
         getFiltered(_eventPath, filter, callback);
     };
 
+    //Function that gets all statechanges that have happened inside specified timeframe
+    //PARAMETERS:
+    //timeframe: An array containing the start poin and endpoint of the queried timeframe.
+    //callback : Function that is called when the data is loaded. Gets the data as an argument. user specifies.
     pub.getStatechangeLog = function (timeframe, callback) {
         var body = {
             startTime: timeframe[0],
@@ -105,6 +109,10 @@ var DATA_QUERY = function () {
         getFiltered(_eventPath, body, callback);
     };
 
+    //Function that gets all statechanges based on filtered fields
+    //PARAMETERS:
+    //filters: An object containing the filters
+    //callback : Function that is called when the data is loaded. Gets the data as an argument. user specifies.
     pub.getFilteredStatechanges = function (filters, callback) {
         var clone = {};
         for (var f in filters) {

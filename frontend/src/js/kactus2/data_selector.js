@@ -5,6 +5,10 @@
  * Developped for a Master's Thesis by Hugo Fooy
  */
 
+//Function for querying sessions related to a user
+//PARAMETERS:
+//user : user that serves as a filter
+//sessions : session list from which to get the related sessions
 function getRelatedSessions(user, sessions) {
     var relatedSessions = [];
 
@@ -18,16 +22,11 @@ function getRelatedSessions(user, sessions) {
     return relatedSessions;
 }
 
+//Variable that holds the current session selected
 var currentSession = false;
 
 /*PARAMETERS:
-    svg : svg element where the visualization is rendered wrapped with d3
-    width : the width of the draw area
-    height : the height of the draw area
-    margins : how much whitespace whould be left to svg (right, left, top, bottom)
-        NOTE: the left and right margin should be the same for time selector as for the charts the time selector is used with
-        if we want that the time axis is in same x-position than the charts time axis.
-    onBrushFunction : the timerange selection callback that gives the new xDomain as parameter.
+    onSessionChange : callback function that is triggered when a session gets selected
     users : user list
     sessions : session list
 */
@@ -36,9 +35,8 @@ var DataSelector = function (par) {
     var p = par || {};
 
     var _changeCallback = p.onSessionChange !== undefined ? p.onSessionChange : function () {
-        console.log("[data_selector]No session change fct defined...");
+        console.log("[DataSelector]No session change fct defined...");
     };
-
     var _users = p.users !== undefined ? p.users : ["User 1", "User 2", "User 3"];
     var _sessions = p.sessions !== undefined ? p.sessions : ["Session 1", "Session 2", "Session 3"];
 
@@ -123,7 +121,7 @@ var DataSelector = function (par) {
     var pub = {};
 
     pub.draw = function () {
-        //console.log("[data_selector.js]Drawing the data selector.");
+        //console.log("[DataSelector]Drawing the data selector.");
     };
 
     pub.getSession = function () {

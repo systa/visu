@@ -24,7 +24,7 @@ var SESSION_TIMEFRAME_PROCESSOR = function (par) {
     _rowId = _rowId.split(".");
 
     //Sorts event based on time
-    // if the timestamps are the same start events are allways smaller than other events
+    // if the timestamps are the same, start events are allways smaller than other events
     // and close events are allways larger than other events
     // if both events have the same timestamp and are both start or close events or neither of them
     // the ordering is done based on rowid (alphabetically)
@@ -48,6 +48,7 @@ var SESSION_TIMEFRAME_PROCESSOR = function (par) {
         return t1 - t2;
     };
 
+    //Create lifespans based on the list of states
     var parseLifespans = function (statelist) {
         var lifespans = [];
         //Looping through all constructs

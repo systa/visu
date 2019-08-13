@@ -5,6 +5,13 @@
  * Developped for a Master's Thesis by Hugo Fooy
  */
 
+//Timeline visualization component for visualizing the usage-data from Kactus2 logs, through a timeline of all user-session. 
+/*PARAMETERS:
+    className : name of the class of the component's div
+    id : id of the component's div
+    parent : parent component of the component's div
+    hidden : whether the component should be hidden at first 
+*/
 var SESSION_TEMPLATE = function (mpar) {
 
     //The main container parameters
@@ -125,6 +132,9 @@ var SESSION_TEMPLATE = function (mpar) {
         return _chartSVG;
     };
 
+
+    //creates the userID and event type search form element
+    //returns the div element
     var createTextSearchForm = function (par) {
         if (!_search) {
             var p = par || {};
@@ -150,7 +160,6 @@ var SESSION_TEMPLATE = function (mpar) {
             _input.placeholder = "userID";
             _input.id = textFieldId;
             _search.appendChild(_input);
-
 
             _input2 = document.createElement("input");
             _input2.type = "text";
@@ -278,6 +287,7 @@ var SESSION_TEMPLATE = function (mpar) {
     //Appends a label to legend element
     //parameters:
     //bgcolor : background color for the label text, the default is legend background color.
+    //color : color for the label text, the default is legend color.
     //text : the label text
     pub.appendLabel = function (par) {
         var p = par || {};

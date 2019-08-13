@@ -9,8 +9,19 @@
 
 var QUERY_UTILITIES = function () {
 
+    //PUBLIC INTERFACE
     var pub = {};
 
+    /*PARAMETERS: filters for events and constructs
+    startTime   : starting time (constructs)
+    endTime     : ending time (constructs)
+    context     : context from the origin_id attribute 
+    source      : source from the origin_id attribute
+    source_id   : source_id from the origin_id attribute
+    metadata    : metadata formatted as an array of pairs containing the attribute name and the value searched
+    constructs  : other construct properties
+    events      : other event properties
+    */
     pub.formatFilters = function (par) {
         var p = par || {};
 
@@ -65,6 +76,7 @@ var QUERY_UTILITIES = function () {
             });
         }
 
+        //parsing the construct properties filters
         for (var cf in constructs) {
             if (constructs.hasOwnProperty(cf)) {
                 var ctmp = constructs[cf];
@@ -74,6 +86,7 @@ var QUERY_UTILITIES = function () {
             }
         }
 
+        //parsing the construct properties filters
         for (var ef in events) {
             if (events.hasOwnProperty(ef)) {
                 var etmp = events[ef];
