@@ -13,9 +13,9 @@ var request = require('request');
 //require( 'request' ).debug = true;
 var _ = require('underscore');
 
-var debugLink = false;
+var debugLink = true;
 var debugSend = false;
-var debugParse = false;
+var debugParse = true;
 
 
 function parseJenkinsTime(jenkinsTime) {
@@ -44,8 +44,8 @@ var SEND_DATA = function (issueData, origin, callback) {
     var milestoneLinks = {};
     // collect information (mongodbIds) for linking events and constructs
     var eventLinks = {};
-
-    var jobLinks = {};
+    // collect information (mongodbIds) for linking pipeines and stages
+    //var jobLinks = {};
 
     // variables for counting when everything has been added
     var count = 0; // how many to add
@@ -57,7 +57,7 @@ var SEND_DATA = function (issueData, origin, callback) {
 
 
     // add stuff to the db in this order 
-    var entityOrder = ['milestones', 'issues', 'comments', 'stateChanges','changeEvents', 'jiraIssues', 'jiraChanges', 'builds', 'buildHistorys', 'jobs'];
+    var entityOrder = ['milestones', 'issues', 'comments', 'details', 'stages', 'stateChanges', 'changeEvents', 'jiraIssues', 'jiraChanges', 'builds', 'buildHistorys', 'jobs'];
 
     // Arrays for Jira parser
     // Items that are not wanted - fields after 'Sprint' might be interesting for us
@@ -73,6 +73,10 @@ var SEND_DATA = function (issueData, origin, callback) {
         }
         count += list.length; // every item from the list should be added      
         type = type.substr(0, type.length - 1); // e.g. comments -> comment
+
+        if (debugParse) {
+            console.log("Parsing data:", type);
+        }
 
         list.forEach(function (item) {
             var artefact = {};
@@ -94,15 +98,15 @@ var SEND_DATA = function (issueData, origin, callback) {
                 meta.updated = item.updated;
                 meta.number = item.number;
                 meta.state = item.state.toLowerCase();
-                
+
                 if (type === 'milestone') {
                     meta.duedate = item.duedate;
                 } else if (type === 'issue') {
                     meta.assignee = item.assignee;
                     var l;
-                    for (var i = 0; i < item.labels.length; i++){
+                    for (var i = 0; i < item.labels.length; i++) {
                         l = item.labels[i];
-                        if (l === 'open' || l === 'Ready to start' || l ===  'Doing next' || l ===  'Doing' || l ===  'In review' || l ===  'closed'){
+                        if (l === 'open' || l === 'Ready to start' || l === 'Doing next' || l === 'Doing' || l === 'In review' || l === 'closed') {
                             l = 'Unlabelled';
                         }
                     }
@@ -120,6 +124,86 @@ var SEND_DATA = function (issueData, origin, callback) {
                     sent: false,
                     item: item
                 });
+            } else if (type === 'pipeline') {
+                if (debugParse) {
+                    //console.log("Useless pipilines");
+                }
+                // Ignore this useless shit
+            } else if (type === 'detail') {
+                // This is the actual stuff
+                if (debugParse) {
+                    //console.log("Useful details");
+                }
+
+                // we are creating a construct / artefact from a pipeline
+                artefact.type = 'pipeline';
+                artefact.description = item.status;
+                artefact.name = item.ref;
+                artefact.origin_id = {
+                    context: origin.context,
+                    source: origin.source,
+                    source_id: String(item.id)
+                };
+
+                meta.created = item.created;
+                meta.updated = item.updated;
+                meta.duration = item.duration;
+                meta.user = item.user;
+
+                artefact.data = meta;
+
+                pending.push({
+                    body: artefact,
+                    url: artefactApi,
+                    type: 'pipeline',
+                    sent: false, 
+                    item: item
+                });
+            } else if (type === 'stage') {
+                // This is the actual stuff
+                if (debugParse) {
+                    //console.log("Pipeline stage");
+                }
+
+                // we are creating an event from a stage
+                event.type = type;
+                event.origin_id = {
+                    source_id: String(item.id),
+                    source: origin.source,
+                    context: origin.context
+                };
+
+                if (item.duration === null || item.duration === undefined) {
+                    item.duration = 0;
+                }
+                event.duration = item.duration;
+                event.creator = item.user;
+                event.time = parseJenkinsTime(item.started);
+                event.isStatechange = true;
+                event.statechange = {
+                    to: item.state.toLowerCase(),
+                    from: ""
+                };
+                if (event.creator === null || event.creator === undefined) {
+                    event.creator = "unknown";
+                }
+
+                event.data = {
+                    pipeline: item.pipeline,
+                    ref: item.ref,
+                    stage: item.stage,
+                    commit: item.commit,
+                    commit_title: item.commit_title
+                };
+
+                pending.push({
+                    body: event,
+                    url: eventApi,
+                    type: type,
+                    sent: false,
+                    item: item
+                });
+
             } else if (type === 'jiraIssue') {
                 // we are creating a construct / artefact from a jiraIssue
                 artefact.type = item.type.toLowerCase();
@@ -321,7 +405,7 @@ var SEND_DATA = function (issueData, origin, callback) {
                     sent: false,
                     item: item
                 });
-            } else if (type === 'job') { //gitlab job
+            }/* else if (type === 'job') { //gitlab job
                 if (!gitlabHelper[item.stage]) {
                     artefact.type = 'stage';
                     artefact.name = item.stage;
@@ -373,7 +457,7 @@ var SEND_DATA = function (issueData, origin, callback) {
                     sent: false,
                     item: item
                 });
-            } else if (type === 'comment' || type === 'changeEvent' || type === 'stateChange') {
+            }*/ else if (type === 'comment' || type === 'changeEvent' || type === 'stateChange') {
                 // we are creating a event from an issue comment or changeEvent
                 event.origin_id = {
                     source_id: String(item.id),
@@ -393,28 +477,28 @@ var SEND_DATA = function (issueData, origin, callback) {
                     event.type = 'comment';
                     event.data = {};
                     event.data.message = item.message;
-                //label changes
-                }else if (type === 'stateChange'){
+                    //label changes
+                } else if (type === 'stateChange') {
                     var states = ['Doing', 'Doing next', 'In review', 'Ready to start'];
                     var l = item.label;
-                    if (l !== states[0] && l !== states[1] && l !== states[2] && l !== states[3]){
+                    if (l !== states[0] && l !== states[1] && l !== states[2] && l !== states[3]) {
                         return; //not a relevant state change
                     }
 
-                    if (item.action === 'add'){
+                    if (item.action === 'add') {
                         event.type = "state change";
                         event.isStatechange = true;
-                        
+
                         event.statechange = {
                             from: "",
                             to: item.label
                         };
-                    }else{
+                    } else {
                         return; //label removal is not really interesting to us
                     }
 
                     //change event
-                }else if (item.change === 'opened' || item.change === 'reopened' || item.change === 'closed') {
+                } else if (item.change === 'opened' || item.change === 'reopened' || item.change === 'closed') {
                     //I reduce the reopened state to opened state because by doing that we can
                     //count on that when we get state closed the state change is from state opened
                     event.type = item.change;
@@ -523,11 +607,7 @@ var SEND_DATA = function (issueData, origin, callback) {
                 var item = obj.item;
                 var type = obj.type;
 
-               
-                //console.log("Posted:", body, type);
-               
-
-                if (type === 'issue' || type === 'milestone' || type === 'jiraIssue' || type === 'build' || type === 'stage') {
+                if (type === 'issue' || type === 'milestone' || type === 'jiraIssue' || type === 'build' || type === 'pipeline') {
                     // add the mongodb id of this construct so that it can be associated with its original id
                     if (!eventLinks[item.id]) {
                         eventLinks[item.id] = {
@@ -536,6 +616,7 @@ var SEND_DATA = function (issueData, origin, callback) {
                         };
                     }
                     eventLinks[item.id].constructMongoId = body._id;
+                    console.log("[LINK] eventLinks[" + eventLinks + "].constructMongoId = " + body._id);
 
                     // if this is an issue that has a milestone add its mongoId so that it can be linked with the milestone
                     if (item.milestone) {
@@ -557,7 +638,7 @@ var SEND_DATA = function (issueData, origin, callback) {
 
                         milestoneLinks[item.id].milestoneMongoid = body._id;
                     }
-                } else if (type === 'comment' || type === 'changeEvent' || type === 'stateChange' || type === 'jiraChange' || type === 'buildHistory' || type === 'job') {
+                } else if (type === 'comment' || type === 'changeEvent' || type === 'stateChange' || type === 'jiraChange' || type === 'buildHistory' || type === 'job' || type === 'stage') {
 
                     if (debugLink) {
                         //console.log(body);
@@ -567,6 +648,8 @@ var SEND_DATA = function (issueData, origin, callback) {
                     var constructId = item.issue;
                     if (item.milestone) {
                         constructId = item.milestone;
+                    }else if (item.pipeline){
+                        constructId = item.pipeline;
                     } else if (item.stage) {
                         constructId = item.stage;
                     }
@@ -591,12 +674,11 @@ var SEND_DATA = function (issueData, origin, callback) {
                     }
                     //github parser and builds from jenkins
                     else if (body.isStatechange === true) {
-
                         eventLinks[constructId].changeIds.push(body._id);
                     } else {
                         eventLinks[constructId].eventIds.push(body._id);
                     }
-                } 
+                }
 
                 obj.sent = true;
                 resolve("post");
@@ -609,7 +691,7 @@ var SEND_DATA = function (issueData, origin, callback) {
 
     // links issues to milestones and constructs to events using the previously collected information
     function link() {
-        console.log("[Poster]linking");
+        console.log("[Poster]linking", eventLinks);
         // variables used to determine when we are done linking
         var linkCount = 0; // how many to be created
         var linked = 0; // how many linked
@@ -648,41 +730,107 @@ var SEND_DATA = function (issueData, origin, callback) {
         });
         linkCount = links.length;
 
-        // create all of the links.
-        links.forEach(function (link) {
-            if (debugLink) {
-                console.log(linked + "/" + linkCount + "link :", link);
-            }
+        if(debugLink){
+            console.log("Links: " + linkCount);
+         }
+         
+         createNewBufferLinks();
+        
+        /* Send pending links to the DB 10 by 10 (size of buffer)
+      * Create a promise for the buffer (and one for each element of the buffer)
+      * When all is buffered, resolve the promise
+      * Then create a new buffer for sending the next 10 items
+      */
+      function createNewBufferLinks(){
+        var start = linked;
+        if(start >= linkCount){
+           return true; //Stops the buffer when all has been sent
+        }
+        
+        var end = linked+bufferSize; //Size is 10
+        if(end >= links.length){
+           end = links.length;
+        }
+              
+        var buffer = [];
+        for(var requests = start; requests < end; ++requests){
+           buffer.push(links[requests]);
+        }
+        
+        if(debugLink){
+           console.log("start: ", start, " end: ", end);
+           console.log("All requests: ",links.length, " in buffer: ", buffer.length);
+        }
+        
+        //Buffer of 10 items
+        var bufferPromise = new Promise(function(resolve, reject){
+              var buffered = [];
 
-            request.put({
-                url: artefactApi + link.construct + '/link',
-                json: true,
-                body: {
-                    id: link.target,
-                    type: link.type
-                }
-            }, function (err, response, body) {
-                var dup = false;
-                if (err) {
-                    console.log(err);
-                    console.log(body);
-                    process.exit();
+              buffer.forEach(function(obj){
+                 var prom = createPromiseLink(obj);
+                 buffered.push(prom);
+              });
 
-                } else if (response.statusCode !== 201 && response.statusCode !== 200) {
-                    console.log(response.statusCode);
-                    console.log(body);
-                    process.exit();
-                }
-                linked++;
-                if (linked === linkCount) {
-                    // all links formed we are done
-                    // could call a callback here if we had one
-                    console.log('[Poster]Everything saved to database.');
+              Promise.all(buffered).then(function(val){
+                 resolve("buffer");
+              });
+           
+           }).then(function(val){
+                 var retval = createNewBufferLinks();
+                 if(retval === true){
+                    if(debugLink){
+                       console.log("ADDED: ", linked);
+                       console.log("COUNT: ", linkCount);
+                    }
+
+                    // All links have now been pushed to DB
+                 }
+              });
+        
+        return false;
+     }//end createNewBufferLinks()
+     
+     // Create a promise for each individual item
+     function createPromiseLink(link){
+              
+        return new Promise(function(resolve, reject){
+           request.put( {
+              url: artefactApi +link.construct +'/link',
+              json: true,
+              body: { id: link.target, type: link.type }
+           }, 
+                    
+           function ( err, response, body ) {
+              var dup = false;
+
+              if ( err ) {
+                 console.log( err );
+                 process.exit();
+              }
+              else if ( response.statusCode !== 201 && response.statusCode !== 200) {
+                 console.log( response.statusCode );
+                 console.log( body );
+                 console.log( "Links saved: " + linked + "/" + linkCount);
+                 process.exit();
+              }
+              linked++;
+              
+              if ( linked === linkCount ) {
+                 // all links formed we are done
+                 // could call a callback here if we had one
+                 if(debugLink){
+                    console.log( '[Poster]Everything saved to database.' );
                     callback(true);
-                }
-            });
+                 }
+              }else{
+                 console.log("[Poster]Links saved:" + linked + "/" + linkCount);
+              }
+
+              resolve("put");
+           });
         });
-    }
+     }//end createPromise()
+  }//end link()
 };
 
 module.exports = SEND_DATA;

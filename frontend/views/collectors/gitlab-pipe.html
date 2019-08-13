@@ -1,0 +1,74 @@
+<script type="text/javascript">
+  //Script that handles authentication method change
+  function authentication(obj) {
+    $('#authMethod').value = obj.value; //Not working!
+    switch (obj.value) {
+      case 'noauth':
+        $('#authParams').hide();
+        $('#token').prop('required', false);
+        break;
+      case 'token':
+        $('#authParams').show();
+        $('#token').prop('required', true);
+
+        break;
+      default:
+    }
+  }
+</script>
+
+<div class="col-sm-12">
+
+  <form id="queryform" class="form-horizontal" action="/apps" method="post">
+
+    <h3>Authentication</h3>
+    <div class="form-group">
+      <label for="method" class="col-sm-3 control-label">Method</label>
+      <div class="col-sm-9">
+        <select class="form-control" id="method" onchange="authentication(this);">
+          <option value="token" selected>Private token</option>
+          <option value="oauth2" disabled>OAuth2</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group" id="authParams">
+      <label for="token" class="col-sm-3 control-label">Token</label>
+      <div class="col-sm-9">
+        <input class="form-control" type="text" name="token" id="token" value="zDwmAvndRzstek-vMsdP">
+      </div>
+    </div>
+
+    <h3>API Settings</h3>
+    <div class="form-group">
+      <label for="url" class="col-sm-3 control-label">Base URL</label>
+      <div class="col-sm-9">
+        <input class="form-control" type="url" name="url" id="url" value="https://course-gitlab.tut.fi/api/v4/" />
+      </div>
+      <label for="projectName" class="col-sm-3 control-label">Project id</label>
+      <div class="col-sm-9">
+        <input class="form-control" type="text" name="projectName" id="projectName" value="911" />
+      </div>
+    </div>
+
+    <h3>Database Settings</h3>
+    <div class="form-group">
+      <label for="context" class="col-sm-3 control-label">Context</label>
+      <div class="col-sm-9">
+        <input class="form-control" type="text" name="context" id="context" value="repolainen" />
+      </div>
+      <label for="source" class="col-sm-3 control-label">Source</label>
+      <div class="col-sm-9">
+        <input class="form-control" type="text" name="source" id="source" value="gitlab" />
+      </div>
+    </div>
+
+    <!-- Hidden parameters (from selection) -->
+    <div hidden>
+      <input class="form-control" type="text" name="api" id="api" value="gitlab_pipelines" />
+      <input class="form-control" type="text" name="authMethod" id="authMethod" value="token">
+    </div>
+
+    <input type="submit" class="btn btn-primary btn-block" value="Submit">
+  </form>
+</div>

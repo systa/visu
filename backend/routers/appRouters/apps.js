@@ -58,6 +58,7 @@ var parse_data = function (body) {
 
     switch (api) {
         case 'gitlab':
+        case 'gitlab_pipelines':
             var userParams = body.projectName;
             var baseURL = body.url;
             var auth = {

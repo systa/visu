@@ -47,6 +47,13 @@ var collector = function (p, callback) {
       _API.baseUrl = _filters.baseURL;
 
       break;
+
+    case 'gitlab_pipelines':
+      _API = require('./apis/gitlab_pipelines.js');
+      _auth = _API.authentication[1]; //Force auth method to be token
+      _API.baseUrl = _filters.baseURL;
+
+      break;
   }
 
   //TODO: make switch of auth method work
@@ -100,6 +107,7 @@ var collector = function (p, callback) {
 
       break;
     case 'gitlab':
+    case 'gitlab_pipelines':
       _userParams = {
         id: _filters.userParams,
         'PRIVATE-TOKEN': _filters.auth.token
@@ -153,6 +161,11 @@ var collector = function (p, callback) {
       console.log("[Collector]" + value.length + ' ' + key + ' last of which is:');
       console.log("[Collector]", value[value.length - 1]);
     });
+
+    /*
+    console.log('[Collector]Not sending data to database.');
+    callback(true);
+    */
 
     // send the issue data to the db
     console.log('[Collector]Sending data to database.');

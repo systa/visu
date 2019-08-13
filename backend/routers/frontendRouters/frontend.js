@@ -53,6 +53,9 @@ router.get('/github', function(req, res) {
 router.get('/gitlab', function(req, res) {
   res.sendfile('./frontend/views/collectors/gitlab.html');
 });
+router.get('/gitlab-pipe', function(req, res) {
+  res.sendfile('./frontend/views/collectors/gitlab-pipe.html');
+});
 
 //Database
 router.get('/database', function(req, res) {

@@ -76,10 +76,16 @@ var GET_DATA = function (baseRequest, api, userParams, callback) {
          getItems(baseRequest, api, 'buildHistorys', api.buildHistorys, userParams, result, status, callback);
       }
 
-      if (api.jobs) {
+      /*if (api.jobs) {
          // get jobs if the api has them
          status.count++;
          getItems(baseRequest, api, 'jobs', api.jobs, userParams, result, status, callback);
+      }*/
+
+      if (api.pipelines) {
+         // get pipelines if the api has them
+         status.count++;
+         getItems(baseRequest, api, 'pipelines', api.pipelines, userParams, result, status, callback);
       }
   
 }
@@ -96,7 +102,7 @@ var GET_DATA = function (baseRequest, api, userParams, callback) {
 // parent: if this is a child resource of some item
 // e.g. if the resource is a issue comment then the parent is the issue
 function getItems(baseRequest, api, type, itemDesc, userParams, result, status, callback, parent) {
-   console.log("[Getdata]Getting items:" + type);
+   //console.log("[Getdata]Getting items:" + type);
 
    // save the stuff we get here
    var items = [];
@@ -147,8 +153,8 @@ function getItems(baseRequest, api, type, itemDesc, userParams, result, status, 
          return;
       }
 
-      //console.log('[Getdata]' + type);
-      //console.log('[Getdata]', body);
+      //console.log('[Getdata]Type:' + type);
+      //console.log('[Getdata]Page:', body);
 
       //for jira parser issues and change history 
       if (type === "jiraIssues" || type === "jiraChanges") {
@@ -159,10 +165,14 @@ function getItems(baseRequest, api, type, itemDesc, userParams, result, status, 
          body = [body];
       } else if (type === "jobs") {
          // body = [body];
-         //console.log( body );
+      }else if (type === "details") {
+         body = [body];
+      }else if (type === "stages") {
+         //body = [body];
+         //console.log('[Getdata]Page:', body);
       }
 
-      if (type === "jobs") {
+      if (type === "pipelines") {
          //console.log(status.count);
       }
 
@@ -174,8 +184,8 @@ function getItems(baseRequest, api, type, itemDesc, userParams, result, status, 
             return;
          }
 
-         if (type === "jobs") {
-            //console.log("Processing single job");
+         if (type === "pipelines") {
+           // console.log("Processing single pipeline");
          }
 
          // the new entity (issue, milestone, comment) we build from the response item
@@ -230,22 +240,22 @@ function getItems(baseRequest, api, type, itemDesc, userParams, result, status, 
             });
          }
 
-         if (type === "jobs") {
-            //console.log("Done processing single job");
+         if (type === "pipelines") {
+            //console.log("Done processing single pipeline");
          }
       });
 
-      if (type === "jobs") {
-         //console.log("Done processing all jobs");
+      if (type === "pipelines") {
+         //console.log("Done processing all pipelines of this page");
       }
 
       // apis use pagination so there may be more items
       // currently we can handle pagination if its done with a link header
-      if ( /*type !== "jobs" &&*/ api.pagination === 'link_header') {
+      if ( api.pagination === 'link_header') {
 
          // parse the link header and if there was one see if it has the url for next page of items
          var link = parse(response.headers.link);
-         if (type !== "jobs" && link && link.next) {
+         if (type !== "jobs" && type !== "stages" && link && link.next) {
             // get the next page of items
             // now we don't need the baseUrl since the header contained the whole url
             // also we don't need resource specific query parameters since the url has them too
@@ -272,7 +282,7 @@ function getItems(baseRequest, api, type, itemDesc, userParams, result, status, 
 
                callback(false, result);
             } else {
-               if (type === "jobs") {
+               if (type === "pipelines") {
                   //console.log(status.count);
                }
             }
