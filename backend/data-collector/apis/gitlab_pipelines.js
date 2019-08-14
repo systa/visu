@@ -22,18 +22,10 @@ var pipelineJob = {
    duration: '$.duration',
    user: '$.user.username',
 
-   pipeline: {
-      path: '$.id',
-      source: 'parent'
-   },
+   pipeline: '$.pipeline.id',
 
    commit: '$.commit.id',
    commit_title: '$.commit.title'
-/*
-   commit: {
-      id: '$.commit.id',
-      source: '$.commit.title'
-   }*/
 };
 
 // describes how a single gitlab pipeline is converted into the general pipeline format
@@ -42,7 +34,7 @@ var pipelineJob = {
 var pipeline = {
    // unique identifier for the pipeline that is unique in the whole system
    id: '$.id',
-   // the name of the ref for the pipeline
+   // the name of the ref for the pipeline (branch or version)
    ref: '$.ref',
    // the overall status of the pipeline
    status: '$.status',
@@ -63,7 +55,10 @@ var pipelineDetails = {
    started: '$.started_at',
    finished: '$.finished_at',
    updated: '$.updated_at',
-   duration: '$.duration'
+   duration: '$.duration',
+
+   // whether it's a branch or a version
+   isVersion: '$.tag'
 };
 
 // describes the gitlab api
@@ -122,7 +117,7 @@ var api = {
       // a resource like pipeline here can have child resources like jobs
       // so for each pipeline we get we have also to get its child resources
       children: {
-         stages: {
+         pipelineJobs: {
             path: '/projects/{id}/pipelines/{pipeline_id}/jobs',
             // the pipeline_id parameter from the url comes from the issue i.e. the comments parent resource
             parentParams: {
@@ -131,7 +126,7 @@ var api = {
             items: '',
             item: pipelineJob
          },
-         details: {
+         pipelineDetails: {
             path: '/projects/{id}/pipelines/{pipeline_id}',
             parentParams: {
                pipeline_id: '$.id'

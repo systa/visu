@@ -153,7 +153,7 @@ function getItems(baseRequest, api, type, itemDesc, userParams, result, status, 
          return;
       }
 
-      //console.log('[Getdata]Type:' + type);
+      console.log('[Getdata]Type:' + type);
       //console.log('[Getdata]Page:', body);
 
       //for jira parser issues and change history 
@@ -165,9 +165,9 @@ function getItems(baseRequest, api, type, itemDesc, userParams, result, status, 
          body = [body];
       } else if (type === "jobs") {
          // body = [body];
-      }else if (type === "details") {
+      }else if (type === "pipelineDetails") {
          body = [body];
-      }else if (type === "stages") {
+      }else if (type === "pipelineJobs") {
          //body = [body];
          //console.log('[Getdata]Page:', body);
       }
