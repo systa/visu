@@ -406,7 +406,7 @@ router.put('/:id/link', function(req,res){
     }).then(function(other) {
         if (!other || !found) {
             //console.log("Error in linking: Invalid ID");
-            return res.status(404).send("Invalid ID: "+"ID 1: " + id + " ID 2: " + id_other);
+            return res.status(404).send("[EventAPI]Invalid ID: "+"ID 1: " + id + " ID 2: " + id_other);
         }
 
         //do findByIdAndUpdate with addToSet as update to

@@ -17,7 +17,6 @@ var debugLink = true;
 var debugSend = true;
 var debugParse = true;
 
-
 function parseJenkinsTime(jenkinsTime) {
   return new Date(jenkinsTime);
 }
@@ -752,9 +751,21 @@ var SEND_DATA = function (issueData, origin, callback) {
     _.each(milestoneLinks, function (item) {
       item.issues.forEach(function (issueId) {
         links.push({
-          construct: issueId,
+          source: issueId,
           target: item.milestoneMongoid,
+          api: artefactApi,
           type: 'construct'
+        });
+      });
+    });
+
+    _.each(jobLinks, function (item) {
+      item.eventIds.forEach(function (eventId) {
+        links.push({
+          source: item.eventMongoId,
+          api: eventApi,
+          target: eventId,
+          type: 'event'
         });
       });
     });
@@ -762,7 +773,8 @@ var SEND_DATA = function (issueData, origin, callback) {
     _.each(eventLinks, function (item) {
       item.eventIds.forEach(function (eventId) {
         links.push({
-          construct: item.constructMongoId,
+          source: item.constructMongoId,
+          api: artefactApi,
           target: eventId,
           type: 'event'
         });
@@ -770,7 +782,8 @@ var SEND_DATA = function (issueData, origin, callback) {
 
       item.changeIds.forEach(function (changeId) {
         links.push({
-          construct: item.constructMongoId,
+          source: item.constructMongoId,
+          api: artefactApi,
           target: changeId,
           type: 'statechange'
         });
@@ -843,7 +856,7 @@ var SEND_DATA = function (issueData, origin, callback) {
 
       return new Promise(function (resolve, reject) {
         request.put({
-            url: artefactApi + link.construct + '/link',
+            url: link.api + link.source + '/link',
             json: true,
             body: {
               id: link.target,

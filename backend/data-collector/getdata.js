@@ -153,7 +153,7 @@ function getItems(baseRequest, api, type, itemDesc, userParams, result, status, 
          return;
       }
 
-      console.log('[Getdata]Type:' + type);
+      //console.log('[Getdata]Type:' + type);
       //console.log('[Getdata]Page:', body);
 
       //for jira parser issues and change history 
