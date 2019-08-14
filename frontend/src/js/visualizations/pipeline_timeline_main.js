@@ -88,7 +88,7 @@ var PIPELINE_TIMELINE_MAIN = function(par){
             timeframe = data.timeframe;
         }
         
-        _issueChartMargins.left = _layout.getSVGTextWidth(data.longestId)+2;
+        _issueChartMargins.left = _layout.getSVGTextWidth(data.longestId)-200;
         _issueChartMargins.right = _layout.getSVGTextWidth(data.longestType)+2;
         _timeSelectorMargins.left =  _issueChartMargins.left;
         _timeSelectorMargins.right = _issueChartMargins.right;
@@ -102,7 +102,7 @@ var PIPELINE_TIMELINE_MAIN = function(par){
             lifespans : data.lifespans,
             constructs : data.constructs,
             stateColors :   data.types,
-            colorScale : d3.scale.category20c()
+            colorScale : d3.scale.category10()
         });
 
         var onBrush= function(timeRange){
@@ -117,7 +117,7 @@ var PIPELINE_TIMELINE_MAIN = function(par){
             linear: false
         });
         
-        createLegend(data.types);
+        createLegend(data.tags);
         onResize();
         
         _layout.getSearchButton().addEventListener('click', function(){

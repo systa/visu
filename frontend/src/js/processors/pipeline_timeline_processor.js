@@ -210,11 +210,7 @@ var PIPELINE_TIMELINE_PROCESSOR = function (par) {
                     //Storing the link between events and constructs so that the visualization understands it.
                     if (constructMap[ev.related_constructs[i].toString()] !== undefined) {
                         tmp.rowId = constructMap[ev.related_constructs[i].toString()].rowId;
-                        if (tag === "label")
-                            tmp.tag = constructMap[ev.related_constructs[i].toString()].data.label;
-                        else if (tag === "assigned")
-                            tmp.tag = constructMap[ev.related_constructs[i].toString()].data.assigned;
-                        else tmp.tag = "notag";
+                       tmp.tag = constructMap[ev.related_constructs[i].toString()].type;
 
                         if (!states[tmp.rowId]) {
                             states[tmp.rowId] = [];
@@ -432,20 +428,31 @@ var PIPELINE_TIMELINE_PROCESSOR = function (par) {
                 if (s2 < s1) {
                     idHelper[lp.rowId].start = lp.start;
                 }
+
+                idHelper[lp.rowId].tag = lp.tag;
             }
         });
+
         for (var obj in idHelper) {
             if (idHelper.hasOwnProperty(obj)) {
                 lptmp.push({
                     start: idHelper[obj].start,
                     end: idHelper[obj].end,
+                    tag: idHelper[obj].tag,
                     rowId: obj
                 });
             }
         }
+
         lptmp.sort(function (lp1, lp2) {
             var s1 = new Date(lp1.start).getTime();
             var s2 = new Date(lp2.start).getTime();
+
+            if (lp1.tag === 'version' && lp2.tag === 'branch'){
+                return 1;
+            }else if (lp1.tag === 'branch' && lp2.tag === 'version'){
+                return -1;
+            }
             //return s1 - s2;
 
             if (lp1.end === false && lp2.end === false) {
@@ -469,9 +476,11 @@ var PIPELINE_TIMELINE_PROCESSOR = function (par) {
                 }
             }
         });
+
         for (var i = 0; i < lptmp.length; ++i) {
             ids.push(lptmp[i].rowId);
         }
+
         return ids;
     };
 
@@ -512,7 +521,7 @@ var PIPELINE_TIMELINE_PROCESSOR = function (par) {
         data.types.sort();
 
         //var tmpStates = stateData.types; //eventData.types.concat(stateData.types);
-        //data.states = ['open', 'Ready to start', 'Doing next', 'Doing', 'In review', 'closed'];
+        //data.states = ['success', 'failed', 'cancelled'];
         data.states = eventData.types.concat(stateData.types);
 
         var scId = sortRows(stateData.lifespans);
@@ -536,14 +545,8 @@ var PIPELINE_TIMELINE_PROCESSOR = function (par) {
             new Date(end.getFullYear(), end.getMonth(), end.getDate() + 1)
         ];
 
-        if (tag === "assigned") {
-            data.tags = constructData.assignees.sort(assignSort);
-        } else if (tag === "label") {
-            data.tags = constructData.labels.sort(labelSort);
-        } else {
-            data.tags = data.states;
-        }
-
+        data.tags = ['canceled', 'success', 'failed'];
+        
         //giving the data to who needs it
         return data;
     };

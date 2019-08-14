@@ -352,12 +352,17 @@ var PipelineTimeline = function(par){
             .on("mousemove", onMouseMove)
             .on("mouseout", onMouseOut);
 
-            _names.attr('x', 2)
+        _names.attr('x', 2)
             .attr('y', function (d) {
                 return _scaleY(d) + _rowHeight * 0.75;
             })
             .text(function (d) {
-                return d.toString();
+                var str = d;
+                if (str.length > 20) {
+                    str = str.substring(0, 15) + "[...]";
+                }
+    
+                return str;
             });
             
         _lifespans.attr('x1', getLpStart)
@@ -365,11 +370,13 @@ var PipelineTimeline = function(par){
             .attr('y1', getLineY)
             .attr('y2', getLineY)
             .attr('stroke', pub.getStateColor)
+            .attr('stroke-width', 1)
+            //.attr('stroke-dasharray', "10,5")
             .on("mouseover", onMouseOverLifespan)
             .on("mousemove", onMouseMove)
             .on("mouseout", onMouseOut);
 
-            _outerEvents.attr('fill', pub.getColor)
+        _outerEvents.attr('fill', pub.getColor)
             .attr('x', getX2)
             .attr('y', getLineY2)
             .attr('width', _rowHeight * 0.5)
