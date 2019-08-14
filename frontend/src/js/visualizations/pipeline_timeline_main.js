@@ -69,7 +69,6 @@ var PIPELINE_TIMELINE_MAIN = function(par){
         }
     };
     
-    
     var createLegend = function(types){
         var scale = _issueChart.getColorScale();
         for(var i = 0; i < types.length; ++i){

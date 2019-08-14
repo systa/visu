@@ -218,31 +218,23 @@ var PipelineTimeline = function(par){
     };
     
     var onMouseOverEvent = function (data) {
-        var dispstring = "<h5>Event</h5>";
+        var dispstring = "<h5>Pipeline</h5>";
 
         dispstring += "<strong>_id:</strong> " + data._id + "<br>";
-        dispstring += "<strong>Type:</strong> " + data.type + "<br>";
         dispstring += "<strong>Row id:</strong> " + data.rowId + "<br>";
-        dispstring += "<strong>Creator:</strong> " + data.creator + "<br>";
+        dispstring += "<strong>Trigger:</strong> " + data.creator + "<br>";
+        dispstring += "<strong>Status:</strong> " + data.statechange.to + "<br>";
+        dispstring += "<strong>Original ID:</strong> " + data.origin_id[0].source_id + "<br>";
 
         var date = new Date(data.time);
         var time = date.getUTCDate() + "/" + (date.getUTCMonth() + 1) + "/" + date.getUTCFullYear() + " " + date.getUTCHours() + ":" + date.getUTCMinutes() + ":" + date.getUTCSeconds() + "." + date.getUTCMilliseconds();
         dispstring += "<strong>Time:</strong> " + time + "<br>";
-
-        if (data.data && data.data.message)
-            dispstring += "<strong>Message:</strong> " + data.data.message + "<br>";
 
         if (data.related_constructs)
             dispstring += "<strong>Related constructs:</strong> " + data.related_constructs.length + "<br>";
 
         if (data.related_events)
             dispstring += "<strong>Related events:</strong> " + data.related_events.length + "<br>";
-
-        if (data.isStatechange) {
-            dispstring += "<strong>Statechange:</strong> " + "from " + (data.statechange.from || "-") + " to " + data.statechange.to + "<br>";
-        } else {
-            dispstring += "<strong>Statechange:</strong> " + "no" + "<br>";
-        }
 
         _tooltip.html(dispstring);
         return _tooltip.style("visibility", "visible");
@@ -272,39 +264,16 @@ var PipelineTimeline = function(par){
     };
 
     var onMouseOverConstruct = function (data) {
-        var dispstring = "<h5>Construct</h5>";
+        var dispstring;
+        if (data.type === 'version'){
+            dispstring = "<h5>Version</h5>";
+        }else{
+            dispstring = "<h5>Branch</h5>";
+        }
 
         dispstring += "<strong>_id:</strong> " + data._id + "<br>";
-        dispstring += "<strong>Type:</strong> " + data.type + "<br>";
         dispstring += "<strong>Row id:</strong> " + data.rowId + "<br>";
-        dispstring += "<strong>Name:</strong> " + data.name + "<br>";
-
-        if (data.description)
-            dispstring += "<strong>Description:</strong> " + data.description + "<br>";
-
-        if (data.author)
-            dispstring += "<strong>Author:</strong> " + data.author + "<br>";
-
-        dispstring += "<strong>Statechanges:</strong> " + data.related_statechanges.length + "<br>";
-        dispstring += "<strong>Events:</strong> " + data.related_events.length + "<br>";
-
-        if (data.data.assignee !== "Unassigned")
-            dispstring += "<strong>Assigned to:</strong> " + data.data.assignee + "<br>";
-        else
-            dispstring += "<strong>Assigned to:</strong> " + "undefined" + "<br>";
-
-        if (data.data.label !== "Unlabelled")
-            dispstring += "<strong>Label:</strong> " + data.data.label + "<br>";
-        else
-            dispstring += "<strong>Label:</strong> " + "undefined" + "<br>";
-
-        dispstring += "<strong>State:</strong> " + data.data.state + "<br>";
-
-        var date = new Date(data.data.created);
-        var created = date.getUTCDate() + "/" + (date.getUTCMonth() + 1) + "/" + date.getUTCFullYear() + " " + date.getUTCHours() + ":" + date.getUTCMinutes() + ":" + date.getUTCSeconds() + "." + date.getUTCMilliseconds();
-        dispstring += "<strong>Creation:</strong> " + created + "<br>";
-
-        dispstring += "<strong>Number:</strong> " + data.data.number + "<br>";
+        dispstring += "<strong>Pipelines:</strong> " + data.related_statechanges.length + "<br>";
 
         _tooltip.html(dispstring);
         return _tooltip.style("visibility", "visible");
@@ -328,6 +297,9 @@ var PipelineTimeline = function(par){
     //Helper function for data mapping
     //maps data.state to color scale used.
     pub.getColor = function(data){
+        if (data.statechange)
+            return _colorScale(data.statechange.to);
+
         return _colorScale(data.type);
     };
     
@@ -357,7 +329,7 @@ var PipelineTimeline = function(par){
                 return _scaleY(d) + _rowHeight * 0.75;
             })
             .text(function (d) {
-                var str = d;
+                var str= d
                 if (str.length > 20) {
                     str = str.substring(0, 15) + "[...]";
                 }
