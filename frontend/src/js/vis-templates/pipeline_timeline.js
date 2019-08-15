@@ -245,6 +245,11 @@ var PipelineTimeline = function(par){
         if (data.related_events)
             dispstring += "<strong>Related events:</strong> " + data.related_events.length + "<br>";
 
+        //Commit indication
+        var commit =  data.stages[Object.keys(data.stages)[0]].jobs[0];
+        dispstring += "<strong>Commit:</strong> " + commit.commit_title + "<br>";
+        dispstring += "<strong>Commit ID:</strong> " + commit.commit + "<br>";
+
         //Stages data
         dispstring += "<h5>Stages</h5> <ol>";
         for (var i in data.stages) {
