@@ -220,6 +220,7 @@ var PipelineTimeline = function(par){
     var onMouseOverEvent = function (data) {
         var dispstring = "<h5>Pipeline</h5>";
 
+        //Pipeline data
         dispstring += "<strong>_id:</strong> " + data._id + "<br>";
         dispstring += "<strong>Row id:</strong> " + data.rowId + "<br>";
         dispstring += "<strong>Trigger:</strong> " + data.creator + "<br>";
@@ -235,6 +236,21 @@ var PipelineTimeline = function(par){
 
         if (data.related_events)
             dispstring += "<strong>Related events:</strong> " + data.related_events.length + "<br>";
+
+        //Stages data
+        dispstring += "<h5>Stages</h5> <ol>";
+        for (var i in data.stages) {
+            var stage = data.stages[i];
+            dispstring += "<li><strong>" + i + "</strong>: " + stage.status + "<br>";
+
+            dispstring += "<ul>";
+            stage.jobs.forEach(function(job){
+                dispstring += "<li>" + job.name + ": " + job.state + "</li>";
+            });
+
+            dispstring += "</ul></li>";
+        }
+        dispstring += "</ol>";
 
         _tooltip.html(dispstring);
         return _tooltip.style("visibility", "visible");

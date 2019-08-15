@@ -18,79 +18,19 @@ var PIPELINE_TIMELINE_PROCESSOR = function (par) {
     var _rowId = p.rowId !== undefined ? p.rowId : "_id";
     var _fromOrigin = p.rowIdIsFromOrigin !== undefined ? p.rowIdIsFromOrigin : false;
     var _anonymize = p.anonymize !== undefined ? p.anonymize : false;
-    //var _anonymize = p.anonymize !== undefined ? p.anonymize : false;
     var _astring = p.astring !== undefined ? p.astring : "";
     var _states = p.states !== undefined ? p.states : {};
 
-    var _resolution = _states.resolution !== undefined ? _states.resolution : [];
+    var _PROCESSOR_UTILITES = PROCESSOR_UTILITES();
 
     //Splitting the Y-index mapping from . so we can do the mapping properly
     //even if it is a field of nested object.
     _rowId = _rowId.split(".");
 
     //Sorts event based on time
-    // if the timestamps are the same start events are allways smaller than other events
-    // and close events are allways larger than other events
-    // if both events have the same timestamp and are both start or close events or neither of them
-    // the ordering is done based on rowid (alphabetically)
-    var stSortFunction = function (e1, e2) {
-        var t1 = new Date(e1.time).getTime();
-        var t2 = new Date(e2.time).getTime();
-
-        if (t1 === t2) {
-
-            if (e1.statechange === undefined || e2.statechange === undefined) {
-                return 0;
-            }
-
-            if (e1.statechange.from === "" || e1.statechange.from === null || e1.statechange.from === undefined) {
-                return 1;
-            } else if (e2.statechange.from === "" || e2.statechange.from === null || e2.statechange.from === undefined) {
-                return -1;
-            }
-        }
-
-        return t1 - t2;
-    };
-
     var eventSortFunction = function(e1, e2){
         var t1 = new Date(e1.time).getTime();
         var t2 = new Date(e2.time).getTime();
-        /*if(t1 === t2){
-            
-            var start1 = _states.start.indexOf(e1.type);
-            var start2 = _states.start.indexOf(e2.type);
-            
-            var closed1 = _states.resolution.indexOf(e1.type);
-            var closed2 = _states.resolution.indexOf(e2.type);
-            
-            if(start1 !== -1 && start2 === -1){
-                return -1;//e1 is smaller as it is start event and e2 is not
-            }
-            else if(start2 !== -1 && start1 === -1){
-                return 1;//e2 is smaller as it is start event and e1 is not
-            }
-            else if(closed1 !== -1 && closed2 === -1){
-                return 1;//e2 is smaller as it is not resolution event and e1 is
-            }
-            else if(closed2 !== -1 && closed1 === -1){
-                return -1;//e1 is smaller as it is not resolution event and e2 is
-            }
-            else{
-                if(e1.rowId !== undefined && e2.rowId !== undefined){
-                    return e1.rowId.localeCompare(e2.rowId);
-                }
-                else if(e1.rowId !== undefined){
-                    return -1;
-                }
-                else if(e2.rowId !== undefined){
-                    return 1;
-                }
-                else{
-                    return 0;
-                }
-            }
-        }*/
         return t1-t2;
     };
 
@@ -243,6 +183,48 @@ var PIPELINE_TIMELINE_PROCESSOR = function (par) {
             if (identity_helper.indexOf(ev._id) === -1) {
                 identity_helper.push(ev._id);
 
+                if(ev.type === 'pipeline'){
+                    //get related events (these are the pipeline jobs)
+                    var jobs = _PROCESSOR_UTILITES.findRelatedEvents([ev], events);
+                    var stages = {};
+
+                    //create stages for each pipeline
+                    jobs.forEach(function(job){
+                        if (stages[job.data.stage] === undefined){
+                            stages[job.data.stage] = {};
+                            stages[job.data.stage].jobs = [];
+                        }
+                        var tmp = {
+                            _id : job._id,
+                            type : job.type,
+                            creator : job.creator,
+                            time : job.time,
+                            name : job.data.name,
+                            stage : job.data.stage,
+                            duration : job.duration,
+                            origin_id : job.origin_id,
+                            state: job.data.state,
+                            commit: job.data.commit,
+                            commit_title: job.data.commit_title
+                        }
+                        stages[job.data.stage].jobs.push(tmp);
+                    });
+
+                    //compute stage status from jobs status
+                    for (var i in stages) {
+                        var stage = stages[i];
+                        var status = 'passed';
+                        stage.jobs.forEach(function(job){
+                            if (job.state !== 'success' && status !== 'canceled' & status !== 'failed'){
+                                status = job.state;
+                            }
+                        });
+                        stage.status = status;
+                    }
+
+                    ev.stages = stages;
+                }
+
                 var related = false;
                 for (var i = 0; i < ev.related_constructs.length; ++i) {
                     if (ev.related_constructs[i] !== null || ev.related_constructs[i] !== undefined) {
@@ -256,7 +238,7 @@ var PIPELINE_TIMELINE_PROCESSOR = function (par) {
                             }
                         }
                         //Storing the link between events and constructs so that the visualization understands it.
-                        if (constructMap[ev.related_constructs[i].toString()] !== undefined/* && constructMap[ev.related_constructs[i].toString()].type === "issue"*/) {
+                        if (constructMap[ev.related_constructs[i].toString()] !== undefined) {
                             tmp.rowId = constructMap[ev.related_constructs[i].toString()].rowId;
                             evs.push(tmp);
                             related = true;
@@ -264,6 +246,7 @@ var PIPELINE_TIMELINE_PROCESSOR = function (par) {
                     }
                 }
 
+                //Only consider events related to a construct
                 if (related) {
                     var time = new Date(ev.time).getTime();
 
@@ -275,9 +258,12 @@ var PIPELINE_TIMELINE_PROCESSOR = function (par) {
                         end = time;
                     }
 
+                    //storing the event types
                     if (types.indexOf(ev.type) === -1) {
                         types.push(ev.type);
                     }
+
+                    
                 }
             }
 
@@ -495,7 +481,7 @@ var PIPELINE_TIMELINE_PROCESSOR = function (par) {
 
     var parseData = function (constructs, events, statechanges, tag) {
         if (debug) {
-            console.log("[LIFSPAN_TIMELINE_PROCESSOR]Data for processor:", events, constructs, statechanges);
+            console.log("[PIPELINE_TIMELINE_PROCESSOR]Data for processor:", events, constructs, statechanges);
         }
         //object for the processed data
         var data = {};
@@ -503,14 +489,14 @@ var PIPELINE_TIMELINE_PROCESSOR = function (par) {
         //from constructs we parse ids and constructs that are used
         //it also adds property rowID to constructs in _constructs list!
         var constructData = parseConstructs(constructs);
-        console.log("[LIFSPAN_TIMELINE_PROCESSOR]Construc data:", constructData);
+        console.log("[PIPELINE_TIMELINE_PROCESSOR]Construct data:", constructData);
 
         var eventData = parseEvents(events, constructData.helper);
-        console.log("[LIFSPAN_TIMELINE_PROCESSOR]Event data:", eventData);
+        console.log("[PIPELINE_TIMELINE_PROCESSOR]Event data:", eventData);
 
         var stateData = parseStates(statechanges, constructData.helper, tag);
 
-        console.log("[LIFSPAN_TIMELINE_PROCESSOR]State data:", stateData);
+        console.log("[PIPELINE_TIMELINE_PROCESSOR]State data:", stateData);
 
         data.constructs = constructData.processedConstructs;
         data.longestId = constructData.longestId;
@@ -549,26 +535,6 @@ var PIPELINE_TIMELINE_PROCESSOR = function (par) {
         
         //giving the data to who needs it
         return data;
-    };
-
-    var labelSort = function (l1, l2) {
-        if(l1 === 'Unlabelled'){
-            return -1;
-        }else if (l2 === 'Unlabelled'){
-            return 1;
-        }
-
-        return l1.localeCompare(l2);
-    };
-
-    var assignSort = function (l1, l2) {
-        if(l1 === 'Unassigned'){
-            return -1;
-        }else if (l2 === 'Unassigned'){
-            return 1;
-        }
-
-        return l1.localeCompare(l2);
     };
 
     return parseData;
