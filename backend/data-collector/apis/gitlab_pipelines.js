@@ -9,6 +9,18 @@
 
 // this file describes the GitLab api for collecting pipelines data
 
+// describes how a single gitlab pipeline is converted into the general pipeline format
+// for every attribute in a pipeline this has a property that tells how it is extracted from a gitlab pipeline
+// Jsonpath expressions are used to describe how to get the value
+var pipeline = {
+   // unique identifier for the pipeline that is unique in the whole system
+   id: '$.id',
+   // the name of the ref for the pipeline (branch or version)
+   ref: '$.ref',
+   // the overall status of the pipeline
+   status: '$.status'
+};
+
 var pipelineJob = {
    // unique identifier for the job that is unique in the whole system
    id: '$.id',
@@ -28,18 +40,6 @@ var pipelineJob = {
    commit_title: '$.commit.title'
 };
 
-// describes how a single gitlab pipeline is converted into the general pipeline format
-// for every attribute in a pipeline this has a property that tells how it is extracted from a gitlab pipeline
-// Jsonpath expressions are used to describe how to get the value
-var pipeline = {
-   // unique identifier for the pipeline that is unique in the whole system
-   id: '$.id',
-   // the name of the ref for the pipeline (branch or version)
-   ref: '$.ref',
-   // the overall status of the pipeline
-   status: '$.status',
-};
-
 var pipelineDetails = {
    // unique identifier for the pipeline that is unique in the whole system
    id: '$.id',
@@ -57,8 +57,32 @@ var pipelineDetails = {
    updated: '$.updated_at',
    duration: '$.duration',
 
+   // sha of the related commit
+   commit: '$.before_sha',
+
    // whether it's a branch or a version
    isVersion: '$.tag'
+};
+
+var commitStatus = {
+   // unique identifier for the commit that is unique in the whole system
+   id: '$.id',
+   // sha of the commit
+   sha: '$.sha',
+   // the name of the ref for the pipeline (branch or version)
+   ref: '$.ref',
+   // name of the related job
+   name: '$.name',
+   // the overall status of the pipeline
+   state: '$.status',
+   // optional description
+   description: '$.description',
+   // user who triggerred the pipeline
+   user: '$.author.username',
+   // time details of the pipeline
+   created: '$.created_at',
+   started: '$.started_at',
+   finished: '$.finished_at',
 };
 
 // describes the gitlab api
@@ -132,7 +156,17 @@ var api = {
                pipeline_id: '$.id'
             },
             items: '',
-            item: pipelineDetails
+            item: pipelineDetails,
+            children: {
+               commitStatuses: {
+                  path: '/projects/{id}/repository/commits/{commit}/statuses',
+                  parentParams: {
+                     commit: '$.before_sha'
+                  },
+                  items: '',
+                  item: commitStatus
+               }
+            }
          }
       }
    }

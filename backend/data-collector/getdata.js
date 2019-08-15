@@ -76,11 +76,11 @@ var GET_DATA = function (baseRequest, api, userParams, callback) {
          getItems(baseRequest, api, 'buildHistorys', api.buildHistorys, userParams, result, status, callback);
       }
 
-      /*if (api.jobs) {
+      if (api.jobs) {
          // get jobs if the api has them
          status.count++;
          getItems(baseRequest, api, 'jobs', api.jobs, userParams, result, status, callback);
-      }*/
+      }
 
       if (api.pipelines) {
          // get pipelines if the api has them
@@ -235,6 +235,11 @@ function getItems(baseRequest, api, type, itemDesc, userParams, result, status, 
          // if the item has child resources e.g. issue has comments, get them also
          if (itemDesc.children) {
             _.each(itemDesc.children, function (value, key) {
+               //Don't get commit children when commit sha = 0
+               if (key === 'commitStatuses' && item.before_sha === '0000000000000000000000000000000000000000'){
+                  return;
+               }
+
                status.count++; // one more resource to get everything from
                getItems(baseRequest, api, key, value, userParams, result, status, callback, item);
             });
@@ -255,7 +260,7 @@ function getItems(baseRequest, api, type, itemDesc, userParams, result, status, 
 
          // parse the link header and if there was one see if it has the url for next page of items
          var link = parse(response.headers.link);
-         if (type !== "jobs" && type !== "stages" && link && link.next) {
+         if (type !== "jobs" && type !== "stages" && type !== "commitStatuses" && link && link.next) {
             // get the next page of items
             // now we don't need the baseUrl since the header contained the whole url
             // also we don't need resource specific query parameters since the url has them too

@@ -46,18 +46,18 @@ var SEND_DATA = function (issueData, origin, callback) {
   // collect information (mongodbIds) for linking pipelines and stages
   var jobLinks = {};
   var refHelper = [];
+  var commitHepler = [];
 
   // variables for counting when everything has been added
   var count = 0; // how many to add
   var added = 0; // how many added
 
   var pending = []; //List of requests to be send
-  //However actually the requests that are already send are not moved away from the list
+  //However actually the requests that are already send are not removed from the list
   //so it's kind of misleading name.
 
-
   // add stuff to the db in this order 
-  var entityOrder = ['milestones', 'issues', 'comments', 'pipelineDetails', 'pipelineJobs', 'stages', 'stateChanges', 'changeEvents', 'jiraIssues', 'jiraChanges', 'builds', 'buildHistorys', 'jobs'];
+  var entityOrder = ['milestones', 'issues', 'comments', 'pipelineDetails', 'pipelineJobs', 'commitStatuses', 'stages', 'stateChanges', 'changeEvents', 'jiraIssues', 'jiraChanges', 'builds', 'buildHistorys', 'jobs'];
 
   // Arrays for Jira parser
   // Items that are not wanted - fields after 'Sprint' might be interesting for us
@@ -171,12 +171,12 @@ var SEND_DATA = function (issueData, origin, callback) {
 
           event.duration = item.duration;
           event.creator = item.user;
-          if (item.duration === 0){
+          if (item.duration === 0) {
             event.time = parseJenkinsTime(item.created);
-          }else{
+          } else {
             event.time = parseJenkinsTime(item.started);
           }
-          
+
           event.isStatechange = true;
           event.statechange = {
             to: item.status.toLowerCase(),
@@ -200,7 +200,7 @@ var SEND_DATA = function (issueData, origin, callback) {
 
         case 'pipelineJob':
           // This is also the actual stuff
-          // we are creating an event from a stage
+          // we are creating an event from a job
           event.type = type;
           event.origin_id = {
             source_id: String(item.id),
@@ -217,15 +217,16 @@ var SEND_DATA = function (issueData, origin, callback) {
 
           event.duration = item.duration;
           event.creator = item.user;
-          if (item.duration === 0){
+          if (item.duration === 0) {
             event.time = parseJenkinsTime(item.created);
-          }else{
+          } else {
             event.time = parseJenkinsTime(item.started);
           }
-      
+
           event.data = {
             pipeline: item.pipeline,
             ref: item.ref,
+            name: item.name,
             stage: item.stage,
             state: item.state,
             commit: item.commit,
@@ -239,6 +240,76 @@ var SEND_DATA = function (issueData, origin, callback) {
             sent: false,
             item: item
           });
+
+          // Store commit sha
+          if (commitHepler[item.commit] === undefined) {
+            commitHepler[item.commit] = {
+              names: [item.name],
+              pipeline: item.pipeline
+            }
+          }else{
+            commitHepler[item.commit].names.push(item.name);
+          }
+
+          break;
+
+        case 'commit':
+          // Used for the pipelines API
+          break;
+
+        case 'commitStatuse':
+          // Check if commit is related to a pipeline we actually care about
+          if (commitHepler[item.sha] === undefined) {
+            break;
+          }
+
+          // Check if it is a commitStatus (ie job) that we have not processed through pipelineJobs before
+          if (commitHepler[item.sha].names.indexOf(item.name) !== -1){
+            break;
+          }
+
+          // Create the appropriate job for this external event
+          event.type = 'pipelineJob';
+          event.origin_id = {
+            source_id: String(item.id),
+            source: origin.source,
+            context: origin.context
+          };
+
+          if (item.duration === null || item.duration === undefined) {
+            item.duration = 0;
+          }
+          if (item.user === null || item.user === undefined) {
+            item.user = "unknown";
+          }
+
+          event.duration = item.duration;
+          event.creator = item.user;
+          if (item.duration === 0) {
+            event.time = parseJenkinsTime(item.created);
+          } else {
+            event.time = parseJenkinsTime(item.started);
+          }
+
+          event.data = {
+            pipeline: commitHepler[item.sha].pipeline, //get pipeline from helper
+            ref: item.ref,
+            name: item.name,
+            stage: 'external',
+            state: item.state,
+            commit: item.id
+          };
+
+          //console.log('[BETA POSTER] Worth creating event:', event);
+          item.pipeline = commitHepler[item.sha].pipeline;
+          pending.push({
+            body: event,
+            url: eventApi,
+            type: 'pipelineJob',
+            sent: false,
+            item: item
+          });
+
           break;
 
         case 'build':
@@ -586,7 +657,7 @@ var SEND_DATA = function (issueData, origin, callback) {
         body: obj.body
       }, function (err, response, body) {
         if (err) {
-          console.log(err, response, body);
+          console.log(err);
           console.error("ERROR");
           reject("post");
           process.exit();
