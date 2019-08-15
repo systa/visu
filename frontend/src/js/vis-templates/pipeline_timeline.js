@@ -224,7 +224,15 @@ var PipelineTimeline = function(par){
         dispstring += "<strong>_id:</strong> " + data._id + "<br>";
         dispstring += "<strong>Row id:</strong> " + data.rowId + "<br>";
         dispstring += "<strong>Trigger:</strong> " + data.creator + "<br>";
-        dispstring += "<strong>Status:</strong> " + data.statechange.to + "<br>";
+
+        if (data.statechange.to === 'canceled'){
+            dispstring += "<strong>Status:</strong> <span style='color: #ff8400'>" + data.statechange.to + "</span><br>";
+        }else if (data.statechange.to === 'failed'){
+            dispstring += "<strong>Status:</strong> <span style='color: #ff1100'>" + data.statechange.to + "</span><br>";
+        }else if (data.statechange.to === 'passed'){
+            dispstring += "<strong>Status:</strong> <span style='color: #00c20a'>" + data.statechange.to + "</span><br>";
+        }
+
         dispstring += "<strong>Original ID:</strong> " + data.origin_id[0].source_id + "<br>";
 
         var date = new Date(data.time);
@@ -241,11 +249,27 @@ var PipelineTimeline = function(par){
         dispstring += "<h5>Stages</h5> <ol>";
         for (var i in data.stages) {
             var stage = data.stages[i];
-            dispstring += "<li><strong>" + i + "</strong>: " + stage.status + "<br>";
+            if (stage.status === 'canceled'){
+                dispstring += "<li><strong>" + i + "</strong>: <span style='color: #ff8400'>" + stage.status + "</span><br>";
+            }else if (stage.status === 'failed'){
+                dispstring += "<li><strong>" + i + "</strong>: <span style='color: #ff1100'>" + stage.status + "</span><br>";
+            }else if (stage.status === 'passed'){
+                dispstring += "<li><strong>" + i + "</strong>: <span style='color: #00c20a'>" + stage.status + "</span><br>";
+            }else if (stage.status === 'skipped'){
+                dispstring += "<li><strong>" + i + "</strong>: <span style='color: #242424'>" + stage.status + "</span><br>";
+            }
 
             dispstring += "<ul>";
             stage.jobs.forEach(function(job){
-                dispstring += "<li>" + job.name + ": " + job.state + "</li>";
+                if (job.state === 'canceled'){
+                    dispstring += "<li>" + job.name + ":  <span style='color: #ff8400'>" + job.state + "</span><br>";
+                }else if (job.state === 'failed'){
+                    dispstring += "<li>" + job.name + ":  <span style='color: #ff1100'>" + job.state + "</span><br>";
+                }else if (job.state === 'success'){
+                    dispstring += "<li>" + job.name + ":  <span style='color: #00c20a'>" + job.state + "</span><br>";
+                }else if (job.state === 'skipped'){
+                    dispstring += "<li>" + job.name + ":  <span style='color: #242424'>" + job.state + "</span><br>";
+                }
             });
 
             dispstring += "</ul></li>";
