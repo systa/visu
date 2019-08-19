@@ -2,6 +2,9 @@
 
 A command line utility that can collect issue management information from various web based sources and send them to the db in a unified format. The api of the source has to be described by a js file in the apis directory. Currently can collect issues, milestones and issue comments. Issues and milestones are constructs and comments are events. There are api description files for GitLab and GitHub.
 
+## Notice
+This collector is outdated compared to the one present in backend/datacollector
+
 ## Usage
 
 First run npm install to install dependencies. Then to run the collector:
