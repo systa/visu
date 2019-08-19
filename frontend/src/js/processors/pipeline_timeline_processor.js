@@ -299,9 +299,10 @@ var PIPELINE_TIMELINE_PROCESSOR = function (par) {
         //The helper data structure is for linking construct origin_id.source_id to events
         var constructHelpper = {};
         constructs.forEach(function (construct) {
-            /*if (construct.type !== "issue" && construct.type !== "pipeline") {
+            //Filter constructs not realted to pipelines
+            if (construct.type !== "branch" && construct.type !== "version") {
                 return;
-            }*/
+            }
 
             //To ignore duplicates
             if (identity_helper.indexOf(construct._id) === -1) {
