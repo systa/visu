@@ -437,7 +437,7 @@ var STATES_CHART_PROCESSOR = function (par) {
         };
     };
 
-    var parseData = function (events, constructs, states, tag) {
+    var parseData = function (events, constructs, states) {
         if (debug) {
             console.log("[STATES_CHART_PROCESSOR]parseData", events, constructs, states);
         }
@@ -447,7 +447,7 @@ var STATES_CHART_PROCESSOR = function (par) {
 
         //from constructs we parse ids and constructs that are used
         //it also adds property rowID to constructs in _constructs list!
-        var constructData = parseConstructs(constructs, tag);
+        var constructData = parseConstructs(constructs);
         var stateData = parseStates(states, constructData.helper);
         data.lifespans = stateData.lifespans;
 

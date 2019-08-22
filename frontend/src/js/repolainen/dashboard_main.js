@@ -413,8 +413,7 @@ var DASHBOARD_MAIN = function (par) {
         _query.getFilteredEvents(_queryFilters.eventFilters, eventsLoaded);
     };
 
-    var createStatesTimeline = function (mapping, filters, tag, callback) {
-        filters.tag = tag;
+    var createStatesTimeline = function (mapping, filters, callback) {
         var _parser = STATES_CHART_PROCESSOR(mapping);
         var _query = DATA_QUERY();
         var _queryFilters = QUERY_UTILITIES().formatFilters(filters);
@@ -425,7 +424,7 @@ var DASHBOARD_MAIN = function (par) {
 
         var whenLoaded = function () {
             if (_events && _constructs && _states) {
-                var parsed_data = _parser(_events, _constructs, _states, tag);
+                var parsed_data = _parser(_events, _constructs, _states);
                 if (debug) {
                     console.log("[StatesTimeline]Parsed data:", parsed_data);
                 }
@@ -437,7 +436,89 @@ var DASHBOARD_MAIN = function (par) {
                     _timeframe.endTime = new Date(parsed_data.timeframe[1]);
                 }
 
-                initCharts(tag, parsed_data, _timeframe, callback);
+                initCharts("state", parsed_data, _timeframe, callback);
+            }
+        };
+
+        var eventsLoaded = function (data) {
+            _events = data;
+            whenLoaded();
+        };
+        var constructsLoaded = function (data) {
+            _constructs = data;
+            whenLoaded();
+        };
+        var statesLoaded = function (data) {
+            _states = data;
+            whenLoaded();
+        };
+
+        _query.getFilteredConstructs(_queryFilters.constructFilters, constructsLoaded);
+        _query.getFilteredStatechanges(_queryFilters.eventFilters, statesLoaded);
+        _query.getFilteredEvents(_queryFilters.eventFilters, eventsLoaded);
+    };
+
+    var createOtherTimelines = function (mapping, filters) {
+        var _query = DATA_QUERY();
+        var _queryFilters = QUERY_UTILITIES().formatFilters(filters);
+
+        var _events = false;
+        var _states = false;
+        var _constructs = false;
+
+        var whenLoaded = function () {
+            var _parser;
+            var parsed_data;
+            if (_events && _constructs && _states) {
+                /* *** STATES TIMELINE *** */
+                _parser = STATES_CHART_PROCESSOR(mapping);
+                parsed_data = _parser(_events, _constructs, _states);
+                if (debug) {
+                    console.log("[StatesTimeline]Parsed data:", parsed_data);
+                }
+
+                if (parsed_data.timeframe[0] < _timeframe.startTime) {
+                    _timeframe.startTime = new Date(parsed_data.timeframe[0]);
+                }
+                if (parsed_data.timeframe[1] > _timeframe.endTime) {
+                    _timeframe.endTime = new Date(parsed_data.timeframe[1]);
+                }
+
+                initCharts("state", parsed_data, _timeframe, false);
+
+                /* *** AMOUNT TIMELINES (label/author) *** */
+                _parser = AMOUNT_CHART_PROCESSOR(mapping);
+                parsed_data = _parser(_events, _constructs, _states);
+                if (debug) {
+                    console.log("[AmountTimeline]Parsed data:", parsed_data);
+                }
+
+                if (parsed_data[0].timeframe[0] < _timeframe.startTime) {
+                    _timeframe.startTime = new Date(parsed_data[0].timeframe[0]);
+                }
+                if (parsed_data[0].timeframe[1] > _timeframe.endTime) {
+                    _timeframe.endTime = new Date(parsed_data[0].timeframe[1]);
+                }
+
+                //Only do the callback after the 2nd chart is initialized!
+                initCharts("assigned", parsed_data[0], _timeframe, false);
+                initCharts("label", parsed_data[1], _timeframe, false);
+
+                /* *** ISSUE TIMELINE *** */
+                _parser = LIFESPAN_CHART_PROCESSOR(mapping);
+                parsed_data = _parser(_constructs, _events, _states);
+                if (debug) {
+                    console.log("[IssueTimeline]Parsed data:", parsed_data);
+                }
+
+                if (parsed_data.timeframe[0] < _timeframe.startTime) {
+                    _timeframe.startTime = new Date(parsed_data.timeframe[0]);
+                }
+                if (parsed_data.timeframe[1] > _timeframe.endTime) {
+                    _timeframe.endTime = new Date(parsed_data.timeframe[1]);
+                }
+
+                initCharts("issue", parsed_data, _timeframe, false);
             }
         };
 
@@ -503,20 +584,25 @@ var DASHBOARD_MAIN = function (par) {
         _query.getFilteredEvents(_queryFilters.eventFilters, eventsLoaded);
     };
 
-    /*
-     * Warning: the order of creation of the charts matter. e.g. to keep coloscales coherent between charts.
-     */
-
-    // PIPELINE TIMELINE
+    /* SLOWER VERSION - Less efficient but more easy to understand/modify
+    // PIPELINE TIMELINE  
     createPipelineTimeline(_mapping, _filters, function () {
-        // AMOUNT TIMELINE 1
+        // AMOUNT TIMELINES (label/author)
         createAmountTimelines(_mapping, _filters, function () {
-            // AMOUNT TIMELINE 3
-            createStatesTimeline(_mapping, _filters, "state", function () {
+            // STATES TIMELINE
+            createStatesTimeline(_mapping, _filters, function () {
                 // ISSUE TIMELINE
                 createIssueTimeline(_mapping, _filters, false);
 
             });
         });
     });
+    */
+    
+    // Version improved for performance: only querries the data once from the DB
+    createPipelineTimeline(_mapping, _filters, function () {
+        createOtherTimelines(_mapping, _filters);
+    });
+
+    
 };
