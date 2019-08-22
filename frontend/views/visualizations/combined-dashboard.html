@@ -27,12 +27,12 @@
 
   <script defer type="text/javascript" src="../src/js/repolainen/amount_chart.js"></script>
   <script defer type="text/javascript" src="../src/js/repolainen/lifespan_chart.js"></script>
-  <script defer type="text/javascript" src="../src/js/repolainen/duration_chart.js"></script>
+  <script defer type="text/javascript" src="../src/js/repolainen/pipeline_chart.js"></script>
 
-  <script defer type="text/javascript" src="../src/js/repolainen/amount_chart_dataprocessor.js"></script>
-  <script defer type="text/javascript" src="../src/js/repolainen/states_chart_dataprocessor.js"></script>
+  <script defer type="text/javascript" src="../src/js/repolainen/amount_chart_processor.js"></script>
+  <script defer type="text/javascript" src="../src/js/repolainen/states_chart_processor.js"></script>
   <script defer type="text/javascript" src="../src/js/repolainen/lifespan_chart_processor.js"></script>
-  <script defer type="text/javascript" src="../src/js/repolainen/duration_chart_dataprocessor.js"></script>
+  <script defer type="text/javascript" src="../src/js/repolainen/pipeline_chart_processor.js"></script>
 
   <!-- UI-Utilities -->
   <script defer type="text/javascript" src="../src/js/ui-utilities/repolainen_query_ui.js"></script>
@@ -289,8 +289,8 @@
 
     <div draggable="true" ondragstart="drag(event)" id="drag4" ondrop="drop(event, 'drag4')"
       ondragover="allowDrop(event)">
-      <button class="collapsible">Duration Timeline (tests)</button>
-      <div id="durationParent" class="parentContainer content"></div>
+      <button class="collapsible">Pipeline Timeline</button>
+      <div id="pipelineParent" class="parentContainer content"></div>
     </div>
 
   </div>

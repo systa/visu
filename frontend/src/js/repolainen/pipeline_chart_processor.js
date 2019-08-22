@@ -12,7 +12,7 @@
 //mapping is to determine which field of construct is used as a Y axis index values
 //if anonymize flag is set to true the Y axis index values are anonymized using the base string provided
 //in astring parameter and order number. If no base string is provided only order numbers are used to anonymize the ids.
-var LIFESPAN_CHART_PROCESSOR = function (par) {
+var PIPELINE_CHART_PROCESSOR = function (par) {
     var p = par || {};
 
     var _rowId = p.rowId !== undefined ? p.rowId : "_id";
@@ -21,36 +21,17 @@ var LIFESPAN_CHART_PROCESSOR = function (par) {
     var _astring = p.astring !== undefined ? p.astring : "";
     var _states = p.states !== undefined ? p.states : {};
 
+    var _PROCESSOR_UTILITES = PROCESSOR_UTILITES();
+
     //Splitting the Y-index mapping from . so we can do the mapping properly
     //even if it is a field of nested object.
     _rowId = _rowId.split(".");
 
-    var eventSortFunction = function (e1, e2) {
+    //Sorts event based on time
+    var eventSortFunction = function(e1, e2){
         var t1 = new Date(e1.time).getTime();
         var t2 = new Date(e2.time).getTime();
-        return t1 - t2;
-    };
-
-    //Puts 'Unlabelled' first
-    var labelSort = function (l1, l2) {
-        if (l1 === 'Unlabelled') {
-            return -1;
-        } else if (l2 === 'Unlabelled') {
-            return 1;
-        }
-
-        return l1.localeCompare(l2);
-    };
-
-    //Puts 'Unassigned' first
-    var assignSort = function (l1, l2) {
-        if (l1 === 'Unassigned') {
-            return -1;
-        } else if (l2 === 'Unassigned') {
-            return 1;
-        }
-
-        return l1.localeCompare(l2);
+        return t1-t2;
     };
 
     var parseLifespans = function (statelist) {
@@ -59,7 +40,7 @@ var LIFESPAN_CHART_PROCESSOR = function (par) {
         for (var rid in statelist) {
             if (statelist.hasOwnProperty(rid)) {
                 var statechanges = statelist[rid];
-
+                
                 statechanges.sort(eventSortFunction);
                 //statechanges.sort(stSortFunction);
 
@@ -83,8 +64,7 @@ var LIFESPAN_CHART_PROCESSOR = function (par) {
                             start: st,
                             state: state,
                             end: sc.time,
-                            label: sc.label,
-                            assigned: sc.assigned
+                            tag: sc.tag
                         };
                         lifespans.push(tmp);
                         st = sc.time;
@@ -112,9 +92,8 @@ var LIFESPAN_CHART_PROCESSOR = function (par) {
                         start: st,
                         state: state,
                         end: rt,
-                        label: sc.label,
-                        assigned: sc.assigned
-                    });
+                        tag: sc.tag
+                    }); 
                 }
             }
         }
@@ -125,8 +104,10 @@ var LIFESPAN_CHART_PROCESSOR = function (par) {
     //the topmost drawn row in the visualization is the row where the first event happened and so on. This is the default ordering of rows for the visualization.
     //Construct map is a helper data structure which contains all constructs in a object where the key is the construct _id (MongoDB). The helper has been formed in
     //parseConstructs function --> parseConstructs NEEDS TO BE CALLED BEFORE THIS FUNCTION (PRECONDITION)!
-    var parseStates = function (statechangeEvents, constructMap) {
+    var parseStates = function (statechangeEvents, constructMap, tag) {
         var types = [];
+
+        //helper datastructure for parsing lifespans
         var states = {};
 
         var start = false;
@@ -134,7 +115,6 @@ var LIFESPAN_CHART_PROCESSOR = function (par) {
 
         var identity_helper = [];
 
-        //helper datastructure for parsing lifespans
         statechangeEvents.forEach(function (ev) {
             //Ignoring duplicates
             if (identity_helper.indexOf(ev._id) === -1) {
@@ -148,12 +128,6 @@ var LIFESPAN_CHART_PROCESSOR = function (par) {
                 }
                 if (time > end || end === false) {
                     end = time;
-                }
-
-                //Ignoring states not related to issues (after registering the time)
-                var whitelist = ['state change', 'opened', 'closed'];
-                if (!whitelist.includes(ev.type)) {
-                    return;
                 }
 
                 if (types.indexOf(ev.statechange.to) === -1) {
@@ -176,8 +150,7 @@ var LIFESPAN_CHART_PROCESSOR = function (par) {
                     //Storing the link between events and constructs so that the visualization understands it.
                     if (constructMap[ev.related_constructs[i].toString()] !== undefined) {
                         tmp.rowId = constructMap[ev.related_constructs[i].toString()].rowId;
-                        tmp.assigned = constructMap[ev.related_constructs[i].toString()].data.assignee;
-                        tmp.label = constructMap[ev.related_constructs[i].toString()].data.label;
+                       tmp.tag = constructMap[ev.related_constructs[i].toString()].type;
 
                         if (!states[tmp.rowId]) {
                             states[tmp.rowId] = [];
@@ -204,10 +177,53 @@ var LIFESPAN_CHART_PROCESSOR = function (par) {
         var end = false;
 
         var identity_helper = [];
+
         events.forEach(function (ev) {
             //Ignoring duplicates
             if (identity_helper.indexOf(ev._id) === -1) {
                 identity_helper.push(ev._id);
+
+                if(ev.type === 'pipeline'){
+                    //get related events (these are the pipeline jobs)
+                    var jobs = _PROCESSOR_UTILITES.findRelatedEvents([ev], events);
+                    var stages = {};
+
+                    //create stages for each pipeline
+                    jobs.forEach(function(job){
+                        if (stages[job.data.stage] === undefined){
+                            stages[job.data.stage] = {};
+                            stages[job.data.stage].jobs = [];
+                        }
+                        var tmp = {
+                            _id : job._id,
+                            type : job.type,
+                            creator : job.creator,
+                            time : job.time,
+                            name : job.data.name,
+                            stage : job.data.stage,
+                            duration : job.duration,
+                            origin_id : job.origin_id,
+                            state: job.data.state,
+                            commit: job.data.commit,
+                            commit_title: job.data.commit_title
+                        }
+                        stages[job.data.stage].jobs.push(tmp);
+                    });
+
+                    //compute stage status from jobs status
+                    for (var i in stages) {
+                        var stage = stages[i];
+                        var status = 'passed';
+                        stage.jobs.forEach(function(job){
+                            if (job.state !== 'success' && status !== 'canceled' & status !== 'failed'){
+                                status = job.state;
+                            }
+                        });
+                        stage.status = status;
+                    }
+
+                    ev.stages = stages;
+                }
 
                 var related = false;
                 for (var i = 0; i < ev.related_constructs.length; ++i) {
@@ -222,7 +238,7 @@ var LIFESPAN_CHART_PROCESSOR = function (par) {
                             }
                         }
                         //Storing the link between events and constructs so that the visualization understands it.
-                        if (constructMap[ev.related_constructs[i].toString()] !== undefined && constructMap[ev.related_constructs[i].toString()].type === "issue") {
+                        if (constructMap[ev.related_constructs[i].toString()] !== undefined) {
                             tmp.rowId = constructMap[ev.related_constructs[i].toString()].rowId;
                             evs.push(tmp);
                             related = true;
@@ -230,6 +246,7 @@ var LIFESPAN_CHART_PROCESSOR = function (par) {
                     }
                 }
 
+                //Only consider events related to a construct
                 if (related) {
                     var time = new Date(ev.time).getTime();
 
@@ -241,9 +258,12 @@ var LIFESPAN_CHART_PROCESSOR = function (par) {
                         end = time;
                     }
 
+                    //storing the event types
                     if (types.indexOf(ev.type) === -1) {
                         types.push(ev.type);
                     }
+
+                    
                 }
             }
 
@@ -279,8 +299,8 @@ var LIFESPAN_CHART_PROCESSOR = function (par) {
         //The helper data structure is for linking construct origin_id.source_id to events
         var constructHelpper = {};
         constructs.forEach(function (construct) {
-            //Ignore constructs that are not issues
-            if (construct.type !== "issue") {
+            //Filter constructs not realted to pipelines
+            if (construct.type !== "branch" && construct.type !== "version") {
                 return;
             }
 
@@ -313,18 +333,21 @@ var LIFESPAN_CHART_PROCESSOR = function (par) {
                     aid = anonymized[ids_help.indexOf(id)];
                 }
 
-                if (!construct.data.label) {
-                    construct.data.label = 'Unlabelled';
-                }
-                if (labels.indexOf(construct.data.label) === -1) {
-                    labels.push(construct.data.label);
-                }
+                if(construct.type === 'issue'){
 
-                if (!construct.data.assignee) {
-                    construct.data.assignee = 'Unassigned';
-                }
-                if (assignees.indexOf(construct.data.assignee) === -1) {
-                    assignees.push(construct.data.assignee);
+                    if (!construct.data.label) {
+                        construct.data.label = 'Unlabelled';
+                    }
+                    if (labels.indexOf(construct.data.label) === -1) {
+                        labels.push(construct.data.label);
+                    }
+    
+                    if (!construct.data.assignee) {
+                        construct.data.assignee = 'Unassigned';
+                    }
+                    if (assignees.indexOf(construct.data.assignee) === -1) {
+                        assignees.push(construct.data.assignee);
+                    }
                 }
 
                 //row id is a visualization specific thing that is used in duration timeline chart
@@ -392,23 +415,32 @@ var LIFESPAN_CHART_PROCESSOR = function (par) {
                 if (s2 < s1) {
                     idHelper[lp.rowId].start = lp.start;
                 }
+
+                idHelper[lp.rowId].tag = lp.tag;
             }
         });
+
         for (var obj in idHelper) {
             if (idHelper.hasOwnProperty(obj)) {
                 lptmp.push({
                     start: idHelper[obj].start,
                     end: idHelper[obj].end,
+                    tag: idHelper[obj].tag,
                     rowId: obj
                 });
             }
         }
 
-        //Sort issues by end time
         lptmp.sort(function (lp1, lp2) {
             var s1 = new Date(lp1.start).getTime();
             var s2 = new Date(lp2.start).getTime();
-            //return s1 - s2; //Use this to sort by start time
+
+            if (lp1.tag === 'version' && lp2.tag === 'branch'){
+                return 1;
+            }else if (lp1.tag === 'branch' && lp2.tag === 'version'){
+                return -1;
+            }
+            //return s1 - s2;
 
             if (lp1.end === false && lp2.end === false) {
                 return s1 - s2;
@@ -448,9 +480,9 @@ var LIFESPAN_CHART_PROCESSOR = function (par) {
         return stateId;
     };
 
-    var parseData = function (constructs, events, statechanges) {
+    var parseData = function (constructs, events, statechanges, tag) {
         if (debug) {
-            console.log("[LIFESPAN_CHART_PROCESSOR]ParseData", events, constructs, statechanges);
+            console.log("[PIPELINE_CHART_PROCESSOR]Data for processor:", events, constructs, statechanges);
         }
         //object for the processed data
         var data = {};
@@ -458,21 +490,23 @@ var LIFESPAN_CHART_PROCESSOR = function (par) {
         //from constructs we parse ids and constructs that are used
         //it also adds property rowID to constructs in _constructs list!
         var constructData = parseConstructs(constructs);
+        console.log("[PIPELINE_CHART_PROCESSOR]Construct data:", constructData);
+
         var eventData = parseEvents(events, constructData.helper);
-        var stateData = parseStates(statechanges, constructData.helper);
+        console.log("[PIPELINE_CHART_PROCESSOR]Event data:", eventData);
+
+        var stateData = parseStates(statechanges, constructData.helper, tag);
+
+        console.log("[PIPELINE_CHART_PROCESSOR]State data:", stateData);
 
         data.constructs = constructData.processedConstructs;
         data.longestId = constructData.longestId;
         data.longestType = constructData.longestType;
-
-        data.authors = constructData.assignees.sort(assignSort);
-        data.labels = constructData.labels.sort(labelSort);
-
         data.events = eventData.events;
         data.lifespans = stateData.lifespans;
-
-        data.types = eventData.types.sort();
-        data.states = ['open', 'Ready to start', 'Doing next', 'Doing', 'In review'];
+        data.types = eventData.types; //eventData.types.concat(stateData.types);
+        data.types.sort();
+        data.states =  ['success', 'failed', 'canceled'];
 
         var scId = sortRows(stateData.lifespans);
         data.ids = mergeIdLists(scId, constructData.ids);
@@ -495,6 +529,9 @@ var LIFESPAN_CHART_PROCESSOR = function (par) {
             new Date(end.getFullYear(), end.getMonth(), end.getDate() + 1)
         ];
 
+        data.tags = ['success', 'failed', 'canceled'];
+        
+        //giving the data to who needs it
         return data;
     };
 

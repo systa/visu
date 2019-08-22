@@ -50,7 +50,7 @@ var DASHBOARD_TEMPLATE = function (mpar) {
         legend: false
     };
 
-    var _durationChart = {
+    var _pipelineChart = {
         div: false,
         svg: false,
         legend: false
@@ -258,13 +258,13 @@ var DASHBOARD_TEMPLATE = function (mpar) {
             source: _amountChartState
         });
 
-        //Create the duration timeline
+        //Create the piepeline timeline
         createChartSVG({
             className: "chart",
-            id: "durationContainer",
+            id: "pipelineContainer",
             svgId: "chart",
-            parent: document.getElementById("durationParent"),
-            source: _durationChart
+            parent: document.getElementById("pipelineParent"),
+            source: _pipelineChart
         });
 
         return {
@@ -274,7 +274,7 @@ var DASHBOARD_TEMPLATE = function (mpar) {
             amountChartAuthor: _amountChartAuthor,
             amountChartLabel: _amountChartLabel,
             amountChartState: _amountChartState,
-            durationChart: _durationChart
+            pipelineChart: _pipelineChart
         };
     };
 

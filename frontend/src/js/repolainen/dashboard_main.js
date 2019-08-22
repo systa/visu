@@ -54,7 +54,7 @@ var DASHBOARD_MAIN = function (par) {
     var _amountChartLabel = false;
     var _amountChartAuthor = false;
     var _amountChartState = false;
-    var _durationChart = false;
+    var _pipelineChart = false;
     var _timeSelector = false;
 
     //Colorscales
@@ -67,7 +67,6 @@ var DASHBOARD_MAIN = function (par) {
     var _colorScaleEvents = d3.scale.category20c();
     var _colorScaleLabels = d3.scale.category10();
     var _colorScaleAuthors = d3.scale.category10();
-    var _colorScaleDurations = d3.scale.category10();
     var _colorScaleStates = d3.scale.category10();
 
     //Initializing the module that helps with cerating the HTML and SVG elements
@@ -131,14 +130,14 @@ var DASHBOARD_MAIN = function (par) {
             _amountChartState.onResize(_width, height, _ChartMargins);
         }
 
-        if (_durationChart !== false) {
+        if (_pipelineChart !== false) {
             //We should not exceed the total height
-            var min = _durationChart.getMinHeight();
+            var min = _pipelineChart.getMinHeight();
             var height = _height * 0.3;
             if (height < min) {
                 height = min;
             }
-            _durationChart.onResize(_width, height, _ChartMargins);
+            _pipelineChart.onResize(_width, height, _ChartMargins);
         }
 
         if (_timeSelector !== false) {
@@ -173,7 +172,7 @@ var DASHBOARD_MAIN = function (par) {
             _elements = _layout.createLayout();
 
             //TODO: fix margins
-            _ChartMargins.left = _layout.getSVGTextWidth("000000");
+            _ChartMargins.left = _layout.getSVGTextWidth("english-rock-cs[...]");
             _ChartMargins.right = _layout.getSVGTextWidth("Unassigned c    c");
             _timeSelectorMargins.left = _ChartMargins.left;
             _timeSelectorMargins.right = _ChartMargins.right;
@@ -183,7 +182,7 @@ var DASHBOARD_MAIN = function (par) {
                 _amountChartAuthor.onBrush(timeRange);
                 _amountChartLabel.onBrush(timeRange);
                 _amountChartState.onBrush(timeRange);
-                _durationChart.onBrush(timeRange);
+                _pipelineChart.onBrush(timeRange);
             };
 
             _timeSelector = TimeSelector({
@@ -250,7 +249,7 @@ var DASHBOARD_MAIN = function (par) {
                 break;
 
             case "state":
-                _colorScaleStates.domain(data.tags); 
+                _colorScaleStates.domain(data.tags);
                 createLegend(_colorScaleStates, _elements.amountChartState.legend, data.tags);
 
                 //NB: State chart uses AmountChart (as do the labels and authors charts, but a different data-processor)
@@ -265,18 +264,20 @@ var DASHBOARD_MAIN = function (par) {
                 });
                 break;
 
-            case "duration":
-                _colorScaleDurations.domain(data.states);
-                createLegend(_colorScaleDurations, _elements.durationChart.legend, data.states);
-
-                _durationChart = DurationChart({
-                    svg: _elements.durationChart.svg,
+            case "pipeline":
+                _pipelineChart = PipelineChart({
+                    svg: _elements.pipelineChart.svg,
                     margins: _ChartMargins,
                     timeframe: timeframe,
                     ids: data.ids,
-                    data: data.events,
-                    colors: data.states
+                    colors: data.tags,
+                    events: data.events,
+                    lifespans: data.lifespans,
+                    constructs: data.constructs,
+                    stateColors: data.types,
+                    displayTypes: false
                 });
+                createLegend(_pipelineChart.getStateColor, _elements.pipelineChart.legend, data.tags);
                 break;
 
             default:
@@ -284,7 +285,8 @@ var DASHBOARD_MAIN = function (par) {
                 return;
         }
 
-        if (_issueChart && _amountChartAuthor && _amountChartLabel && _amountChartState && _durationChart) {
+        // When all visualizations have been loaded
+        if (_issueChart && _amountChartAuthor && _amountChartLabel && _amountChartState && _pipelineChart) {
             window.addEventListener('resize', onResize);
             onResize();
 
@@ -296,7 +298,7 @@ var DASHBOARD_MAIN = function (par) {
             _amountChartAuthor.draw();
             _amountChartLabel.draw();
             _amountChartState.draw();
-            _durationChart.draw();
+            _pipelineChart.draw();
         }
 
         if (callback) {
@@ -318,7 +320,7 @@ var DASHBOARD_MAIN = function (par) {
         _timeframe = [new Date(_filters.startTime), new Date()];
     }
 
-    var createIssueTimeline = function (mapping, filters, timeframe, callback) {
+    var createIssueTimeline = function (mapping, filters, callback) {
         var _parser = LIFESPAN_CHART_PROCESSOR(mapping);
         var _query = DATA_QUERY();
         var _queryFilters = QUERY_UTILITIES().formatFilters(filters);
@@ -333,7 +335,15 @@ var DASHBOARD_MAIN = function (par) {
                 if (debug) {
                     console.log("[IssueTimeline]Parsed data:", parsed_data);
                 }
-                initCharts("issue", parsed_data, timeframe, callback);
+
+                if (parsed_data.timeframe[0] < _timeframe.startTime) {
+                    _timeframe.startTime = new Date(parsed_data.timeframe[0]);
+                }
+                if (parsed_data.timeframe[1] > _timeframe.endTime) {
+                    _timeframe.endTime = new Date(parsed_data.timeframe[1]);
+                }
+
+                initCharts("issue", parsed_data, _timeframe, callback);
             }
         };
 
@@ -355,7 +365,7 @@ var DASHBOARD_MAIN = function (par) {
         _query.getFilteredEvents(_queryFilters.eventFilters, eventsLoaded);
     };
 
-    var createAmountTimelines = function (mapping, filters, timeframe, callback) {
+    var createAmountTimelines = function (mapping, filters, callback) {
 
         var _parser = AMOUNT_CHART_PROCESSOR(mapping);
         var _query = DATA_QUERY();
@@ -372,9 +382,16 @@ var DASHBOARD_MAIN = function (par) {
                     console.log("[AmountTimeline]Parsed data:", parsed_data);
                 }
 
+                if (parsed_data[0].timeframe[0] < _timeframe.startTime) {
+                    _timeframe.startTime = new Date(parsed_data[0].timeframe[0]);
+                }
+                if (parsed_data[0].timeframe[1] > _timeframe.endTime) {
+                    _timeframe.endTime = new Date(parsed_data[0].timeframe[1]);
+                }
+
                 //Only do the callback after the 2nd chart is initialized!
-                initCharts("assigned", parsed_data[0], timeframe, false);
-                initCharts("label", parsed_data[1], timeframe, callback);
+                initCharts("assigned", parsed_data[0], _timeframe, false);
+                initCharts("label", parsed_data[1], _timeframe, callback);
             }
         };
 
@@ -396,7 +413,7 @@ var DASHBOARD_MAIN = function (par) {
         _query.getFilteredEvents(_queryFilters.eventFilters, eventsLoaded);
     };
 
-    var createStatesTimeline = function (mapping, filters, timeframe, tag, callback) {
+    var createStatesTimeline = function (mapping, filters, tag, callback) {
         filters.tag = tag;
         var _parser = STATES_CHART_PROCESSOR(mapping);
         var _query = DATA_QUERY();
@@ -412,7 +429,15 @@ var DASHBOARD_MAIN = function (par) {
                 if (debug) {
                     console.log("[StatesTimeline]Parsed data:", parsed_data);
                 }
-                initCharts(tag, parsed_data, timeframe, callback);
+
+                if (parsed_data.timeframe[0] < _timeframe.startTime) {
+                    _timeframe.startTime = new Date(parsed_data.timeframe[0]);
+                }
+                if (parsed_data.timeframe[1] > _timeframe.endTime) {
+                    _timeframe.endTime = new Date(parsed_data.timeframe[1]);
+                }
+
+                initCharts(tag, parsed_data, _timeframe, callback);
             }
         };
 
@@ -434,22 +459,29 @@ var DASHBOARD_MAIN = function (par) {
         _query.getFilteredEvents(_queryFilters.eventFilters, eventsLoaded);
     };
 
-    var createDurationTimeline = function (mapping, filters, timeframe) {
-        filters.constructs.type = 'stage';
-
-        var _parser = DURATION_CHART_PROCESSOR(mapping);
+    var createPipelineTimeline = function (mapping, filters, callback) {
+        var _parser = PIPELINE_CHART_PROCESSOR(mapping);
         var _query = DATA_QUERY();
         var _queryFilters = QUERY_UTILITIES().formatFilters(filters);
 
         var _events = false;
+        var _states = false;
         var _constructs = false;
         var whenLoaded = function () {
             if (_events && _constructs) {
-                var parsed_data = _parser(_constructs, _events);
+                var parsed_data = _parser(_constructs, _events, _states);
                 if (debug) {
-                    console.log("[DurationTimeline]Parsed data:", parsed_data);
+                    console.log("[PipelineTimeline]Parsed data:", parsed_data);
                 }
-                initCharts("duration", parsed_data, timeframe, false);
+
+                if (parsed_data.timeframe[0] < _timeframe.startTime) {
+                    _timeframe.startTime = new Date(parsed_data.timeframe[0]);
+                }
+                if (parsed_data.timeframe[1] > _timeframe.endTime) {
+                    _timeframe.endTime = new Date(parsed_data.timeframe[1]);
+                }
+
+                initCharts("pipeline", parsed_data, _timeframe, callback);
             }
         };
 
@@ -461,8 +493,13 @@ var DASHBOARD_MAIN = function (par) {
             _constructs = data;
             whenLoaded();
         };
+        var statesLoaded = function (data) {
+            _states = data;
+            whenLoaded();
+        };
 
         _query.getFilteredConstructs(_queryFilters.constructFilters, constructsLoaded);
+        _query.getFilteredStatechanges(_queryFilters.eventFilters, statesLoaded);
         _query.getFilteredEvents(_queryFilters.eventFilters, eventsLoaded);
     };
 
@@ -470,14 +507,15 @@ var DASHBOARD_MAIN = function (par) {
      * Warning: the order of creation of the charts matter. e.g. to keep coloscales coherent between charts.
      */
 
-    // AMOUNT TIMELINE 1
-    createAmountTimelines(_mapping, _filters, _timeframe, function () {
-        // AMOUNT TIMELINE 3
-        createStatesTimeline(_mapping, _filters, _timeframe, "state", function () {
-            // ISSUE TIMELINE
-            createIssueTimeline(_mapping, _filters, _timeframe, function () {
-                // DURATION TIMELINE
-                createDurationTimeline(_mapping, _filters, _timeframe, false);
+    // PIPELINE TIMELINE
+    createPipelineTimeline(_mapping, _filters, function () {
+        // AMOUNT TIMELINE 1
+        createAmountTimelines(_mapping, _filters, function () {
+            // AMOUNT TIMELINE 3
+            createStatesTimeline(_mapping, _filters, "state", function () {
+                // ISSUE TIMELINE
+                createIssueTimeline(_mapping, _filters, false);
+
             });
         });
     });
