@@ -65,26 +65,26 @@ var REPOLAINEN_QUERY_UI = function(states, callback){
 
         var mapping = {};
         
-        var rowId = document.getElementById("rowId").value;
+        var rowId = "source_id"; //document.getElementById("rowId").value;
         rowId = rowId.replace(/\s/g,'');
         if(rowId.length === 0){
             rowId = false;
         }
         mapping.rowId = rowId;
-        var rowIdIsFromOrigin = document.getElementById("rowIdIsFromOrigin").checked;
+        var rowIdIsFromOrigin = true; //document.getElementById("rowIdIsFromOrigin").checked;
         if(!rowId){
             rowIdIsFromOrigin = false;
         }
         mapping.rowIdIsFromOrigin = rowIdIsFromOrigin;
         
         if(_states === "full"){
-            var initial = parseStates(document.getElementById("initial").value);
-            var intermediate = parseStates(document.getElementById("intermediate").value);
-            var resolution = parseStates(document.getElementById("resolution").value);
+            var initial = parseStates("open, opened, to do, created, reopened"); // parseStates(document.getElementById("initial").value);
+            var intermediate = parseStates("Ready to start, Doing Next, Doing, In review"); //parseStates(document.getElementById("intermediate").value);
+            var resolution = parseStates("closed, resolved, done, fixed, cancelled, won't fix, won't do, cannot reproduce"); //parseStates(document.getElementById("resolution").value);
             mapping.states = {resolution : resolution, start : initial, intermediate : intermediate};
         }
         else if(_states === "limited"){
-            var resolution = parseStates(document.getElementById("resolution").value);
+            var resolution =  parseStates("closed, resolved, done, fixed, cancelled, won't fix, won't do, cannot reproduce"); //parseStates(document.getElementById("resolution").value);
             mapping.states = {resolution : resolution};
         }
         
