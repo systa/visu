@@ -21,12 +21,8 @@
 * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-//require separate db module
-//var db = require()
-
 var express = require('express');
 var app = express();
-var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var errorHandler = require('errorhandler');
@@ -51,8 +47,6 @@ app.use(errorHandler({
 
 //DATABASE 
 var db = require("./backend/database/database.js");
-//var collector = require("./backend/data-collector/collector.js");
-//collector(false);
 
 //-------------
 //----ROUTES---
