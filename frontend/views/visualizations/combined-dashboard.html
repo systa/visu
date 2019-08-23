@@ -1,10 +1,24 @@
 <!--
-* Copyright (c) TUT Tampere University of Technology 2014-2015.
-* All rights reserved.
-* This software has been developed in Tekes-TIVIT project Need-for-Speed.
-* All rule set in consortium agreement of Need-for-Speed project apply.
-*
-* Main authors: Antti Luoto, Anna-Liisa Mattila, Henri Terho, Hugo Fooy
+* Copyright 2018-2019 Tampere University
+* 
+* Main authors: Anna-Liisa Mattila, Henri Terho, Antti Luoto, Hugo Fooy
+* 
+* Permission is hereby granted, free of charge, to any person obtaining a copy of
+* this software and associated documentation files (the "Software"), to deal in 
+* the Software without restriction, including without limitation the rights to 
+* use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+* the Software, and to permit persons to whom the Software is furnished to do so, 
+* subject to the following conditions:
+* 
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+* 
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS 
+* FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR 
+* COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+* IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
+* CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -178,75 +192,6 @@
           </div>
         </div>
       </div>
-      <!-- 
-      <div class="col-sm-12">
-        <div class="panel panel-primary">
-          <div class="panel-heading">
-            <h1>Data Mapping</h1>
-          </div>
-          <div class="panel-body">
-            <div class="col-sm-12">
-              <h2>Y-axis</h2>
-              <p>Choose the attribute to be mapped to Y-axis from the data. If the attribute is part of
-                origin id, write
-                just the attribute name (eg. soure_id not origin_id.source_id) and check the checkbox
-                below. However if
-                you want to group data to y-axis based on metada, then you need to write
-                "metada.attributename".</p>
-              <div class="form-group">
-                <label for="rowId" class="col-sm-4 control-label">Attribute name</label>
-                <div class="col-sm-8">
-                  <input class="form-control" type="text" name="rowId" id="rowId" value="source_id" />
-                </div>
-              </div>
-
-              <div class="form-group">
-
-                <label for="rowIdIsFromOrigin" class="col-sm-4 control-label">Y-axis attribute is an
-                  attribute of
-                  origin id</label>
-                <div class="col-sm-8">
-                  <input type="checkbox" name="fromOrigin" id="rowIdIsFromOrigin" checked="true" />
-                </div>
-              </div>
-            </div>
-
-            <div class="col-sm-12">
-              <h2>States</h2>
-              <p>Define the states to be visualized. To open states write the name of each initial state you want to
-                visualize. To intermediate states write all states that are not initial or resolution states you whish
-                to explore. To resolution states write all resolution states you wich to use in visualization. Note that
-                the states are fetched from the event's type attribute!</p>
-
-              <div class="form-group">
-                <label for="initial" class="col-sm-4 control-label">Start states separated by comma</label>
-                <div class="col-sm-8">
-                  <input class="form-control" type="text" name="initial" id="initial"
-                    value="open, opened, to do, created, reopened" />
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="intermediate" class="col-sm-4 control-label">Intermediate states separated by comma</label>
-                <div class="col-sm-8">
-                  <input class="form-control" type="text" name="intermediate" id="intermediate"
-                    value="Ready to start, Doing Next, Doing, In review" />
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="resolution" class="col-sm-4 control-label">Resolution states separated by comma</label>
-                <div class="col-sm-8">
-                  <input class="form-control" type="text" name="resolution" id="resolution"
-                    value="closed, resolved, done, fixed, cancelled, won't fix, won't do, cannot reproduce" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-
-
-      </div>
-     -->
     </form>
 
     <div class="col-sm-12" id="buttonplacer"></div>
