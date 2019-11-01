@@ -27,7 +27,7 @@
     "grunt-wait": "^0.3.0",
     "method-override": "^3.0.0",
     "mongodb": "^3.2.7",
-    "mongoose": "^4.2.7",
+    "mongoose": "^5.7.5",
     "parse-link-header": "^0.2.0",
     "promise": "^8.0.3",
     "request": "^2.58.0",
