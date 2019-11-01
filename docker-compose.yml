@@ -1,9 +1,11 @@
-version: "2"
+version: "3"
 
 services:
   web:
-    image: hugofooy/vis-a-vis:v0.4
-    build: .
+    image: karis-image
+#    image: hugofooy/vis-a-vis:v0.4
+# Build would use too new versions
+#    build: .
     command: nodemon --debug=5858
     volumes:
       - .:/code

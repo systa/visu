@@ -1,0 +1,8 @@
+#Test fixing of Hugo's original by adding three missing modules
+
+FROM hugofooy/vis-a-vis:v0.4
+
+WORKDIR /code
+
+RUN npm install url-template parse-link-header JSONPath
+

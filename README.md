@@ -1,13 +1,15 @@
 VISU Application
 ==========
 
-A node-based dashboard prototype for the ITEA 3 VISDOM Project. Developped by Hugo Fooy at Tampere University.
+
 
 Installation
 -------------
 1. Cloning the repo and running the app
 
 ``` git clone https://github.com/coin-quin/vis-a-vis.git -b dockerized```
+
+``` sudo docker build -f Dockerfile.kari .```  (See Kari's notes below)
 
 ``` sudo docker-compose up```
 
@@ -29,6 +31,17 @@ Use file *log.txt* as input in the last command. This data can be visualized wit
 2. Loading data source (issue data) from within the web app
 
 Go to Collectors/API collector. Select the API and enter the parameters. This data can be visualized with the other visualizations.
+
+
+Kari's notes
+------------
+
+I have "hacked" docker-compose.yml not to run "nmp install" since it seems to fail with the combination of pre-historical version of node and current state of library hub.
+Unfortunately, Hugo's original base image does not work out of the box. That's why "Kari's image" need to be created. At the moment you need to
+
+``` sudo docker build -f Dockerfile.kari .```
+
+In next version proper image will be in Docker-hub.
 
 Files
 ----------
