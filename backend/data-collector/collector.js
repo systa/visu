@@ -22,16 +22,25 @@
 */
 
 var fs = require('fs');
+//console.log(" - #collector: : fs");
 var path = require('path');
+//console.log(" - #collector: : path");
 // prompt is a library for getting user input
 var request = require('request');
+//console.log(" - #collector: : request");
 
 var _ = require('underscore');
+//console.log(" - #collector: : underscore");
+
 
 // the module that actually gets the data
 var GET_DATA = require('./getdata.js');
+//console.log(" - #collector: : getdata");
+
 // module that sends the data to db
 var SEND_DATA = require('./poster.js');
+//console.log(" - #collector: : poster");
+
 
 var collector = function (p, callback) {
   var par = p || {};
@@ -66,6 +75,7 @@ var collector = function (p, callback) {
       break;
     case 'gitlab':
       _API = require('./apis/gitlab.js');
+//      console.log(" - #collector: : using gitlab");
       _auth = _API.authentication[1]; //Force auth method to be token
       _API.baseUrl = _filters.baseURL;
 
@@ -82,11 +92,11 @@ var collector = function (p, callback) {
   //TODO: make switch of auth method work
 
   // 2. Get auth method
-  console.log('[Collector]_auth:', _auth);
+//  console.log('#[Collector]_auth:', _auth);
 
   // 3. Get auth params
   if (_auth === 'basic') {
-    console.log('[Collector]Basic auth');
+//    console.log('[Collector]Basic auth');
     //Need username and password
     _baseRequest = _baseRequest.defaults({
       auth: {
@@ -96,7 +106,7 @@ var collector = function (p, callback) {
     });
 
   } else if (_auth === 'oauth2') {
-    console.log(_auth + ' not yet supported');
+//    console.log(_auth + ' not yet supported');
     process.exit();
 
   } else if (_auth !== 'no authentication') {
@@ -145,9 +155,11 @@ var collector = function (p, callback) {
   // if a header in the api description has an undefined value check if the userParams contains a value for it
   var headers = {};
   _.each(_API.headers, function (value, key) {
-    if (value === undefined) {
+      if (value === undefined) {
+//	  console.log(" - #collector: : " + key + " is undefined");
       headers[key] = _userParams[key];
     } else {
+//	  console.log(" - #collector: : " + key + " is " + value);
       headers[key] = value;
     }
   });
@@ -163,37 +175,47 @@ var collector = function (p, callback) {
 
   //console.log('[Collector]Fetching issue management data...');
   //console.log( '[Collector]baseRequest:', _baseRequest);
-  console.log('[Collector]api:', _API);
-  console.log('[Collector]userParams:', _userParams);
+//  console.log('[Collector]api:', _API);
+//  console.log('[Collector]userParams:', _userParams);
 
   var errorHandler = false;
   GET_DATA(_baseRequest, _API, _userParams, function (err, result) {
-    if (errorHandler) {
-      return;
-    }
-    if (err) {
-      errorHandler = true;
-      console.log('[Collector]Error detected in the data collection', err);
-      callback(false, err, true);
-      return;
-    }
-
-    // print debug information how many items of each type we got and what is the last item
-    console.log('[Collector]Issue management data fetched from source.');
-    _.each(result, function (value, key) {
-      console.log("[Collector]" + value.length + ' ' + key + ' last of which is:');
-      console.log("[Collector]", value[value.length - 1]);
-    });
-
+      if (errorHandler) {
+	  return;
+      }
+      if (err) {
+	  errorHandler = true;
+	  console.log('[Collector]Error detected in the data collection', err);
+	  callback(false, err, true);
+	  return;
+      }
+      
+      // print debug information how many items of each type we got and what is the last item
+      console.log('#[Collector]Issue management data fetched from source.');
+      _.each(result, function (value, key) {
+	  console.log("#[Collector]" + value.length + ' ' + key + ' last of which is:');
+	  console.log("#[Collector]", value[value.length - 1]);
+      });
+      
+      // DEBUG: issues
+/*
+      _.each(result, function (value, key) {
+	  if (key == "issues") {
+	      for (var i=0; i<value.length; ++ i) {
+		  console.log("issue " + i + ", id= " + value[i].id + ", created=" + value[i].created);
+	      }
+	  }
+      });
+*/
     /*
     console.log('[Collector]Not sending data to database.');
     callback(true);
     */
 
     // send the issue data to the db
-    console.log('[Collector]Sending data to database.');
+    console.log('#[Collector]Sending data to database.');
     SEND_DATA(result, origin, function () {
-      console.log("Data collection and sending successful.");
+      console.log("#Data collection and sending successful.");
       callback(true);
     });
 

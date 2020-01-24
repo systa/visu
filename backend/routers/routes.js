@@ -23,12 +23,18 @@
 
 //main API file which requires all the different sub API files and serves it to the server.js
 
+console.log(" - routes: starting");
+
 var express = require('express');
+console.log(" - routes: express");
 var router = express.Router();
 
 var frontendRouter = require('./frontendRouters/frontend.js');
+console.log(" - routes: frontend");
 var APIRouter = require('./apiRouters/APIRouter.js');
+console.log(" - routes: APIRouter");
 var appController = require('./appRouters/apps.js');
+console.log(" - routes: appsd");
 
 //var collector = require("../../backend/data-collector/collector.js");
 

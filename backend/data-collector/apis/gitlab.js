@@ -181,6 +181,7 @@ var api = {
             path: '/projects/{id}/issues/{issue_id}/notes',
             // the issue_id parameter from the url comes from the issue i.e. the comments parent resource
             parentParams: {
+//               issue_id: '$.id' // 2019-12-17 Kari change "iid" to "id" (did not work)
                issue_id: '$.iid'
             },
             items: '',

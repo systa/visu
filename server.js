@@ -47,13 +47,17 @@ app.use(errorHandler({
 
 //DATABASE 
 var db = require("./backend/database/database.js");
-
+console.log("Database  - done");
 //-------------
 //----ROUTES---
 //-------------
 //require the routers
 var routing = require('./backend/routers/routes.js');
+console.log("Routes  - done");
 app.use('/', routing);
+console.log("Routes  - in use");
 
+
+console.log("Attemps to liste port " + config.get('port'));
 server = app.listen(config.get('port'));
 console.log("[server.js]Server listening on port " + config.get('port'));

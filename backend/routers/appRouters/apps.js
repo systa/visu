@@ -23,9 +23,12 @@
 
 var express = require('express');
 var router = express.Router();
+console.log(" - apps: started");
 const querystring = require('querystring');
+console.log(" - apps: querystring");
 
 var collector = require("../../../backend/data-collector/collector.js");
+console.log(" - apps: collector");
 
 router.post('/', function (req, res) {
     res.setHeader('Content-Type', 'text/plain');
@@ -133,5 +136,6 @@ var parse_data = function (body) {
         api: api
     };
 }
+console.log(" - apps: finds defined");
 
 module.exports = router;

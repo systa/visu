@@ -50,53 +50,66 @@ var GET_DATA = function (baseRequest, api, userParams, callback) {
    
       // get the issues
       if (api.issues) {
-         status.count++;
+//	  console.log("\nGET api.issues");
+          status.count++;
          getItems(baseRequest, api, 'issues', api.issues, userParams, result, status, callback);
       }
 
       if (api.milestones) {
+//	  console.log("\nGET api.milestones");
          // get milestones if the api has them
          status.count++;
          getItems(baseRequest, api, 'milestones', api.milestones, userParams, result, status, callback);
       }
 
-      if (api.changeEvents) {
+    if (api.changeEvents) {
+//	console.log("\nGET api.changeEvents");
          // get changeEvents if the api has them
          status.count++;
          getItems(baseRequest, api, 'changeEvents', api.changeEvents, userParams, result, status, callback);
       }
 
-      if (api.jiraIssues) {
+    if (api.jiraIssues) {
+//	console.log("\nGET api.jiraIssues");
          // get changes if the api has them
          status.count++;
          getItems(baseRequest, api, 'jiraIssues', api.jiraIssues, userParams, result, status, callback);
       }
 
-      if (api.jiraChanges) {
+    if (api.jiraChanges) {
+//	console.log("\nGET api.jiraChanges");
+
          // get changes if the api has them
          status.count++;
          getItems(baseRequest, api, 'jiraChanges', api.jiraChanges, userParams, result, status, callback);
       }
 
       if (api.builds) {
+//	console.log("\nGET api.builds");
          // get changes if the api has them
          status.count++;
          getItems(baseRequest, api, 'builds', api.builds, userParams, result, status, callback);
       }
 
       if (api.buildHistorys) {
-         // get changes if the api has them
+//	console.log("\nGET api.buildHistorys");
+
+          // get changes if the api has them
          status.count++;
          getItems(baseRequest, api, 'buildHistorys', api.buildHistorys, userParams, result, status, callback);
       }
 
-      if (api.jobs) {
+    if (api.jobs) {
+//	console.log("\nGET api.jobs");
+
          // get jobs if the api has them
          status.count++;
          getItems(baseRequest, api, 'jobs', api.jobs, userParams, result, status, callback);
       }
 
-      if (api.pipelines) {
+    if (api.pipelines) {
+//	console.log("\nGET api.pipelines");
+
          // get pipelines if the api has them
          status.count++;
          getItems(baseRequest, api, 'pipelines', api.pipelines, userParams, result, status, callback);
@@ -116,22 +129,29 @@ var GET_DATA = function (baseRequest, api, userParams, callback) {
 // parent: if this is a child resource of some item
 // e.g. if the resource is a issue comment then the parent is the issue
 function getItems(baseRequest, api, type, itemDesc, userParams, result, status, callback, parent) {
-   //console.log("[Getdata]Getting items:" + type);
+//   console.log("@[Getdata]Getting items:" + type);
 
    // save the stuff we get here
    var items = [];
    // resolve the uri template in to actual url using the user input that contains the values for the template parameters
    var url = template.parse(itemDesc.path);
 
-   var params = userParams;
+    var params = userParams;  // TODO: Meaningless init
+/*
+    _.each(userParams, function (value, key) {
+	console.log("UserParam " + key + " = " + value);
+    });
+*/
    // use also the possible parent parameters
    // for example when getting the comments of an issue the url contains
    // the id of the issue i.e. the id of the parent resource
    if (itemDesc.parentParams) {
       params = {};
       // use json path to get the values for the parameters from the parent
+ //      console.log("@params: ");
       _.each(itemDesc.parentParams, function (value, key) {
-         params[key] = jsonPath.eval(parent, value);
+          params[key] = jsonPath.eval(parent, value);
+//	  console.log(" - " + key + ":" + params[key] + ", value=" + value);
       });
 
       // combine parent parameters and the user parameters
@@ -141,6 +161,7 @@ function getItems(baseRequest, api, type, itemDesc, userParams, result, status, 
    // get the url for the resource
    url = url.expand(params);
 
+//   console.log("GET1:" + url + "\n" + itemDesc.query);
    // get stuff from the source
    baseRequest.get({
       url: url,

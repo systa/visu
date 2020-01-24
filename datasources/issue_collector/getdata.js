@@ -126,7 +126,8 @@ function getItems( baseRequest, api, type, itemDesc, userParams, result, status,
    // get the url for the resource
    url = url.expand( params );
    
-   // get stuff from the source
+    console.log("GET:" + url + "\n" + itemDesc.query);
+    // get stuff from the source
    baseRequest.get( {
       url: url,
       // the query parameters from the api description

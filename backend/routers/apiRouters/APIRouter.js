@@ -23,21 +23,29 @@
 
 //main API file which requires all the different sub API files and serves it to the server.js
 
+console.log(" - APIrouter: starring");
 var express = require('express');
 var router = express.Router();
+console.log(" - APIrouter: router");
 
 
 var constructAPI = require('./constructApi.js');
+console.log(" - APIrouter: constructApi");
 var eventsAPI = require('./eventsApi.js');
+console.log(" - APIrouter: evenrsApi");
 
 //load other API files here
 router.use('/constructs', constructAPI);
 router.use('/events', eventsAPI);
+console.log(" - APIrouter: routers in use");
+
 
 //serve a simple status check api to easily test if the API is running
 router.get('/', function(req,res){
 	res.status(200).send("Api is running!");
 });
+
+console.log(" - APIrouter: Api checked");
 
 
 module.exports = router;

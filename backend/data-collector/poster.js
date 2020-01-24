@@ -27,9 +27,9 @@ var request = require('request');
 //require( 'request' ).debug = true;
 var _ = require('underscore');
 
-var debugLink = true;
-var debugSend = true;
-var debugParse = true;
+var debugLink = false;
+var debugSend = false;
+var debugParse = false;
 
 function parseJenkinsTime(jenkinsTime) {
   return new Date(jenkinsTime);
@@ -823,7 +823,7 @@ var SEND_DATA = function (issueData, origin, callback) {
 
   // links issues to milestones and constructs to events using the previously collected information
   function link() {
-    console.log("[Poster]linking", eventLinks);
+//    console.log("[Poster]linking", eventLinks);
     // variables used to determine when we are done linking
     var linkCount = 0; // how many to be created
     var linked = 0; // how many linked
@@ -958,7 +958,7 @@ var SEND_DATA = function (issueData, origin, callback) {
             } else if (response.statusCode !== 201 && response.statusCode !== 200) {
               console.log(response.statusCode);
               console.log(body);
-              console.log("Links saved: " + linked + "/" + linkCount);
+//              console.log("Links saved: " + linked + "/" + linkCount);
               process.exit();
             }
             linked++;
@@ -970,10 +970,11 @@ var SEND_DATA = function (issueData, origin, callback) {
                 console.log('[Poster]Everything saved to database.');
                 callback(true);
               }
+/*
             } else {
               console.log("[Poster]Links saved:" + linked + "/" + linkCount);
+*/
             }
-
             resolve("put");
           });
       });
